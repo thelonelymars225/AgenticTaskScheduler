@@ -83,6 +83,7 @@ class AcceptanceTestResult:
     failures: list[str] = field(default_factory=list)
     stdout: str = ""
     stderr: str = ""
+    executed: bool = False
 
 
 @dataclass
@@ -232,7 +233,9 @@ def repair_code(code: str, task: TaskPlan, failures: list[str]) -> str:
         [
             {"role": "system", "content": (
                 "Return only the complete corrected Python source. Make the smallest changes needed to fix every "
-                "reported failure. Preserve working behavior and the AGENT_SMOKE_TEST=1 non-blocking path."
+                "reported failure as one coherent fix; do not address only the first bullet or add cosmetic no-op "
+                "changes. Re-check control flow, state updates, and required user-visible behavior after the change. "
+                "Preserve working behavior and the AGENT_SMOKE_TEST=1 non-blocking path."
             )},
             {"role": "user", "content": (
                 f"{task.as_markdown()}\n\nFailures:\n{failure_text}\n\nCurrent code:\n```python\n{code}\n```"
@@ -351,7 +354,7 @@ def run_acceptance_tests(code: str, tests: str,
                          timeout: float = ACCEPTANCE_TEST_TIMEOUT_SECONDS) -> AcceptanceTestResult:
     """Run generated acceptance tests in an isolated temporary directory."""
     if not tests.strip():
-        return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."])
+        return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."], executed=True)
     with tempfile.TemporaryDirectory(prefix="agentic-acceptance-") as directory:
         root = Path(directory)
         candidate = root / "candidate.py"
@@ -368,16 +371,16 @@ def run_acceptance_tests(code: str, tests: str,
         except subprocess.TimeoutExpired as exc:
             return AcceptanceTestResult(
                 False, [f"Acceptance tests timed out after {timeout:g} seconds."],
-                exc.stdout or "", exc.stderr or "",
+                exc.stdout or "", exc.stderr or "", True,
             )
         except OSError as exc:
-            return AcceptanceTestResult(False, [f"Could not run acceptance tests: {exc}"])
+            return AcceptanceTestResult(False, [f"Could not run acceptance tests: {exc}"], executed=True)
     stdout = result.stdout[-4000:]
     stderr = result.stderr[-4000:]
     if result.returncode != 0:
         detail = stderr.strip() or stdout.strip() or f"Test process exited with code {result.returncode}."
-        return AcceptanceTestResult(False, [f"Acceptance failure: {detail}"], stdout, stderr)
-    return AcceptanceTestResult(True, stdout=stdout, stderr=stderr)
+        return AcceptanceTestResult(False, [f"Acceptance failure: {detail}"], stdout, stderr, True)
+    return AcceptanceTestResult(True, stdout=stdout, stderr=stderr, executed=True)
 
 
 def _review_response_is_invalid(text: str, review: ReviewResult) -> bool:
@@ -393,6 +396,8 @@ def quality_review(code: str, task: TaskPlan, evidence: list[str] | None = None)
             "Return valid JSON only: {\"verdict\":\"PASS\"|\"FAIL\",\"issues\":[\"specific issue\"]}. "
             "Act as an adversarial code reviewer: trace actual control flow and method calls instead of assuming that "
             "plausible-looking code works. PASS only if every required behavior and acceptance test is implemented. "
+            "On FAIL, list every independently actionable root cause you can verify (up to six), prioritizing causes "
+            "that block a required behavior; do not stop at the first symptom or suggest cosmetic changes. "
             "For GUI or interactive code, verify event bindings, the scheduled update loop, rendering, collision/state "
             "changes, restart behavior, and the AGENT_SMOKE_TEST=1 exit path when applicable. Report only actionable "
             "issues with the relevant class, function, or behavior. Ignore optional improvements."
@@ -422,7 +427,9 @@ def project_management_with_attempts(prompt: str, max_retries: int = MAX_REPAIRS
         with Timer(f"pipeline.validate.{attempt + 1}"):
             validation = validate_code(code, task)
         acceptance_tests = ""
-        acceptance = AcceptanceTestResult(True)
+        # The default profile deliberately skips generated deep acceptance tests
+        # for speed. Keep that distinct from a passing executed test in artifacts.
+        acceptance = AcceptanceTestResult(True, executed=False)
         if validation.passed and ENABLE_ACCEPTANCE_TESTS:
             with Timer(f"pipeline.acceptance.generate.{attempt + 1}"):
                 acceptance_tests = write_acceptance_tests(code, task)
@@ -459,7 +466,7 @@ def project_management_with_attempts(prompt: str, max_retries: int = MAX_REPAIRS
             code = write_code(prompt, task, ESCALATION_MODEL, failures)
         validation = validate_code(code, task)
         acceptance_tests = write_acceptance_tests(code, task) if validation.passed and ENABLE_ACCEPTANCE_TESTS else ""
-        acceptance = run_acceptance_tests(code, acceptance_tests) if acceptance_tests else AcceptanceTestResult(validation.passed)
+        acceptance = run_acceptance_tests(code, acceptance_tests) if acceptance_tests else AcceptanceTestResult(validation.passed, executed=False)
         review = quality_review(code, task, [*validation.failures, *acceptance.failures]) if ENABLE_LLM_REVIEW else ReviewResult(True)
         attempts.append(AttemptRecord(len(attempts) + 1, code, validation, acceptance_tests, acceptance, review))
 

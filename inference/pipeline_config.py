@@ -12,7 +12,10 @@ CODER_MODEL = PRIMARY_MODEL
 QA_MODEL = PRIMARY_MODEL
 
 MODEL_KEEP_ALIVE = "30m"
-MAX_REPAIRS = 1
+# A second focused repair lets the coder address the full review list without
+# adding another independent QA subsystem.  On the target GPU this is a small
+# latency trade for materially better first-pass completion.
+MAX_REPAIRS = 2
 STARTUP_GRACE_SECONDS = 1.0
 ACCEPTANCE_TEST_TIMEOUT_SECONDS = 5.0
 

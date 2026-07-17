@@ -63,7 +63,7 @@ class PipelineHelperTests(unittest.TestCase):
     def test_default_profile_prioritizes_quality(self) -> None:
         self.assertTrue(ENABLE_PLANNING)
         self.assertTrue(ENABLE_LLM_REVIEW)
-        self.assertEqual(MAX_REPAIRS, 1)
+        self.assertEqual(MAX_REPAIRS, 2)
         self.assertFalse(ENABLE_ACCEPTANCE_TESTS)
 
     def test_plan_parser_uses_structured_values(self) -> None:
@@ -152,10 +152,12 @@ class PipelineHelperTests(unittest.TestCase):
             "assert module.add(2, 3) == 5\n",
         )
         self.assertTrue(result.passed)
+        self.assertTrue(result.executed)
 
     def test_acceptance_test_failure_is_reported(self) -> None:
         result = run_acceptance_tests("value = 1\n", "raise AssertionError('missing behavior')\n")
         self.assertFalse(result.passed)
+        self.assertTrue(result.executed)
         self.assertIn("Acceptance failure", result.failures[0])
 
 

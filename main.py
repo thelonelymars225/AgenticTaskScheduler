@@ -52,6 +52,7 @@ def _write_attempt_artifacts(output_dir: Path, result: PipelineResult) -> Path:
             "path": attempt_dir.name,
             "validation_passed": attempt.validation.passed,
             "acceptance_passed": attempt.acceptance_result.passed,
+            "acceptance_executed": attempt.acceptance_result.executed,
             "review_passed": attempt.review.passed,
         })
     (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
