@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not exit after the smoke test when AGENT_SMOKE_TEST=1 is set."
+  ],
+  "raw": "{\n  \"verdict\": \"FAIL\",\n  \"issues\": [\n    \"The program does not exit after the smoke test when AGENT_SMOKE_TEST=1 is set.\"\n  ]\n}"
+}

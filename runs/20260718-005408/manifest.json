@@ -1,0 +1,20 @@
+{
+  "task": "## Specification\n- Implement the user request.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "final_verdict": "VERDICT: FAIL\n- The program does not exit after the smoke test when AGENT_SMOKE_TEST=1 is set.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": false,
+      "acceptance_passed": true,
+      "review_passed": false
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": false,
+      "acceptance_passed": true,
+      "review_passed": false
+    }
+  ]
+}

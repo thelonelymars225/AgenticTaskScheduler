@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "failures": [
+    "Smoke test did not exit within 1 seconds while AGENT_SMOKE_TEST=1."
+  ],
+  "stdout": "",
+  "stderr": ""
+}
