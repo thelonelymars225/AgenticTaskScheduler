@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The if statement at the end of the script should check for `len(sys.argv) < 2` instead of `len(sys.argv) == 1`.",
+    "The elif statements at the end of the script should check for `command != 'add'`, `command != 'list'`, etc. instead of just checking for the known commands."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  {\n    \"description\": \"The program does not handle the case when the user runs it without any arguments.\",\n    \"root_cause\": \"The if statement at the end of the script should check for `len(sys.argv) < 2` instead of `len(sys.argv) == 1`.\"\n  },\n  {\n    \"description\": \"The program does not handle the case when the user runs it with an unknown command.\",\n    \"root_cause\": \"The elif statements at the end of the script should check for `command != 'add'`, `command != 'list'`, etc. instead of just checking for the known commands.\"\n  }\n] }"
+}

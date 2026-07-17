@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case when the user provides an invalid command. It should print a usage message and exit with a non-zero status code.",
+    "The `add_todo` function does not validate the input task text. It should check if the input is a string and raise an error if it's not.",
+    "The `complete_todo` and `remove_todo` functions do not handle the case when the user provides an invalid index. They should print an error message and exit with a non-zero status code.",
+    "The program does not have any tests to verify its functionality. It would be good to add some unit tests to ensure that the program works as expected."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The program does not handle the case when the user provides an invalid command. It should print a usage message and exit with a non-zero status code.\",\n    \"The `add_todo` function does not validate the input task text. It should check if the input is a string and raise an error if it's not.\",\n    \"The `complete_todo` and `remove_todo` functions do not handle the case when the user provides an invalid index. They should print an error message and exit with a non-zero status code.\",\n    \"The program does not have any tests to verify its functionality. It would be good to add some unit tests to ensure that the program works as expected.\"\n] }"
+}

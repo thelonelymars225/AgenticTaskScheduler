@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Usage: python todo.py [add|list|complete|remove] [task|index]"
+  ],
+  "stdout": "",
+  "stderr": "Usage: python todo.py [add|list|complete|remove] [task|index]\n",
+  "executed": true
+}

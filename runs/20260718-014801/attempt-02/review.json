@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case when the user provides an invalid command or argument. It should print a usage message and exit with a non-zero status code in this case.",
+    "The `add_todo` function does not check if the task text is already present in the list of todos before adding it. This could lead to duplicate tasks being added.",
+    "The `complete_todo` and `remove_todo` functions do not handle the case when the user provides an invalid index. They should print an error message and exit with a non-zero status code in this case.",
+    "The program does not persist the todos list across multiple runs. It should save the updated list to the file after each operation.",
+    "The `load_todos` function does not handle the case when the todos file is missing or corrupted. It should print an error message and exit with a non-zero status code in this case.",
+    "The program does not provide any help or usage information for the user. It should add a --help option to display the available commands and their usage."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The program does not handle the case when the user provides an invalid command or argument. It should print a usage message and exit with a non-zero status code in this case.\",\n  \"The `add_todo` function does not check if the task text is already present in the list of todos before adding it. This could lead to duplicate tasks being added.\",\n  \"The `complete_todo` and `remove_todo` functions do not handle the case when the user provides an invalid index. They should print an error message and exit with a non-zero status code in this case.\",\n  \"The program does not persist the todos list across multiple runs. It should save the updated list to the file after each operation.\",\n  \"The `load_todos` function does not handle the case when the todos file is missing or corrupted. It should print an error message and exit with a non-zero status code in this case.\",\n  \"The program does not provide any help or usage information for the user. It should add a --help option to display the available commands and their usage.\"\n] }"
+}
