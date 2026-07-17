@@ -363,7 +363,9 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
                 "behavior, not style. Do not invent APIs: inspect the candidate and use public functions/classes it "
                 "actually provides. Never instantiate tkinter.Tk(), Canvas, or any GUI/window: for GUI candidates, "
                 "test pure logic with fakes or mocks only. If no headless interface can be exercised, raise one clear "
-                "AssertionError without opening a window. Avoid network calls, sleeps, and third-party packages. Exit non-zero "
+                "AssertionError without opening a window. If testing a CLI, create its temporary input and invoke it "
+                "with explicit arguments (or call its public functions); never rely on the test runner's empty argv. "
+                "Exercise at least one valid case and one invalid/edge case. Avoid network calls, sleeps, and third-party packages. Exit non-zero "
                 "or raise AssertionError when a required behavior fails. If an acceptance requirement cannot be tested "
                 "from the candidate, fail with a clear assertion explaining the missing testable interface."
             )},
