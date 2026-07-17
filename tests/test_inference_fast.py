@@ -167,10 +167,22 @@ class PipelineHelperTests(unittest.TestCase):
         self.assertTrue(result.executed)
 
     def test_acceptance_test_failure_is_reported(self) -> None:
-        result = run_acceptance_tests("value = 1\n", "raise AssertionError('missing behavior')\n")
+        result = run_acceptance_tests(
+            "value = 1\n",
+            "import importlib.util, os\n"
+            "spec = importlib.util.spec_from_file_location('candidate', os.environ['CANDIDATE_PATH'])\n"
+            "module = importlib.util.module_from_spec(spec)\n"
+            "spec.loader.exec_module(module)\n"
+            "raise AssertionError('missing behavior')\n",
+        )
         self.assertFalse(result.passed)
         self.assertTrue(result.executed)
         self.assertIn("Acceptance failure", result.failures[0])
+
+    def test_acceptance_harness_must_import_candidate(self) -> None:
+        result = run_acceptance_tests("value = 1\n", "assert True\n")
+        self.assertFalse(result.passed)
+        self.assertIn("Invalid acceptance harness", result.failures[0])
 
 
 if __name__ == "__main__":

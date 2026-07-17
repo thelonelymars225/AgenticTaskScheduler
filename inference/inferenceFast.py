@@ -357,7 +357,9 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
         [
             {"role": "system", "content": (
                 "Return only a complete Python test script using the standard library. The generated candidate path "
-                "is in os.environ['CANDIDATE_PATH']. Test the explicit acceptance requirements using observable "
+                "is in os.environ['CANDIDATE_PATH']. The script MUST import and execute that candidate via "
+                "importlib.util.spec_from_file_location; a script that reimplements the solution or does not reference "
+                "CANDIDATE_PATH is invalid. Test the explicit acceptance requirements using observable "
                 "behavior, not style. Do not invent APIs: inspect the candidate and use public functions/classes it "
                 "actually provides. Never instantiate tkinter.Tk(), Canvas, or any GUI/window: for GUI candidates, "
                 "test pure logic with fakes or mocks only. If no headless interface can be exercised, raise one clear "
@@ -380,6 +382,12 @@ def run_acceptance_tests(code: str, tests: str,
     """Run generated acceptance tests in an isolated temporary directory."""
     if not tests.strip():
         return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."], executed=True)
+    if "CANDIDATE_PATH" not in tests or "spec_from_file_location" not in tests:
+        return AcceptanceTestResult(
+            False,
+            ["Invalid acceptance harness: it must import the candidate through CANDIDATE_PATH."],
+            executed=True,
+        )
     with tempfile.TemporaryDirectory(prefix="agentic-acceptance-") as directory:
         root = Path(directory)
         candidate = root / "candidate.py"
