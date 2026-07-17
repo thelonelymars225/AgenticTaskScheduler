@@ -394,8 +394,8 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
     violations: list[str] = []
     if "CANDIDATE_PATH" not in tests or "spec_from_file_location" not in tests:
         violations.append("it must import the candidate through CANDIDATE_PATH")
-    if re.search(r"(?:tkinter|tk)\.(?:Tk|Canvas)\s*\(", tests):
-        violations.append("it must not instantiate GUI objects in headless acceptance")
+    if re.search(r"(?:import\s+tkinter|from\s+tkinter|(?:tkinter|tk)\.(?:Tk|Canvas)\s*\()", tests):
+        violations.append("it must not import or instantiate GUI objects in headless acceptance")
     return violations
 
 
