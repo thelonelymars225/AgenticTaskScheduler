@@ -1,6 +1,6 @@
 === Analysis ===
 ## Specification
-- Write a Python Pong game using tkinter and object-oriented programming. It must support two paddles, ball movement, wall and paddle collisions, scoring, restart after a score, keyboard controls, and AGENT_SMOKE_TEST=1 must exit without opening a window.
+- Write a standard-library Python command-line todo application. It must persist tasks as JSON, support add, list, complete, and remove commands, validate malformed stored data, return useful exit codes, and expose the storage operations as importable functions for tests.
 
 ## Implementation Plan
 - Use a minimal reliable Python design.
@@ -12,101 +12,103 @@ COMPLEXITY: medium
 
 === Code ===
 import os
-import tkinter as tk
+import json
+import sys
 
-class PongGame:
-    def __init__(self, root):
-        self.root = root
-        self.canvas = tk.Canvas(root, width=600, height=400, bg='black')
-        self.canvas.pack()
-        
-        self.ball = Ball(self.canvas)
-        self.paddle_left = Paddle(self.canvas, 'left')
-        self.paddle_right = Paddle(self.canvas, 'right')
-        
-        self.score_left = 0
-        self.score_right = 0
-        
-        self.left_score_text = self.canvas.create_text(150, 20, text=f"Score: {self.score_left}", fill="white", font=('Helvetica', 16))
-        self.right_score_text = self.canvas.create_text(450, 20, text=f"Score: {self.score_right}", fill="white", font=('Helvetica', 16))
-        
-        self.root.bind('<KeyPress-Left>', lambda event: self.paddle_left.move(-10))
-        self.root.bind('<KeyPress-Right>', lambda event: self.paddle_left.move(10))
-        self.root.bind('<KeyPress-a>', lambda event: self.paddle_right.move(-10))
-        self.root.bind('<KeyPress-d>', lambda event: self.paddle_right.move(10))
-        
-        self.game_loop()
-    
-    def game_loop(self):
-        if self.ball.update():
-            self.score_left += 1
-            self.canvas.itemconfig(self.left_score_text, text=f"Score: {self.score_left}")
-        elif self.ball.update():
-            self.score_right += 1
-            self.canvas.itemconfig(self.right_score_text, text=f"Score: {self.score_right}")
-        
-        self.root.after(20, self.game_loop)
+TODO_FILE = 'todos.json'
 
-class Ball:
-    def __init__(self, canvas):
-        self.canvas = canvas
-        self.id = canvas.create_oval(10, 10, 30, 30, fill='white')
-        self.canvas.move(self.id, 285, 185)
-        
-        starts = [-3, -2, -1, 1, 2, 3]
-        from random import choice
-        self.x = choice(starts)
-        self.y = -3
-        
-    def update(self):
-        pos = self.canvas.coords(self.id)
-        
-        if pos[1] <= 0:
-            self.y = 3
-        elif pos[3] >= 400:
-            self.y = -3
-        if pos[0] <= 0:
-            return True
-        elif pos[2] >= 600:
-            return False
-        
-        paddle_pos_left = self.canvas.coords(self.paddle_left.id)
-        paddle_pos_right = self.canvas.coords(self.paddle_right.id)
-        
-        if pos[1] <= paddle_pos_left[3] and paddle_pos_left[0] <= pos[2] <= paddle_pos_left[2]:
-            self.x *= -1
-        elif pos[1] <= paddle_pos_right[3] and paddle_pos_right[0] <= pos[2] <= paddle_pos_right[2]:
-            self.x *= -1
-        
-        self.canvas.move(self.id, self.x, self.y)
-        return False
+def load_todos():
+    if not os.path.exists(TODO_FILE):
+        return []
+    try:
+        with open(TODO_FILE, 'r') as f:
+            todos = json.load(f)
+            if not isinstance(todos, list):
+                raise ValueError("Invalid todo data")
+            for todo in todos:
+                if not isinstance(todo, dict) or 'task' not in todo or 'completed' not in todo:
+                    raise ValueError("Invalid todo item")
+            return todos
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"Error loading todos: {e}", file=sys.stderr)
+        sys.exit(1)
 
-class Paddle:
-    def __init__(self, canvas, side):
-        self.canvas = canvas
-        if side == 'left':
-            self.id = canvas.create_rectangle(10, 150, 20, 250, fill='white', tags='paddle_left')
-        else:
-            self.id = canvas.create_rectangle(580, 150, 590, 250, fill='white', tags='paddle_right')
-    
-    def move(self, delta):
-        pos = self.canvas.coords(self.id)
-        if pos[1] + delta >= 0 and pos[3] + delta <= 400:
-            self.canvas.move(self.id, 0, delta)
+def save_todos(todos):
+    try:
+        with open(TODO_FILE, 'w') as f:
+            json.dump(todos, f, indent=4)
+    except IOError as e:
+        print(f"Error saving todos: {e}", file=sys.stderr)
+        sys.exit(1)
 
-if __name__ == "__main__":
+def add_task(task):
+    todos = load_todos()
+    todos.append({'task': task, 'completed': False})
+    save_todos(todos)
+
+def list_tasks():
+    todos = load_todos()
+    for i, todo in enumerate(todos, start=1):
+        status = '[X]' if todo['completed'] else '[ ]'
+        print(f"{i}. {status} {todo['task']}")
+
+def complete_task(index):
+    todos = load_todos()
+    try:
+        index -= 1
+        if not (0 <= index < len(todos)):
+            raise IndexError("Task index out of range")
+        todos[index]['completed'] = True
+        save_todos(todos)
+    except IndexError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+def remove_task(index):
+    todos = load_todos()
+    try:
+        index -= 1
+        if not (0 <= index < len(todos)):
+            raise IndexError("Task index out of range")
+        del todos[index]
+        save_todos(todos)
+    except IndexError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+def main():
     if os.getenv('AGENT_SMOKE_TEST') == '1':
-        print("Smoke test passed.")
+        sys.exit(0)
+
+    if len(sys.argv) < 2:
+        print("Usage: python todo.py [add|list|complete|remove] [task|index]", file=sys.stderr)
+        sys.exit(1)
+
+    command = sys.argv[1]
+    if command == 'add' and len(sys.argv) > 2:
+        add_task(' '.join(sys.argv[2:]))
+    elif command == 'list':
+        list_tasks()
+    elif command == 'complete' and len(sys.argv) > 2:
+        try:
+            complete_task(int(sys.argv[2]))
+        except ValueError:
+            print("Error: Index must be an integer", file=sys.stderr)
+            sys.exit(1)
+    elif command == 'remove' and len(sys.argv) > 2:
+        try:
+            remove_task(int(sys.argv[2]))
+        except ValueError:
+            print("Error: Index must be an integer", file=sys.stderr)
+            sys.exit(1)
     else:
-        root = tk.Tk()
-        game = PongGame(root)
-        root.mainloop()
+        print(f"Unknown command or missing argument for {command}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
 
 === QA Result ===
 VERDICT: FAIL
-- The program does not handle the case when AGENT_SMOKE_TEST=1. It should exit without opening a window in this case.
-- The game loop is not properly implemented. The score is incremented twice for each point scored, and the game does not restart after a score.
-- The paddle movement is not smooth. The paddle moves by 10 pixels at a time, which can be too fast or too slow depending on the user's preference.
-- There are no checks to prevent the ball from moving off the screen. This can cause the game to crash if the ball hits the edge of the screen.
-- The scoring system is not implemented correctly. The score is incremented twice for each point scored, and there is no way to reset the score after a game.
-- The game does not handle keyboard input properly. The paddle movement is not smooth, and the game does not restart after a score.
+- The program does not handle the case when an unknown command is provided as a command-line argument. It should print an error message and exit with a non-zero status code.
+- Repair returned an unchanged candidate; stopping the loop.
