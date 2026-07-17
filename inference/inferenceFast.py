@@ -22,10 +22,12 @@ PRIMARY_MODEL = os.getenv("ATS_PRIMARY_MODEL", "qwen2.5-coder:14b")
 PLANNER_MODEL = os.getenv("ATS_PLANNER_MODEL", PRIMARY_MODEL)
 CODER_MODEL = os.getenv("ATS_CODER_MODEL", PRIMARY_MODEL)
 QA_MODEL = os.getenv("ATS_QA_MODEL", PRIMARY_MODEL)
-ESCALATION_MODEL = os.getenv("ATS_ESCALATION_MODEL", "qwen2.5-coder:32b")
 KEEP_ALIVE = os.getenv("ATS_MODEL_KEEP_ALIVE", "30m")
-MAX_REPAIRS = max(0, int(os.getenv("ATS_MAX_REPAIRS", "2")))
-STARTUP_GRACE = max(1.0, float(os.getenv("ATS_STARTUP_GRACE_SECONDS", "3")))
+MAX_REPAIRS = max(0, int(os.getenv("ATS_MAX_REPAIRS", "1")))
+STARTUP_GRACE = max(0.2, float(os.getenv("ATS_STARTUP_GRACE_SECONDS", "1")))
+ENABLE_PLANNING = os.getenv("ATS_ENABLE_PLANNING", "0") == "1"
+ENABLE_LLM_REVIEW = os.getenv("ATS_ENABLE_LLM_REVIEW", "0") == "1"
+ESCALATION_MODEL = os.getenv("ATS_ESCALATION_MODEL", "")
 CHAR_LIMITS = {"simple": 8000, "medium": 16000, "complex": 24000, "very_complex": 32000}
 
 
@@ -148,6 +150,17 @@ def analyze_task(prompt: str) -> TaskPlan:
     return _parse_plan_payload(text)
 
 
+def _fast_task_plan(prompt: str) -> TaskPlan:
+    """Build the minimum useful plan without spending a model request."""
+    request = prompt.strip() or "Implement the user request."
+    return TaskPlan(
+        specification=[request],
+        implementation_plan=["Implement the smallest complete Python solution."],
+        acceptance_tests=["The generated source compiles and exits successfully with AGENT_SMOKE_TEST=1."],
+        complexity="medium",
+    )
+
+
 def _token_budget(task: TaskPlan) -> int:
     return max(1500, min(10000, task.char_limit // 3))
 
@@ -245,6 +258,16 @@ def runtime_check(code: str, startup_grace: float = STARTUP_GRACE) -> Validation
         if exit_code is not None and exit_code != 0:
             detail = stderr.strip() or stdout.strip() or f"Process exited with code {exit_code}."
             return ValidationResult(False, [f"Runtime failure: {detail}"], stdout, stderr)
+        if exit_code is None:
+            return ValidationResult(
+                False,
+                [
+                    "Smoke test did not exit within "
+                    f"{startup_grace:g} seconds while AGENT_SMOKE_TEST=1."
+                ],
+                stdout,
+                stderr,
+            )
         return ValidationResult(True, stdout=stdout, stderr=stderr)
 
 
@@ -284,7 +307,7 @@ def project_management(prompt: str, max_retries: int = MAX_REPAIRS) -> tuple[str
     max_retries = max(0, min(max_retries, MAX_REPAIRS))
     Timer.reset_all()
     with Timer("pipeline.analyze"):
-        task = analyze_task(prompt)
+        task = analyze_task(prompt) if ENABLE_PLANNING else _fast_task_plan(prompt)
     with Timer("pipeline.generate"):
         code = write_code(prompt, task)
 
@@ -294,6 +317,9 @@ def project_management(prompt: str, max_retries: int = MAX_REPAIRS) -> tuple[str
         with Timer(f"pipeline.validate.{attempt + 1}"):
             validation = validate_code(code, task)
         if validation.passed:
+            if not ENABLE_LLM_REVIEW:
+                Timer.print_stats()
+                return task.as_markdown(), code, ReviewResult(True).as_text()
             with Timer(f"pipeline.review.{attempt + 1}"):
                 review = quality_review(code, task)
             if review.passed:

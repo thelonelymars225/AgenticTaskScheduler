@@ -40,6 +40,7 @@ from inference.inferenceFast import (  # noqa: E402
     _parse_plan_payload,
     _parse_review_payload,
     _strip_code_blocks,
+    _fast_task_plan,
     runtime_check,
     validate_syntax,
 )
@@ -58,6 +59,11 @@ class PipelineHelperTests(unittest.TestCase):
         plan = _parse_plan_payload("plain requirements")
         self.assertTrue(plan.specification)
         self.assertEqual(plan.complexity, "medium")
+
+    def test_fast_plan_needs_no_model_and_preserves_request(self) -> None:
+        plan = _fast_task_plan("build a small CLI")
+        self.assertEqual(plan.specification, ["build a small CLI"])
+        self.assertTrue(plan.acceptance_tests)
 
     def test_review_parser_fails_closed(self) -> None:
         review = _parse_review_payload("not json")
@@ -83,6 +89,11 @@ class PipelineHelperTests(unittest.TestCase):
         result = runtime_check('raise RuntimeError("broken")', startup_grace=1.0)
         self.assertFalse(result.passed)
         self.assertIn("Runtime failure", result.failures[0])
+
+    def test_runtime_check_rejects_non_exiting_smoke_test(self) -> None:
+        result = runtime_check("while True: pass", startup_grace=0.2)
+        self.assertFalse(result.passed)
+        self.assertIn("Smoke test did not exit", result.failures[0])
 
 
 if __name__ == "__main__":
