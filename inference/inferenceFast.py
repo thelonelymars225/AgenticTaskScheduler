@@ -105,7 +105,9 @@ class PipelineResult:
 
 def _as_list(value: Any) -> list[str]:
     if isinstance(value, list):
-        return [str(x).strip() for x in value if str(x).strip()]
+        return [str(x).strip() for x in value if not isinstance(x, (dict, list)) and str(x).strip()]
+    if isinstance(value, (dict, tuple, set)):
+        return []
     return [str(value).strip()] if value is not None and str(value).strip() else []
 
 
@@ -378,28 +380,31 @@ def run_acceptance_tests(code: str, tests: str,
     return AcceptanceTestResult(True, stdout=stdout, stderr=stderr)
 
 
+def _review_response_is_invalid(text: str, review: ReviewResult) -> bool:
+    return not text.strip() or any(issue.startswith("QA returned invalid JSON:") for issue in review.issues)
+
+
 def quality_review(code: str, task: TaskPlan, evidence: list[str] | None = None) -> ReviewResult:
     evidence_text = ""
     if evidence:
         evidence_text = "\n\nExecution evidence:\n" + "\n".join(f"- {item}" for item in evidence)
-    text = _chat(
-        QA_MODEL,
-        [
-            {"role": "system", "content": (
-                "Return valid JSON only: {\"verdict\":\"PASS\"|\"FAIL\",\"issues\":[\"specific issue\"]}. "
-                "Act as an adversarial code reviewer: trace actual control flow and method calls instead of assuming that "
-                "plausible-looking code works. PASS only if every required behavior and acceptance test is implemented. "
-                "For GUI or interactive code, verify event bindings, the scheduled update loop, rendering, collision/state "
-                "changes, restart behavior, and the AGENT_SMOKE_TEST=1 exit path when applicable. Report only actionable "
-                "issues with the relevant class, function, or behavior. Ignore optional improvements."
-            )},
-            {"role": "user", "content": f"{task.as_markdown()}\n\nCode:\n```python\n{code}\n```{evidence_text}"},
-        ],
-        json_output=True,
-        num_predict=1200,
-        temperature=0.0,
-    )
-    return _parse_review_payload(text)
+    messages = [
+        {"role": "system", "content": (
+            "Return valid JSON only: {\"verdict\":\"PASS\"|\"FAIL\",\"issues\":[\"specific issue\"]}. "
+            "Act as an adversarial code reviewer: trace actual control flow and method calls instead of assuming that "
+            "plausible-looking code works. PASS only if every required behavior and acceptance test is implemented. "
+            "For GUI or interactive code, verify event bindings, the scheduled update loop, rendering, collision/state "
+            "changes, restart behavior, and the AGENT_SMOKE_TEST=1 exit path when applicable. Report only actionable "
+            "issues with the relevant class, function, or behavior. Ignore optional improvements."
+        )},
+        {"role": "user", "content": f"{task.as_markdown()}\n\nCode:\n```python\n{code}\n```{evidence_text}"},
+    ]
+    for _ in range(2):
+        text = _chat(QA_MODEL, messages, json_output=True, num_predict=1200, temperature=0.0)
+        review = _parse_review_payload(text)
+        if not _review_response_is_invalid(text, review):
+            return review
+    return ReviewResult(False, ["QA unavailable: reviewer returned no valid structured response after one retry."])
 
 
 def project_management_with_attempts(prompt: str, max_retries: int = MAX_REPAIRS) -> PipelineResult:
@@ -439,9 +444,15 @@ def project_management_with_attempts(prompt: str, max_retries: int = MAX_REPAIRS
 
         failures.extend(evidence)
         failures.extend(review.issues)
+        if any(issue.startswith("QA unavailable:") for issue in review.issues):
+            break
         if attempt < max_retries:
             with Timer(f"pipeline.repair.{attempt + 1}"):
-                code = repair_code(code, task, failures)
+                repaired = repair_code(code, task, failures)
+            if repaired.strip() == code.strip():
+                review = ReviewResult(False, [*review.issues, "Repair returned an unchanged candidate; stopping the loop."], review.raw)
+                break
+            code = repaired
 
     if ESCALATION_MODEL and ESCALATION_MODEL != CODER_MODEL:
         with Timer("pipeline.escalate"):
