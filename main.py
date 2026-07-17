@@ -2,7 +2,7 @@ from inference.inferenceLocal import project_management, _strip_code_blocks
 from timer import Timer
 import os
 def main():
-    prompt = "write a python game of snake using tkinter and object oriented programming, make sure its user friendly and has a scoring system"
+    prompt = "write a python game of pong using tkinter and object oriented programming"
 
     with Timer("pipeline.total"):
         business_analysis_result, code, qa_result = project_management(prompt)

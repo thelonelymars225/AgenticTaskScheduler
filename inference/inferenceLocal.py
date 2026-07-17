@@ -15,9 +15,10 @@ import signal
 
 ollama_client = ollama.Client()
 
-# Pre-warm models
-for m in ['llava:7b', 'deepseek-r1:8b', 'llama3.1:8b', 'qwen2.5-coder:14b']:
+# Pre-warm models (sequential, one at a time — fits 16 GB VRAM)
+for m in ['deepseek-r1:8b', 'llama3.1:8b']:
     ollama_client.generate(model=m, prompt='', keep_alive='60m', options={'temperature': 0.1})
+# qwen2.5-coder:32b loaded on-demand — too big to pre-warm alongside others
 
 
 # ── Helpers ────────────────────────────────────────────────────────
@@ -55,33 +56,16 @@ def _is_visual_prompt(prompt: str) -> bool:
 
 # ── Screenshot capture ────────────────────────────────────────────
 
-def _capture_screenshot(output_path: str, delay: float = 2.0) -> bool:
-    """Capture a screenshot of the running app using importlib (no extra deps)."""
-    try:
-        # Use mss for fast screen capture (install: pip install mss)
-        import mss
-        with mss.mss() as sct:
-            time.sleep(delay)
-            monitor = sct.monitors[1]  # primary monitor
-            sct.shot(output=output_path)
-        return True
-    except ImportError:
-        pass
-
-    # Fallback: use scrot (Linux) or screencapture (macOS)
-    try:
-        time.sleep(delay)
-        if os.name == 'posix':
-            if os.system('which scrot > /dev/null 2>&1') == 0:
-                subprocess.run(['scrot', output_path], capture_output=True, timeout=5)
-                return os.path.exists(output_path)
-            elif os.system('which screencapture > /dev/null 2>&1') == 0:
-                subprocess.run(['screencapture', output_path], capture_output=True, timeout=5)
-                return os.path.exists(output_path)
-    except Exception:
-        pass
-
-    return False
+def _capture_screenshots(output_dir: str, count: int = 4, interval: float = 2.0) -> list:
+    """Take multiple screenshots over time and return paths to all of them."""
+    paths = []
+    for i in range(count):
+        time.sleep(interval)
+        path = os.path.join(output_dir, f"frame_{i}.png")
+        os.system(f'flameshot full -p "{path}" > /dev/null 2>&1')
+        if os.path.exists(path):
+            paths.append(path)
+    return paths
 
 
 # ── Visual QA (local vision model) ────────────────────────────────
@@ -93,7 +77,7 @@ def _visual_qa(spec: str, plan: str, screenshot_path: str) -> str:
         img_b64 = base64.b64encode(f.read()).decode()
 
     response = ollama_client.chat(
-        model="llava:7b",
+        model="llava:13b",
         messages=[
             {
                 "role": "user",
@@ -170,13 +154,13 @@ def create_plan(spec, analysis):
 # ── Stage 2: Code generation ──────────────────────────────────────
 
 def write_code(spec, plan, char_limit, qa_history=None):
-    """Write code locally via qwen2.5-coder:14b."""
+    """Write code locally via qwen2.5-coder:32b (partial GPU offload)."""
     history_section = ""
     if qa_history:
         history_section = "\n## Issues to Avoid (from previous attempts)\n" + "\n---\n".join(qa_history)
 
     response = ollama_client.chat(
-        model="qwen2.5-coder:14b",
+        model="qwen2.5-coder:32b",
         messages=[
             {"role": "system", "content": "You are a senior software engineer implementing a detailed plan. "
              "Write EXHAUSTIVE, production-quality Python code. "
@@ -201,7 +185,7 @@ def fix_code(existing_code, feedback, spec, plan, char_limit, qa_history=None):
         history_section = "\n## Previously Reported Bugs (now fixed)\n" + "\n---\n".join(qa_history[:-1])
 
     response = ollama_client.chat(
-        model="qwen2.5-coder:14b",
+        model="qwen2.5-coder:32b",
         messages=[
             {"role": "system", "content": "You are a senior software engineer. Fix ALL bugs listed below and expand the code. "
              "Add docstrings to any class/method that lacks them. Add type hints everywhere. "
@@ -312,9 +296,10 @@ def visual_qa(code, spec, plan, screenshot_path=None):
             preexec_fn=os.setsid if hasattr(os, 'setsid') else None
         )
 
-        # Step 2: Wait for app to render, then screenshot
-        screenshot_path = screenshot_path or "/tmp/visual_qa_screenshot.png"
-        captured = _capture_screenshot(screenshot_path, delay=3.0)
+        # Step 2: Take multiple screenshots over time
+        os.makedirs(os.path.expanduser("~/Pictures/Screenshots/qaScreenshots"), exist_ok=True)
+        ss_dir = os.path.expanduser("~/Pictures/Screenshots/qaScreenshots")
+        frames = _capture_screenshots(ss_dir, count=4, interval=2.0)
 
         # Kill the app
         try:
@@ -327,11 +312,12 @@ def visual_qa(code, spec, plan, screenshot_path=None):
             proc.kill()
             proc.wait()
 
-        if not captured:
+        if not frames:
             return "[VISUAL QA ERROR]\nCould not capture screenshot."
 
-        # Step 3: Vision model checks the screenshot
-        vision_feedback = _visual_qa(spec, plan, screenshot_path)
+        # Step 3: Vision model checks the LAST frame (fullest game state)
+        print(f"📸 Analyzing {len(frames)} frames, using last one")
+        vision_feedback = _visual_qa(spec, plan, frames[-1])
         return vision_feedback
 
     except Exception as e:
