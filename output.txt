@@ -1,6 +1,6 @@
 === Analysis ===
 ## Specification
-- Write a Python Pong game using tkinter and object-oriented programming. It must support two paddles, ball movement, wall and paddle collisions, scoring, restart after a score, keyboard controls, and AGENT_SMOKE_TEST=1 must exit without opening a window.
+- Write a standard-library Python command-line todo application. It must persist tasks as JSON, support add, list, complete, and remove commands, validate malformed stored data, return useful exit codes, and expose the storage operations as importable functions for tests.
 
 ## Implementation Plan
 - Use a minimal reliable Python design.
@@ -12,101 +12,92 @@ COMPLEXITY: medium
 
 === Code ===
 import os
-import tkinter as tk
+import json
+import sys
 
-class PongGame:
-    def __init__(self, root):
-        self.root = root
-        self.canvas = tk.Canvas(root, width=600, height=400, bg='black')
-        self.canvas.pack()
-        
-        self.ball = Ball(self.canvas)
-        self.paddle_left = Paddle(self.canvas, 'left')
-        self.paddle_right = Paddle(self.canvas, 'right')
-        
-        self.score_left = 0
-        self.score_right = 0
-        
-        self.score_label = tk.Label(root, text=f"{self.score_left} : {self.score_right}", font=('Arial', 24), fg='white', bg='black')
-        self.score_label.pack()
-        
-        self.root.bind('<KeyPress-w>', lambda e: self.paddle_left.move(-10))
-        self.root.bind('<KeyPress-s>', lambda e: self.paddle_left.move(10))
-        self.root.bind('<KeyPress-Up>', lambda e: self.paddle_right.move(-10))
-        self.root.bind('<KeyPress-Down>', lambda e: self.paddle_right.move(10))
-        
-        self.game_loop()
-    
-    def game_loop(self):
-        if self.ball.update():
-            self.score_left += 1
-        elif self.ball.update():
-            self.score_right += 1
-        
-        self.score_label.config(text=f"{self.score_left} : {self.score_right}")
-        self.root.after(50, self.game_loop)
+TODO_FILE = 'todos.json'
 
-class Ball:
-    def __init__(self, canvas):
-        self.canvas = canvas
-        self.id = canvas.create_oval(290, 190, 310, 210, fill='white')
-        self.x = 2
-        self.y = 2
-    
-    def update(self):
-        self.canvas.move(self.id, self.x, self.y)
-        
-        pos = self.canvas.coords(self.id)
-        
-        if pos[1] <= 0 or pos[3] >= 400:
-            self.y *= -1
-        
-        if pos[0] <= 0:
-            return True
-        elif pos[2] >= 600:
-            return False
-        
-        paddle_left = self.canvas.coords(self.paddle_left.id)
-        paddle_right = self.canvas.coords(self.paddle_right.id)
-        
-        if pos[2] >= paddle_right[0] and pos[0] <= paddle_right[2]:
-            if pos[3] >= paddle_right[1] and pos[1] <= paddle_right[3]:
-                self.x *= -1
-        
-        if pos[0] <= paddle_left[2] and pos[2] >= paddle_left[0]:
-            if pos[3] >= paddle_left[1] and pos[1] <= paddle_left[3]:
-                self.x *= -1
+def load_todos():
+    if not os.path.exists(TODO_FILE):
+        return []
+    try:
+        with open(TODO_FILE, 'r') as f:
+            todos = json.load(f)
+            if not isinstance(todos, list):
+                raise ValueError("Invalid todo data")
+            for todo in todos:
+                if not isinstance(todo, dict) or 'task' not in todo or 'completed' not in todo:
+                    raise ValueError("Invalid todo item")
+            return todos
+    except (json.JSONDecodeError, ValueError) as e:
+        print(f"Error loading todos: {e}", file=sys.stderr)
+        sys.exit(1)
 
-class Paddle:
-    def __init__(self, canvas, side):
-        self.canvas = canvas
-        self.id = canvas.create_rectangle(0, 150, 10, 250, fill='white', tags=f'paddle_{side}')
-        
-        if side == 'right':
-            self.x = 590
-    
-    def move(self, delta):
-        pos = self.canvas.coords(self.id)
-        
-        if pos[1] + delta >= 0 and pos[3] + delta <= 400:
-            self.canvas.move(self.id, 0, delta)
+def save_todos(todos):
+    try:
+        with open(TODO_FILE, 'w') as f:
+            json.dump(todos, f, indent=4)
+    except IOError as e:
+        print(f"Error saving todos: {e}", file=sys.stderr)
+        sys.exit(1)
 
-if __name__ == "__main__":
+def add_task(task):
+    todos = load_todos()
+    todos.append({'task': task, 'completed': False})
+    save_todos(todos)
+
+def list_tasks():
+    todos = load_todos()
+    for i, todo in enumerate(todos, start=1):
+        status = '[X]' if todo['completed'] else '[ ]'
+        print(f"{i}. {status} {todo['task']}")
+
+def complete_task(index):
+    todos = load_todos()
+    if 0 < index <= len(todos):
+        todos[index - 1]['completed'] = True
+        save_todos(todos)
+    else:
+        print("Invalid task index", file=sys.stderr)
+        sys.exit(1)
+
+def remove_task(index):
+    todos = load_todos()
+    if 0 < index <= len(todos):
+        del todos[index - 1]
+        save_todos(todos)
+    else:
+        print("Invalid task index", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == '__main__':
     if os.getenv('AGENT_SMOKE_TEST') == '1':
-        print("Smoke test passed.")
-        exit(0)
-    
-    root = tk.Tk()
-    root.title("Pong")
-    game = PongGame(root)
-    root.mainloop()
+        sys.exit(0)
+
+    if len(sys.argv) < 2:
+        print("Usage: python todo.py [add|list|complete|remove] [task|index]", file=sys.stderr)
+        sys.exit(1)
+
+    command = sys.argv[1]
+    if command == 'add' and len(sys.argv) > 2:
+        add_task(' '.join(sys.argv[2:]))
+    elif command == 'list':
+        list_tasks()
+    elif command == 'complete' and len(sys.argv) > 2:
+        try:
+            complete_task(int(sys.argv[2]))
+        except ValueError:
+            print("Index must be an integer", file=sys.stderr)
+            sys.exit(1)
+    elif command == 'remove' and len(sys.argv) > 2:
+        try:
+            remove_task(int(sys.argv[2]))
+        except ValueError:
+            print("Index must be an integer", file=sys.stderr)
+            sys.exit(1)
+    else:
+        print(f"Unknown command: {command}", file=sys.stderr)
+        sys.exit(1)
 
 === QA Result ===
-VERDICT: FAIL
-- The `PongGame` class does not handle the case where the ball goes out of bounds on the right side.
-- The `Ball` class does not correctly update the score when the ball goes out of bounds.
-- The `Paddle` class does not move the paddle when the user presses the corresponding key.
-- The game loop is not properly synchronized, causing the game to freeze or behave erratically.
-- The `AGENT_SMOKE_TEST=1` condition is not correctly implemented, allowing the game window to open even when it should exit immediately.
-- The code does not handle the case where the user closes the game window while the game is running.
-- Repair returned an unchanged candidate; stopping the loop.
+VERDICT: PASS
