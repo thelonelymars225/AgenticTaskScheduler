@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The `draw` method in the `Paddle` class does not update the paddle's position on the canvas."
+  ],
+  "raw": "{\n  \"verdict\": \"FAIL\",\n  \"issues\": [\n    \"The `draw` method in the `Paddle` class does not update the paddle's position on the canvas.\"\n  ]\n}"
+}

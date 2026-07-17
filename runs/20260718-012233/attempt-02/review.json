@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The `Ball` class's `update` method does not handle collisions with the paddles correctly. The paddle collision detection logic is flawed and will not work as intended."
+  ],
+  "raw": "{\n  \"verdict\": \"FAIL\",\n  \"issues\": [\n    \"The `Ball` class's `update` method does not handle collisions with the paddles correctly. The paddle collision detection logic is flawed and will not work as intended.\"\n  ]\n}"
+}

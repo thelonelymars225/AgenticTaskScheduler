@@ -1,16 +1,3 @@
-=== Analysis ===
-## Specification
-- Implement the user request.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import tkinter as tk
 
@@ -74,9 +61,7 @@ class Paddle:
             self.id = canvas.create_rectangle(590, 150, 600, 250, fill='white', tags='paddle_right')
 
     def draw(self):
-        # Update the paddle's position on the canvas
-        pos = self.canvas.coords(self.id)
-        self.canvas.move(self.id, 0, 0)  # This line is necessary to update the paddle's position
+        pass
 
     def move(self, delta_y):
         pos = self.canvas.coords(self.id)
@@ -92,7 +77,3 @@ if __name__ == "__main__":
     root.title("Pong")
     game = PongGame(root)
     root.mainloop()
-
-=== QA Result ===
-VERDICT: FAIL
-- The `Ball` class's `update` method does not handle collisions with the paddles correctly. The paddle collision detection logic is flawed and will not work as intended.
