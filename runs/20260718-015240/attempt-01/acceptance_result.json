@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Usage: python config_validator.py <config_file>"
+  ],
+  "stdout": "Usage: python config_validator.py <config_file>\n",
+  "stderr": "",
+  "executed": true
+}

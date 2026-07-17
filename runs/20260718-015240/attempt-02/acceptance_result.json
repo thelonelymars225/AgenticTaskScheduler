@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Invalid acceptance harness: it must import the candidate through CANDIDATE_PATH."
+  ],
+  "stdout": "",
+  "stderr": "",
+  "executed": true
+}

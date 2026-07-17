@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where the configuration file is malformed JSON.",
+    "The program does not check if the required fields are present in the configuration before checking their types.",
+    "The program does not provide a way to specify the path to the configuration file as an argument, it only accepts the file name."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The program does not handle the case where the configuration file is malformed JSON.\",\n  \"The program does not check if the required fields are present in the configuration before checking their types.\",\n  \"The program does not provide a way to specify the path to the configuration file as an argument, it only accepts the file name.\"\n] }"
+}

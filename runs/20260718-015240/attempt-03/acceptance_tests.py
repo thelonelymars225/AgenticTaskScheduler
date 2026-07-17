@@ -1,5 +1,6 @@
 import json
 import os
+import importlib.util
 import sys
 
 def validate_config(config):
@@ -27,6 +28,12 @@ def validate_config(config):
 
     return errors
 
+def load_candidate(candidate_path):
+    spec = importlib.util.spec_from_file_location("candidate", candidate_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
 def main():
     if os.getenv('AGENT_SMOKE_TEST') == '1':
         sys.exit(0)
@@ -49,8 +56,15 @@ def main():
         print("Configuration file is empty.")
         sys.exit(4)
 
-    errors = validate_config(config)
+    candidate_path = os.environ['CANDIDATE_PATH']
+    try:
+        candidate_module = load_candidate(candidate_path)
+    except Exception as e:
+        print(f"Failed to import candidate module: {e}")
+        sys.exit(5)
 
+    # Test the validate_config function
+    errors = candidate_module.validate_config(config)
     if errors:
         for error in errors:
             print(error)

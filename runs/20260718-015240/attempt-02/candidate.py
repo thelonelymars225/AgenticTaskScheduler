@@ -7,7 +7,7 @@ def validate_config(config):
 
     # Validate required string fields
     for field in ['name', 'description']:
-        if field not in config or not isinstance(config[field], str) or not config[field]:
+        if not isinstance(config.get(field), str) or not config[field]:
             errors.append(f"Missing or invalid string field: {field}")
 
     # Validate integer-range fields
@@ -16,13 +16,14 @@ def validate_config(config):
         'max_users': (1, 1000)
     }
     for field, (min_val, max_val) in int_fields.items():
-        if field not in config or not isinstance(config[field], int) or not min_val <= config[field] <= max_val:
+        value = config.get(field)
+        if not isinstance(value, int) or not min_val <= value <= max_val:
             errors.append(f"Missing or invalid integer field: {field} (must be between {min_val} and {max_val})")
 
     # Validate boolean fields
     bool_fields = ['is_active', 'allow_anonymous']
     for field in bool_fields:
-        if field not in config or not isinstance(config[field], bool):
+        if not isinstance(config.get(field), bool):
             errors.append(f"Missing or invalid boolean field: {field}")
 
     return errors
