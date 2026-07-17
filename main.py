@@ -3,13 +3,59 @@
 from __future__ import annotations
 
 import argparse
-import os
+import json
+from datetime import datetime
 from pathlib import Path
 
-from inference.inferenceFast import _strip_code_blocks, project_management
+from inference.inferenceFast import PipelineResult, _strip_code_blocks, project_management_with_attempts
 from timer import Timer
 
 DEFAULT_PROMPT = "write a python game of pong using tkinter and object oriented programming"
+
+
+def _write_attempt_artifacts(output_dir: Path, result: PipelineResult) -> Path:
+    """Persist every generated candidate and its evidence for later analysis."""
+    run_dir = output_dir / "runs" / datetime.now().strftime("%Y%m%d-%H%M%S")
+    run_dir.mkdir(parents=True, exist_ok=True)
+    manifest: dict[str, object] = {
+        "task": result.task.as_markdown(),
+        "final_verdict": result.review.as_text(),
+        "attempts": [],
+    }
+    for attempt in result.attempts:
+        attempt_dir = run_dir / f"attempt-{attempt.number:02d}"
+        attempt_dir.mkdir()
+        (attempt_dir / "candidate.py").write_text(_strip_code_blocks(attempt.code), encoding="utf-8")
+        (attempt_dir / "acceptance_tests.py").write_text(attempt.acceptance_tests, encoding="utf-8")
+        validation = {
+            "passed": attempt.validation.passed,
+            "failures": attempt.validation.failures,
+            "stdout": attempt.validation.stdout,
+            "stderr": attempt.validation.stderr,
+        }
+        acceptance = {
+            "passed": attempt.acceptance_result.passed,
+            "failures": attempt.acceptance_result.failures,
+            "stdout": attempt.acceptance_result.stdout,
+            "stderr": attempt.acceptance_result.stderr,
+        }
+        review = {
+            "passed": attempt.review.passed,
+            "issues": attempt.review.issues,
+            "raw": attempt.review.raw,
+        }
+        (attempt_dir / "validation.json").write_text(json.dumps(validation, indent=2), encoding="utf-8")
+        (attempt_dir / "acceptance_result.json").write_text(json.dumps(acceptance, indent=2), encoding="utf-8")
+        (attempt_dir / "review.json").write_text(json.dumps(review, indent=2), encoding="utf-8")
+        manifest["attempts"].append({
+            "number": attempt.number,
+            "path": attempt_dir.name,
+            "validation_passed": attempt.validation.passed,
+            "acceptance_passed": attempt.acceptance_result.passed,
+            "review_passed": attempt.review.passed,
+        })
+    (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return run_dir
 
 
 def main() -> int:
@@ -19,12 +65,17 @@ def main() -> int:
     parser.add_argument("--output-dir", default=".")
     args = parser.parse_args()
 
-    prompt = " ".join(args.prompt).strip() or os.getenv("AGENT_TASK_PROMPT", DEFAULT_PROMPT)
+    prompt = " ".join(args.prompt).strip() or DEFAULT_PROMPT
     output_dir = Path(args.output_dir).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
     with Timer("pipeline.total"):
-        analysis, code, qa_result = project_management(prompt)
+        result = project_management_with_attempts(prompt)
+
+    analysis = result.task.as_markdown()
+    code = result.code
+    qa_result = result.review.as_text()
+    run_dir = _write_attempt_artifacts(output_dir, result)
 
     (output_dir / "output.txt").write_text(
         f"=== Analysis ===\n{analysis}\n\n=== Code ===\n{code}\n\n=== QA Result ===\n{qa_result}\n",
@@ -39,6 +90,7 @@ def main() -> int:
     output_path = output_dir / "output.py"
     output_path.write_text(clean_code, encoding="utf-8")
     print(f"Written {len(clean_code)} characters to {output_path}")
+    print(f"Saved {len(result.attempts)} attempt record(s) to {run_dir}")
     print(qa_result)
     return 0 if qa_result.startswith("VERDICT: PASS") else 1
 

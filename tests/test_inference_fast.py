@@ -41,6 +41,7 @@ from inference.inferenceFast import (  # noqa: E402
     _parse_review_payload,
     _strip_code_blocks,
     _fast_task_plan,
+    run_acceptance_tests,
     runtime_check,
     validate_syntax,
 )
@@ -104,6 +105,22 @@ class PipelineHelperTests(unittest.TestCase):
         result = runtime_check("while True: pass", startup_grace=0.2)
         self.assertFalse(result.passed)
         self.assertIn("Smoke test did not exit", result.failures[0])
+
+    def test_acceptance_tests_can_inspect_candidate(self) -> None:
+        result = run_acceptance_tests(
+            "def add(left, right):\n    return left + right\n",
+            "import importlib.util\nimport os\n"
+            "spec = importlib.util.spec_from_file_location('candidate', os.environ['CANDIDATE_PATH'])\n"
+            "module = importlib.util.module_from_spec(spec)\n"
+            "spec.loader.exec_module(module)\n"
+            "assert module.add(2, 3) == 5\n",
+        )
+        self.assertTrue(result.passed)
+
+    def test_acceptance_test_failure_is_reported(self) -> None:
+        result = run_acceptance_tests("value = 1\n", "raise AssertionError('missing behavior')\n")
+        self.assertFalse(result.passed)
+        self.assertIn("Acceptance failure", result.failures[0])
 
 
 if __name__ == "__main__":

@@ -16,7 +16,9 @@ from typing import Any
 import ollama
 
 from inference.pipeline_config import (
+    ACCEPTANCE_TEST_TIMEOUT_SECONDS,
     CODER_MODEL,
+    ENABLE_ACCEPTANCE_TESTS,
     ENABLE_LLM_REVIEW,
     ENABLE_PLANNING,
     ESCALATION_MODEL,
@@ -73,6 +75,32 @@ class ReviewResult:
         verdict = "PASS" if self.passed else "FAIL"
         details = "\n".join(f"- {x}" for x in self.issues)
         return f"VERDICT: {verdict}" + (f"\n{details}" if details else "")
+
+
+@dataclass
+class AcceptanceTestResult:
+    passed: bool
+    failures: list[str] = field(default_factory=list)
+    stdout: str = ""
+    stderr: str = ""
+
+
+@dataclass
+class AttemptRecord:
+    number: int
+    code: str
+    validation: ValidationResult
+    acceptance_tests: str
+    acceptance_result: AcceptanceTestResult
+    review: ReviewResult
+
+
+@dataclass
+class PipelineResult:
+    task: TaskPlan
+    code: str
+    review: ReviewResult
+    attempts: list[AttemptRecord]
 
 
 def _as_list(value: Any) -> list[str]:
@@ -182,7 +210,9 @@ def write_code(prompt: str, task: TaskPlan, model: str = CODER_MODEL,
             {"role": "system", "content": (
                 "Return only complete executable Python source. Build the smallest reliable solution. "
                 "The program must compile and start. When AGENT_SMOKE_TEST=1, run a safe non-interactive "
-                "self-check and exit 0 rather than blocking. "
+                "self-check and exit 0 rather than blocking. Use os.getenv('AGENT_SMOKE_TEST') exactly; do not "
+                "use a Python global for this protocol. Keep core behavior separable from UI/framework code so an "
+                "independent standard-library test script can exercise it without a display, network, or user input. "
                 f"Keep source below {task.char_limit} characters."
             )},
             {"role": "user", "content": f"Request:\n{prompt}\n\n{task.as_markdown()}{failure_text}"},
@@ -292,7 +322,66 @@ def validate_code(code: str, task: TaskPlan) -> ValidationResult:
     return ValidationResult(not failures, failures, runtime.stdout, runtime.stderr)
 
 
-def quality_review(code: str, task: TaskPlan) -> ReviewResult:
+def write_acceptance_tests(code: str, task: TaskPlan) -> str:
+    """Ask an independent QA role for a standard-library executable test harness."""
+    text = _chat(
+        QA_MODEL,
+        [
+            {"role": "system", "content": (
+                "Return only a complete Python test script using the standard library. The generated candidate path "
+                "is in os.environ['CANDIDATE_PATH']. Test the explicit acceptance requirements using observable "
+                "behavior, not style. Do not invent APIs: inspect the candidate and use public functions/classes it "
+                "actually provides. Avoid GUI windows, network calls, sleeps, and third-party packages. Exit non-zero "
+                "or raise AssertionError when a required behavior fails. If an acceptance requirement cannot be tested "
+                "from the candidate, fail with a clear assertion explaining the missing testable interface."
+            )},
+            {"role": "user", "content": (
+                f"{task.as_markdown()}\n\nCandidate:\n```python\n{code}\n```"
+            )},
+        ],
+        num_predict=1800,
+        temperature=0.0,
+    )
+    return _strip_code_blocks(text)
+
+
+def run_acceptance_tests(code: str, tests: str,
+                         timeout: float = ACCEPTANCE_TEST_TIMEOUT_SECONDS) -> AcceptanceTestResult:
+    """Run generated acceptance tests in an isolated temporary directory."""
+    if not tests.strip():
+        return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."])
+    with tempfile.TemporaryDirectory(prefix="agentic-acceptance-") as directory:
+        root = Path(directory)
+        candidate = root / "candidate.py"
+        test_file = root / "acceptance_tests.py"
+        candidate.write_text(code, encoding="utf-8")
+        test_file.write_text(tests, encoding="utf-8")
+        env = os.environ.copy()
+        env["CANDIDATE_PATH"] = str(candidate)
+        try:
+            result = subprocess.run(
+                [sys.executable, str(test_file)], cwd=root, env=env,
+                capture_output=True, text=True, timeout=timeout,
+            )
+        except subprocess.TimeoutExpired as exc:
+            return AcceptanceTestResult(
+                False, [f"Acceptance tests timed out after {timeout:g} seconds."],
+                exc.stdout or "", exc.stderr or "",
+            )
+        except OSError as exc:
+            return AcceptanceTestResult(False, [f"Could not run acceptance tests: {exc}"])
+    stdout = result.stdout[-4000:]
+    stderr = result.stderr[-4000:]
+    if result.returncode != 0:
+        detail = stderr.strip() or stdout.strip() or f"Test process exited with code {result.returncode}."
+        return AcceptanceTestResult(False, [f"Acceptance failure: {detail}"], stdout, stderr)
+    return AcceptanceTestResult(True, stdout=stdout, stderr=stderr)
+
+
+def quality_review(code: str, task: TaskPlan, evidence: list[str] | None = None) -> ReviewResult:
+    evidence_text = ""
+    if evidence:
+        evidence_text = "\n\nExecution evidence:\n" + "\n".join(f"- {item}" for item in evidence)
     text = _chat(
         QA_MODEL,
         [
@@ -304,7 +393,7 @@ def quality_review(code: str, task: TaskPlan) -> ReviewResult:
                 "changes, restart behavior, and the AGENT_SMOKE_TEST=1 exit path when applicable. Report only actionable "
                 "issues with the relevant class, function, or behavior. Ignore optional improvements."
             )},
-            {"role": "user", "content": f"{task.as_markdown()}\n\nCode:\n```python\n{code}\n```"},
+            {"role": "user", "content": f"{task.as_markdown()}\n\nCode:\n```python\n{code}\n```{evidence_text}"},
         ],
         json_output=True,
         num_predict=1200,
@@ -313,7 +402,7 @@ def quality_review(code: str, task: TaskPlan) -> ReviewResult:
     return _parse_review_payload(text)
 
 
-def project_management(prompt: str, max_retries: int = MAX_REPAIRS) -> tuple[str, str, str]:
+def project_management_with_attempts(prompt: str, max_retries: int = MAX_REPAIRS) -> PipelineResult:
     max_retries = max(0, min(max_retries, MAX_REPAIRS))
     Timer.reset_all()
     with Timer("pipeline.analyze"):
@@ -322,23 +411,34 @@ def project_management(prompt: str, max_retries: int = MAX_REPAIRS) -> tuple[str
         code = write_code(prompt, task)
 
     failures: list[str] = []
+    attempts: list[AttemptRecord] = []
     review = ReviewResult(False, ["Pipeline did not complete."])
     for attempt in range(max_retries + 1):
         with Timer(f"pipeline.validate.{attempt + 1}"):
             validation = validate_code(code, task)
-        if validation.passed:
-            if not ENABLE_LLM_REVIEW:
-                Timer.print_stats()
-                return task.as_markdown(), code, ReviewResult(True).as_text()
+        acceptance_tests = ""
+        acceptance = AcceptanceTestResult(True)
+        if validation.passed and ENABLE_ACCEPTANCE_TESTS:
+            with Timer(f"pipeline.acceptance.generate.{attempt + 1}"):
+                acceptance_tests = write_acceptance_tests(code, task)
+            with Timer(f"pipeline.acceptance.run.{attempt + 1}"):
+                acceptance = run_acceptance_tests(code, acceptance_tests)
+
+        evidence = [*validation.failures, *acceptance.failures]
+        if ENABLE_LLM_REVIEW:
             with Timer(f"pipeline.review.{attempt + 1}"):
-                review = quality_review(code, task)
-            if review.passed:
-                Timer.print_stats()
-                return task.as_markdown(), code, review.as_text()
-            failures.extend(review.issues)
+                review = quality_review(code, task, evidence)
         else:
-            review = ReviewResult(False, validation.failures)
-            failures.extend(validation.failures)
+            review = ReviewResult(True)
+
+        attempt_record = AttemptRecord(attempt + 1, code, validation, acceptance_tests, acceptance, review)
+        attempts.append(attempt_record)
+        if validation.passed and acceptance.passed and review.passed:
+            Timer.print_stats()
+            return PipelineResult(task, code, review, attempts)
+
+        failures.extend(evidence)
+        failures.extend(review.issues)
         if attempt < max_retries:
             with Timer(f"pipeline.repair.{attempt + 1}"):
                 code = repair_code(code, task, failures)
@@ -347,7 +447,16 @@ def project_management(prompt: str, max_retries: int = MAX_REPAIRS) -> tuple[str
         with Timer("pipeline.escalate"):
             code = write_code(prompt, task, ESCALATION_MODEL, failures)
         validation = validate_code(code, task)
-        review = quality_review(code, task) if validation.passed else ReviewResult(False, validation.failures)
+        acceptance_tests = write_acceptance_tests(code, task) if validation.passed and ENABLE_ACCEPTANCE_TESTS else ""
+        acceptance = run_acceptance_tests(code, acceptance_tests) if acceptance_tests else AcceptanceTestResult(validation.passed)
+        review = quality_review(code, task, [*validation.failures, *acceptance.failures]) if ENABLE_LLM_REVIEW else ReviewResult(True)
+        attempts.append(AttemptRecord(len(attempts) + 1, code, validation, acceptance_tests, acceptance, review))
 
     Timer.print_stats()
-    return task.as_markdown(), code, review.as_text()
+    return PipelineResult(task, code, review, attempts)
+
+
+def project_management(prompt: str, max_retries: int = MAX_REPAIRS) -> tuple[str, str, str]:
+    """Compatibility wrapper returning the latest candidate and its QA verdict."""
+    result = project_management_with_attempts(prompt, max_retries)
+    return result.task.as_markdown(), result.code, result.review.as_text()
