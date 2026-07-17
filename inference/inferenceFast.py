@@ -15,19 +15,23 @@ from typing import Any
 
 import ollama
 
+from inference.pipeline_config import (
+    CODER_MODEL,
+    ENABLE_LLM_REVIEW,
+    ENABLE_PLANNING,
+    ESCALATION_MODEL,
+    MAX_REPAIRS,
+    MODEL_KEEP_ALIVE,
+    PLANNER_MODEL,
+    PRIMARY_MODEL,
+    QA_MODEL,
+    STARTUP_GRACE_SECONDS,
+)
 from timer import Timer
 
 CLIENT = ollama.Client()
-PRIMARY_MODEL = os.getenv("ATS_PRIMARY_MODEL", "qwen2.5-coder:14b")
-PLANNER_MODEL = os.getenv("ATS_PLANNER_MODEL", PRIMARY_MODEL)
-CODER_MODEL = os.getenv("ATS_CODER_MODEL", PRIMARY_MODEL)
-QA_MODEL = os.getenv("ATS_QA_MODEL", PRIMARY_MODEL)
-KEEP_ALIVE = os.getenv("ATS_MODEL_KEEP_ALIVE", "30m")
-MAX_REPAIRS = max(0, int(os.getenv("ATS_MAX_REPAIRS", "1")))
-STARTUP_GRACE = max(0.2, float(os.getenv("ATS_STARTUP_GRACE_SECONDS", "1")))
-ENABLE_PLANNING = os.getenv("ATS_ENABLE_PLANNING", "0") == "1"
-ENABLE_LLM_REVIEW = os.getenv("ATS_ENABLE_LLM_REVIEW", "0") == "1"
-ESCALATION_MODEL = os.getenv("ATS_ESCALATION_MODEL", "")
+KEEP_ALIVE = MODEL_KEEP_ALIVE
+STARTUP_GRACE = STARTUP_GRACE_SECONDS
 CHAR_LIMITS = {"simple": 8000, "medium": 16000, "complex": 24000, "very_complex": 32000}
 
 
