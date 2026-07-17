@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The `analyze_text` function is not defined as a class method or a standalone function, but it's being called directly from the main module.",
+    "The `analyze_text` function is missing in the object's namespace, which suggests that it should be a class method or a static method of a class.",
+    "The code does not handle empty Unicode text correctly. The `count_lines`, `count_words`, and `count_characters` functions will return incorrect results for an empty string.",
+    "The code does not provide any error handling when reading the file specified by the command-line argument. If the file does not exist or cannot be read, the program will crash with a generic exception message.",
+    "The `word_frequencies` function splits the text into words using spaces as delimiters, but it does not handle punctuation correctly. For example, 'hello,' and 'hello' are considered different words.",
+    "The code does not provide any command-line help or usage information when the user runs the program with the `-h` or `--help` option."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"issue\": \"The `analyze_text` function is not defined as a class method or a standalone function, but it's being called directly from the main module.\"},\n    {\"issue\": \"The `analyze_text` function is missing in the object's namespace, which suggests that it should be a class method or a static method of a class.\"},\n    {\"issue\": \"The code does not handle empty Unicode text correctly. The `count_lines`, `count_words`, and `count_characters` functions will return incorrect results for an empty string.\"},\n    {\"issue\": \"The code does not provide any error handling when reading the file specified by the command-line argument. If the file does not exist or cannot be read, the program will crash with a generic exception message.\"},\n    {\"issue\": \"The `word_frequencies` function splits the text into words using spaces as delimiters, but it does not handle punctuation correctly. For example, 'hello,' and 'hello' are considered different words.\"},\n    {\"issue\": \"The code does not provide any command-line help or usage information when the user runs the program with the `-h` or `--help` option.\"}\n] }"
+}
