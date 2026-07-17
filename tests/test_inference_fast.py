@@ -103,6 +103,11 @@ class PipelineHelperTests(unittest.TestCase):
         review = _parse_review_payload('{"verdict":"PASS","issues":["still broken"]}')
         self.assertFalse(review.passed)
 
+    def test_review_parser_preserves_object_shaped_issues(self) -> None:
+        review = _parse_review_payload('{"verdict":"FAIL","issues":[{"cause":"no display","behavior":"opens Tk"}]}')
+        self.assertFalse(review.passed)
+        self.assertIn("no display", review.issues[0])
+
     @patch("inference.inferenceFast._chat", side_effect=["", '{"verdict":"PASS","issues":[]}'])
     def test_quality_review_retries_empty_response(self, mock_chat) -> None:
         review = quality_review("print('ok')", _fast_task_plan("print ok"))

@@ -140,7 +140,24 @@ def _parse_review_payload(text: str) -> ReviewResult:
         payload = json.loads(text)
     except json.JSONDecodeError:
         return ReviewResult(False, [f"QA returned invalid JSON: {text[:500]}"], text)
-    issues = _as_list(payload.get("issues"))
+    raw_issues = payload.get("issues")
+    issues: list[str] = []
+    if isinstance(raw_issues, list):
+        for item in raw_issues:
+            if isinstance(item, str) and item.strip():
+                issues.append(item.strip())
+            elif isinstance(item, dict):
+                # Some local models return richer objects despite the requested
+                # string schema. Preserve their concrete evidence for repair.
+                details = [
+                    str(item[key]).strip()
+                    for key in ("issue", "cause", "behavior", "root_cause")
+                    if isinstance(item.get(key), str) and item[key].strip()
+                ]
+                if details:
+                    issues.append(" — ".join(details))
+    else:
+        issues = _as_list(raw_issues)
     passed = str(payload.get("verdict", "FAIL")).upper() == "PASS" and not issues
     if not passed and not issues:
         issues = ["Quality review did not approve the implementation."]
@@ -342,7 +359,9 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
                 "Return only a complete Python test script using the standard library. The generated candidate path "
                 "is in os.environ['CANDIDATE_PATH']. Test the explicit acceptance requirements using observable "
                 "behavior, not style. Do not invent APIs: inspect the candidate and use public functions/classes it "
-                "actually provides. Avoid GUI windows, network calls, sleeps, and third-party packages. Exit non-zero "
+                "actually provides. Never instantiate tkinter.Tk(), Canvas, or any GUI/window: for GUI candidates, "
+                "test pure logic with fakes or mocks only. If no headless interface can be exercised, raise one clear "
+                "AssertionError without opening a window. Avoid network calls, sleeps, and third-party packages. Exit non-zero "
                 "or raise AssertionError when a required behavior fails. If an acceptance requirement cannot be tested "
                 "from the candidate, fail with a clear assertion explaining the missing testable interface."
             )},
