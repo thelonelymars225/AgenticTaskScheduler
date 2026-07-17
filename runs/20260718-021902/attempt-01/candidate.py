@@ -47,11 +47,6 @@ def main():
         print(f"Error reading configuration file: {e}")
         sys.exit(2)
     
-    # Check if the configuration is empty
-    if not config:
-        print("Configuration file is empty")
-        sys.exit(4)
-    
     errors = validate_config(config)
     
     if errors:

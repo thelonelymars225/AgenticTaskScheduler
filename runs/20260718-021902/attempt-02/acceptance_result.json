@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-jak7fx7z/acceptance_tests.py\", line 67, in <module>\n    test_empty_config()\n  File \"/tmp/agentic-acceptance-jak7fx7z/acceptance_tests.py\", line 42, in test_empty_config\n    assert len(errors) == 4\n           ^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-jak7fx7z/acceptance_tests.py\", line 67, in <module>\n    test_empty_config()\n  File \"/tmp/agentic-acceptance-jak7fx7z/acceptance_tests.py\", line 42, in test_empty_config\n    assert len(errors) == 4\n           ^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true
+}

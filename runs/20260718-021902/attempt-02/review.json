@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case when the configuration file is empty."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [ \"The program does not handle the case when the configuration file is empty.\" ] }"
+}
