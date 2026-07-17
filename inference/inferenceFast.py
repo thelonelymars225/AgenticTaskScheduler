@@ -184,7 +184,12 @@ def analyze_task(prompt: str) -> TaskPlan:
         json_output=True,
         num_predict=1500,
     )
-    return _parse_plan_payload(text)
+    plan = _parse_plan_payload(text)
+    # A malformed/empty planner response must not erase the original task:
+    # downstream acceptance and review need the concrete benchmark requirements.
+    if plan.specification == ["Implement the user request."] and prompt.strip():
+        return TaskPlan([prompt.strip()], plan.implementation_plan, plan.acceptance_tests, plan.complexity)
+    return plan
 
 
 def _fast_task_plan(prompt: str) -> TaskPlan:
@@ -212,8 +217,9 @@ def write_code(prompt: str, task: TaskPlan, model: str = CODER_MODEL,
         [
             {"role": "system", "content": (
                 "Return only complete executable Python source. Build the smallest reliable solution. "
-                "The program must compile and start. When AGENT_SMOKE_TEST=1, run a safe non-interactive "
-                "self-check and exit 0 rather than blocking. Use os.getenv('AGENT_SMOKE_TEST') exactly; do not "
+                "The program must compile and start. When AGENT_SMOKE_TEST=1, perform only a safe startup/liveness "
+                "probe and exit 0 rather than blocking. Do not put task-behavior assertions or hand-calculated expected "
+                "outputs in the smoke path; an independent acceptance test verifies behavior. Use os.getenv('AGENT_SMOKE_TEST') exactly; do not "
                 "use a Python global for this protocol. Keep core behavior separable from UI/framework code so an "
                 "independent standard-library test script can exercise it without a display, network, or user input. "
                 f"Keep source below {task.char_limit} characters."
@@ -235,7 +241,7 @@ def repair_code(code: str, task: TaskPlan, failures: list[str]) -> str:
                 "Return only the complete corrected Python source. Make the smallest changes needed to fix every "
                 "reported failure as one coherent fix; do not address only the first bullet or add cosmetic no-op "
                 "changes. Re-check control flow, state updates, and required user-visible behavior after the change. "
-                "Preserve working behavior and the AGENT_SMOKE_TEST=1 non-blocking path."
+                "Keep AGENT_SMOKE_TEST=1 as a liveness-only non-blocking path; do not add behavioral assertions there."
             )},
             {"role": "user", "content": (
                 f"{task.as_markdown()}\n\nFailures:\n{failure_text}\n\nCurrent code:\n```python\n{code}\n```"

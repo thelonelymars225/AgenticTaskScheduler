@@ -42,6 +42,7 @@ from inference.inferenceFast import (  # noqa: E402
     _parse_review_payload,
     _strip_code_blocks,
     _fast_task_plan,
+    analyze_task,
     PipelineResult,
     ReviewResult,
     ValidationResult,
@@ -82,6 +83,11 @@ class PipelineHelperTests(unittest.TestCase):
     def test_plan_parser_rejects_nested_fields(self) -> None:
         plan = _parse_plan_payload('{"specification":{"nested":"value"}}')
         self.assertEqual(plan.specification, ["Implement the user request."])
+
+    @patch("inference.inferenceFast._chat", return_value="")
+    def test_planner_fallback_keeps_original_request_for_qa(self, mock_chat) -> None:
+        plan = analyze_task("build a JSON validator with range checks")
+        self.assertEqual(plan.specification, ["build a JSON validator with range checks"])
 
     def test_fast_plan_needs_no_model_and_preserves_request(self) -> None:
         plan = _fast_task_plan("build a small CLI")
