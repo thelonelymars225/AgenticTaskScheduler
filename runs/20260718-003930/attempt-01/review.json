@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "QA returned invalid JSON: "
+  ],
+  "raw": ""
+}

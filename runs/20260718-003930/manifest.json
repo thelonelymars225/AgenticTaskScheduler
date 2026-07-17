@@ -1,0 +1,27 @@
+{
+  "task": "## Specification\n- {'implementation_plan': 'The game will be implemented in Python using the Tkinter library for GUI. The game will have two paddles, one on each side of the screen, and a ball that bounces between them. The player can control their paddle by moving it up or down. The game will keep track of the score and display it on the screen.', 'acceptance_tests': [{'test_name': 'Paddle movement', 'description': 'The paddles should move up and down when the user presses the corresponding keys.', 'steps': ['Press the up key to move the left paddle up.', 'Press the down key to move the left paddle down.', 'Press the up key to move the right paddle up.', 'Press the down key to move the right paddle down.']}, {'test_name': 'Ball movement', 'description': 'The ball should bounce between the paddles and off the edges of the screen.', 'steps': ['Start the game and let the ball bounce between the paddles.', 'Observe that the ball bounces off the edges of the screen.', 'Let the ball hit a paddle and observe that it bounces back.']}, {'test_name': 'Scoring', 'description': 'The score should be displayed on the screen and updated correctly.', 'steps': ['Start the game and let one player score a point.', 'Observe that the score is displayed on the screen and has been updated correctly.', 'Let another player score a point and observe that the score has been updated again.']}], 'complexity': 'medium'}\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "final_verdict": "VERDICT: FAIL\n- QA returned invalid JSON: ",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "review_passed": false
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "review_passed": false
+    },
+    {
+      "number": 3,
+      "path": "attempt-03",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "review_passed": false
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "failures": [
+    "Independent acceptance test generator returned no test script."
+  ],
+  "stdout": "",
+  "stderr": ""
+}
