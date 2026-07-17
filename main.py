@@ -7,18 +7,17 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from inference.benchmarks import select_benchmark
 from inference.inferenceFast import PipelineResult, _strip_code_blocks, project_management_with_attempts
 from timer import Timer
 
-DEFAULT_PROMPT = "write a python game of pong using tkinter and object oriented programming"
-
-
-def _write_attempt_artifacts(output_dir: Path, result: PipelineResult) -> Path:
+def _write_attempt_artifacts(output_dir: Path, result: PipelineResult, benchmark_id: str | None = None) -> Path:
     """Persist every generated candidate and its evidence for later analysis."""
     run_dir = output_dir / "runs" / datetime.now().strftime("%Y%m%d-%H%M%S")
     run_dir.mkdir(parents=True, exist_ok=True)
     manifest: dict[str, object] = {
         "task": result.task.as_markdown(),
+        "benchmark_id": benchmark_id,
         "final_verdict": result.review.as_text(),
         "attempts": [],
     }
@@ -38,6 +37,7 @@ def _write_attempt_artifacts(output_dir: Path, result: PipelineResult) -> Path:
             "failures": attempt.acceptance_result.failures,
             "stdout": attempt.acceptance_result.stdout,
             "stderr": attempt.acceptance_result.stderr,
+            "executed": attempt.acceptance_result.executed,
         }
         review = {
             "passed": attempt.review.passed,
@@ -66,9 +66,15 @@ def main() -> int:
     parser.add_argument("--output-dir", default=".")
     args = parser.parse_args()
 
-    prompt = " ".join(args.prompt).strip() or DEFAULT_PROMPT
     output_dir = Path(args.output_dir).expanduser().resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
+    prompt = " ".join(args.prompt).strip()
+    benchmark_id: str | None = None
+    if not prompt:
+        completed_runs = sum(1 for path in (output_dir / "runs").glob("*/manifest.json")) if (output_dir / "runs").exists() else 0
+        benchmark = select_benchmark(completed_runs)
+        prompt = benchmark.prompt
+        benchmark_id = benchmark.identifier
 
     with Timer("pipeline.total"):
         result = project_management_with_attempts(prompt)
@@ -76,7 +82,7 @@ def main() -> int:
     analysis = result.task.as_markdown()
     code = result.code
     qa_result = result.review.as_text()
-    run_dir = _write_attempt_artifacts(output_dir, result)
+    run_dir = _write_attempt_artifacts(output_dir, result, benchmark_id)
 
     (output_dir / "output.txt").write_text(
         f"=== Analysis ===\n{analysis}\n\n=== Code ===\n{code}\n\n=== QA Result ===\n{qa_result}\n",

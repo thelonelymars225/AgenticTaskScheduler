@@ -5,11 +5,10 @@ environment variables: the pipeline should run predictably from its source.
 """
 
 PRIMARY_MODEL = "qwen2.5-coder:14b"
-# The planner is lightweight; use the stable coder model for review so review
-# and repair share a reliable structured-output implementation.
+# Keep the judge independent from the coder to reduce self-confirming reviews.
 PLANNER_MODEL = "llama3.1:8b"
 CODER_MODEL = PRIMARY_MODEL
-QA_MODEL = PRIMARY_MODEL
+QA_MODEL = PLANNER_MODEL
 
 MODEL_KEEP_ALIVE = "30m"
 # A second focused repair lets the coder address the full review list without
@@ -19,9 +18,9 @@ MAX_REPAIRS = 2
 STARTUP_GRACE_SECONDS = 1.0
 ACCEPTANCE_TEST_TIMEOUT_SECONDS = 5.0
 
-# Default loop: plan, generate, deterministic checks, review, one repair.
-# Generated acceptance tests remain available for deliberate deep-QA runs.
+# Default loop: plan, generate, deterministic checks, executable acceptance
+# evidence, review, and focused repairs.
 ENABLE_PLANNING = True
 ENABLE_LLM_REVIEW = True
-ENABLE_ACCEPTANCE_TESTS = False
+ENABLE_ACCEPTANCE_TESTS = True
 ESCALATION_MODEL = ""

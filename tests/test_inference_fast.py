@@ -64,7 +64,7 @@ class PipelineHelperTests(unittest.TestCase):
         self.assertTrue(ENABLE_PLANNING)
         self.assertTrue(ENABLE_LLM_REVIEW)
         self.assertEqual(MAX_REPAIRS, 2)
-        self.assertFalse(ENABLE_ACCEPTANCE_TESTS)
+        self.assertTrue(ENABLE_ACCEPTANCE_TESTS)
 
     def test_plan_parser_uses_structured_values(self) -> None:
         plan = _parse_plan_payload(
@@ -115,6 +115,7 @@ class PipelineHelperTests(unittest.TestCase):
     @patch("inference.inferenceFast.validate_code", return_value=ValidationResult(True))
     @patch("inference.inferenceFast.write_code", return_value="print('ok')")
     @patch("inference.inferenceFast.analyze_task", return_value=_fast_task_plan("print ok"))
+    @patch("inference.inferenceFast.ENABLE_ACCEPTANCE_TESTS", False)
     def test_unavailable_qa_stops_without_blind_repair(self, analyze, write, validate, review, repair) -> None:
         result = project_management_with_attempts("print ok", max_retries=1)
         self.assertIsInstance(result, PipelineResult)
