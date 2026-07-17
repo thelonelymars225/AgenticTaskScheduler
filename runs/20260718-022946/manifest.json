@@ -1,0 +1,31 @@
+{
+  "task": "## Specification\n- Write a Python Pong game using tkinter and object-oriented programming. It must support two paddles, ball movement, wall and paddle collisions, scoring, restart after a score, keyboard controls, and AGENT_SMOKE_TEST=1 must exit without opening a window.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "pong_tkinter",
+  "final_verdict": "VERDICT: FAIL\n- The program does not handle the case when AGENT_SMOKE_TEST=1. It should exit without opening a window in this case.\n- The game loop is not properly implemented. The score is incremented twice for each point scored, and the game does not restart after a score.\n- The paddle movement is not smooth. The paddle moves by 10 pixels at a time, which can be too fast or too slow depending on the user's preference.\n- There are no checks to prevent the ball from moving off the screen. This can cause the game to crash if the ball hits the edge of the screen.\n- The scoring system is not implemented correctly. The score is incremented twice for each point scored, and there is no way to reset the score after a game.\n- The game does not handle keyboard input properly. The paddle movement is not smooth, and the game does not restart after a score.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 3,
+      "path": "attempt-03",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    }
+  ]
+}

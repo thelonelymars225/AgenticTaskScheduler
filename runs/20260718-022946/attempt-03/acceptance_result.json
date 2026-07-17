@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-7bcmmvx7/acceptance_tests.py\", line 84, in <module>\n    test.test_smoke_test()\n  File \"/tmp/agentic-acceptance-7bcmmvx7/acceptance_tests.py\", line 27, in test_smoke_test\n    root = FakeTk()\n           ^^^^^^^^\n  File \"/tmp/agentic-acceptance-7bcmmvx7/acceptance_tests.py\", line 21, in __init__\n    super().__init__()\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/tkinter/__init__.py\", line 2346, in __init__\n    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_tkinter.TclError: no display name and no $DISPLAY environment variable"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-7bcmmvx7/acceptance_tests.py\", line 84, in <module>\n    test.test_smoke_test()\n  File \"/tmp/agentic-acceptance-7bcmmvx7/acceptance_tests.py\", line 27, in test_smoke_test\n    root = FakeTk()\n           ^^^^^^^^\n  File \"/tmp/agentic-acceptance-7bcmmvx7/acceptance_tests.py\", line 21, in __init__\n    super().__init__()\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/tkinter/__init__.py\", line 2346, in __init__\n    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_tkinter.TclError: no display name and no $DISPLAY environment variable\n",
+  "executed": true
+}

@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-6hj8flx5/acceptance_tests.py\", line 43, in <module>\n    suite = unittest.TestLoader().loadTestsFromTestCase(TestPongGame)\n            ^^^^^^^^\nNameError: name 'unittest' is not defined. Did you forget to import 'unittest'?"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-6hj8flx5/acceptance_tests.py\", line 43, in <module>\n    suite = unittest.TestLoader().loadTestsFromTestCase(TestPongGame)\n            ^^^^^^^^\nNameError: name 'unittest' is not defined. Did you forget to import 'unittest'?\n",
+  "executed": true
+}

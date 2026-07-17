@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-2_ldq6uw/acceptance_tests.py\", line 38, in <module>\n    test.test_valid_case()\n  File \"/tmp/agentic-acceptance-2_ldq6uw/acceptance_tests.py\", line 14, in test_valid_case\n    game = candidate_module.PongGame(mock_tk.return_value)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-2_ldq6uw/candidate.py\", line 25, in __init__\n    self.game_loop()\n  File \"/tmp/agentic-acceptance-2_ldq6uw/candidate.py\", line 28, in game_loop\n    if self.ball.update():\n       ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-2_ldq6uw/candidate.py\", line 51, in update\n    if pos[1] <= 0:\n       ^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'MagicMock' and 'int'"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-2_ldq6uw/acceptance_tests.py\", line 38, in <module>\n    test.test_valid_case()\n  File \"/tmp/agentic-acceptance-2_ldq6uw/acceptance_tests.py\", line 14, in test_valid_case\n    game = candidate_module.PongGame(mock_tk.return_value)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-2_ldq6uw/candidate.py\", line 25, in __init__\n    self.game_loop()\n  File \"/tmp/agentic-acceptance-2_ldq6uw/candidate.py\", line 28, in game_loop\n    if self.ball.update():\n       ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-2_ldq6uw/candidate.py\", line 51, in update\n    if pos[1] <= 0:\n       ^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'MagicMock' and 'int'\n",
+  "executed": true
+}
