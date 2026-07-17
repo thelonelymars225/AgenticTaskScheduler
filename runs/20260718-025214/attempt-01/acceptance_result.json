@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Unknown command or missing argument for invalid_command"
+  ],
+  "stdout": "",
+  "stderr": "Unknown command or missing argument for invalid_command\n",
+  "executed": true
+}
