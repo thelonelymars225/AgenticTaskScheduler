@@ -143,8 +143,10 @@ def analyze_task(prompt: str) -> TaskPlan:
         [
             {"role": "system", "content": (
                 "Return valid JSON only with specification, implementation_plan, acceptance_tests, and complexity. "
-                "Complexity must be simple, medium, complex, or very_complex. Create the smallest design that works. "
-                "Acceptance tests must be concrete and observable. Do not over-engineer."
+                "Complexity must be simple, medium, complex, or very_complex. Translate every explicit user request "
+                "into a concrete, testable requirement; do not invent optional product features. For interactive or GUI "
+                "programs, include startup, input, update-loop, and exit/smoke-test behavior. Acceptance tests must be "
+                "concrete and observable, and must cover the important user flows and edge cases."
             )},
             {"role": "user", "content": prompt},
         ],
@@ -296,7 +298,11 @@ def quality_review(code: str, task: TaskPlan) -> ReviewResult:
         [
             {"role": "system", "content": (
                 "Return valid JSON only: {\"verdict\":\"PASS\"|\"FAIL\",\"issues\":[\"specific issue\"]}. "
-                "PASS only if every required behavior and acceptance test is implemented. Ignore optional improvements."
+                "Act as an adversarial code reviewer: trace actual control flow and method calls instead of assuming that "
+                "plausible-looking code works. PASS only if every required behavior and acceptance test is implemented. "
+                "For GUI or interactive code, verify event bindings, the scheduled update loop, rendering, collision/state "
+                "changes, restart behavior, and the AGENT_SMOKE_TEST=1 exit path when applicable. Report only actionable "
+                "issues with the relevant class, function, or behavior. Ignore optional improvements."
             )},
             {"role": "user", "content": f"{task.as_markdown()}\n\nCode:\n```python\n{code}\n```"},
         ],
