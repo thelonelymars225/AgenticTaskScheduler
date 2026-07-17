@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "failures": [
+    "Runtime failure: Traceback (most recent call last):\n  File \"/tmp/agentic-task-2hesf0iv/generated.py\", line 38, in <module>\n    assert result == expected_result, f\"Test failed: {result} != {expected_result}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Test failed: {'lines': 1, 'words': 4, 'characters': 21, 'frequencies': {'hello': 2, 'world!': 1, 'python.': 1}} != {'lines': 1, 'words': 4, 'characters': 23, 'frequencies': {'hello': 2, 'world!': 1, 'python.': 1}}"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-task-2hesf0iv/generated.py\", line 38, in <module>\n    assert result == expected_result, f\"Test failed: {result} != {expected_result}\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Test failed: {'lines': 1, 'words': 4, 'characters': 21, 'frequencies': {'hello': 2, 'world!': 1, 'python.': 1}} != {'lines': 1, 'words': 4, 'characters': 23, 'frequencies': {'hello': 2, 'world!': 1, 'python.': 1}}\n"
+}

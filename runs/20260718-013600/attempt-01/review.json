@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The assertion in the smoke test failed because the actual result has a different number of characters (26) than the expected result (23). This is likely due to the fact that the `count_characters` function counts each character individually, including punctuation. To fix this, you can modify the `count_characters` function to exclude non-alphanumeric characters."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The assertion in the smoke test failed because the actual result has a different number of characters (26) than the expected result (23). This is likely due to the fact that the `count_characters` function counts each character individually, including punctuation. To fix this, you can modify the `count_characters` function to exclude non-alphanumeric characters.\"]}"
+}
