@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The function does not handle punctuation attached to words. \u2014 case-insensitive word frequencies",
+    "The function does not correctly count words in a file when there are multiple lines with the same word. \u2014 command-line interface"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"class\": \"analyze_text\", \"function\": \"word_frequencies\", \"behavior\": \"case-insensitive word frequencies\", \"cause\": \"The function does not handle punctuation attached to words.\"},\n    {\"class\": \"count_words\", \"function\": \"__main__\", \"behavior\": \"command-line interface\", \"cause\": \"The function does not correctly count words in a file when there are multiple lines with the same word.\"}\n] }"
+}

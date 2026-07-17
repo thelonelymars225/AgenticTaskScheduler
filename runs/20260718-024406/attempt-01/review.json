@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The `analyze_text` function is not defined as a module-level function, but rather as an instance method of the main class. \u2014 1. The code should be refactored to define `analyze_text` as a standalone function.",
+    "The program does not handle empty Unicode text correctly. \u2014 2. Add input validation to check for empty strings and return an error message or a default result."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"issue\": \"The `analyze_text` function is not defined as a module-level function, but rather as an instance method of the main class.\", \n     \"root_cause\": \"1. The code should be refactored to define `analyze_text` as a standalone function.\"},\n    {\"issue\": \"The program does not handle empty Unicode text correctly.\", \n     \"root_cause\": \"2. Add input validation to check for empty strings and return an error message or a default result.\"}\n] }"
+}

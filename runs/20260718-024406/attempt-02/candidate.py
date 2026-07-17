@@ -1,22 +1,18 @@
 import os
 import json
 from collections import Counter
-import re
 
 def count_lines(text):
     return len(text.splitlines())
 
 def count_words(text):
-    # Use regex to handle punctuation attached to words
-    words = re.findall(r'\b\w+\b', text)
-    return len(words)
+    return len(text.split())
 
 def count_characters(text):
     return len(text)
 
 def word_frequencies(text):
-    # Use regex to handle punctuation attached to words
-    words = re.findall(r'\b\w+\b', text.lower())
+    words = text.lower().split()
     return dict(Counter(words))
 
 def analyze_text(text):
