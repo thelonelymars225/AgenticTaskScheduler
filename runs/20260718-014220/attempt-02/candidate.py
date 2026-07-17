@@ -1,16 +1,3 @@
-=== Analysis ===
-## Specification
-- Write a Python Pong game using tkinter and object-oriented programming. It must support two paddles, ball movement, wall and paddle collisions, scoring, restart after a score, keyboard controls, and AGENT_SMOKE_TEST=1 must exit without opening a window.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import tkinter as tk
 
@@ -29,10 +16,10 @@ class PongGame:
         self.left_score_text = self.canvas.create_text(150, 20, text=f"Score: {self.score_left}", fill="white", font=('Helvetica', 16))
         self.right_score_text = self.canvas.create_text(450, 20, text=f"Score: {self.score_right}", fill="white", font=('Helvetica', 16))
         
-        root.bind('<KeyPress-w>', lambda e: self.paddle_left.move(-10))
-        root.bind('<KeyPress-s>', lambda e: self.paddle_left.move(10))
-        root.bind('<KeyPress-Up>', lambda e: self.paddle_right.move(-10))
-        root.bind('<KeyPress-Down>', lambda e: self.paddle_right.move(10))
+        root.bind('<KeyPress-Left>', lambda e: self.paddle_left.move(-10))
+        root.bind('<KeyPress-Right>', lambda e: self.paddle_left.move(10))
+        root.bind('<KeyPress-a>', lambda e: self.paddle_right.move(-10))
+        root.bind('<KeyPress-d>', lambda e: self.paddle_right.move(10))
         
         self.game_loop()
     
@@ -66,8 +53,8 @@ class Ball:
         elif pos[2] >= 600:
             return False
         
-        paddle_left = self.canvas.coords(self.paddle_left.id)
-        paddle_right = self.canvas.coords(self.paddle_right.id)
+        paddle_left = self.canvas.coords('paddle_left')
+        paddle_right = self.canvas.coords('paddle_right')
         
         if pos[2] >= paddle_right[0] and pos[0] <= paddle_right[2]:
             if pos[3] >= paddle_right[1] and pos[1] <= paddle_right[3]:
@@ -80,7 +67,7 @@ class Ball:
 class Paddle:
     def __init__(self, canvas, side):
         self.canvas = canvas
-        self.id = canvas.create_rectangle(0, 150, 10, 250, fill='white')
+        self.id = canvas.create_rectangle(0, 150, 10, 250, fill='white', tags=f'paddle_{side}')
         
         if side == 'right':
             self.canvas.move(self.id, 590, 0)
@@ -100,7 +87,3 @@ if __name__ == "__main__":
     root.title("Pong")
     game = PongGame(root)
     root.mainloop()
-
-=== QA Result ===
-VERDICT: FAIL
-- Quality review did not approve the implementation.

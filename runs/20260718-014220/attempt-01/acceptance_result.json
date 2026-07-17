@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-dhv7ytdd/acceptance_tests.py\", line 88, in <module>\n    root = tk.Tk()\n           ^^^^^^^\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/tkinter/__init__.py\", line 2346, in __init__\n    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_tkinter.TclError: no display name and no $DISPLAY environment variable"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-dhv7ytdd/acceptance_tests.py\", line 88, in <module>\n    root = tk.Tk()\n           ^^^^^^^\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/tkinter/__init__.py\", line 2346, in __init__\n    self.tk = _tkinter.create(screenName, baseName, className, interactive, wantobjects, useTk, sync, use)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n_tkinter.TclError: no display name and no $DISPLAY environment variable\n",
+  "executed": true
+}

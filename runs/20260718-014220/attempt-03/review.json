@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "Quality review did not approve the implementation."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"cause\": \"The program does not handle the case when there is no DISPLAY environment variable set, which causes a _tkinter.TclError.\", \n     \"behavior\": \"When AGENT_SMOKE_TEST=1, the program should exit without opening a window.\"},\n    {\"cause\": \"The game loop does not correctly update the scores after each point.\", \n     \"behavior\": \"After each point, the score of the player who scored should be incremented and displayed on the canvas.\"},\n    {\"cause\": \"The paddle movement is not smooth due to the use of `after` method with a fixed delay.\", \n     \"behavior\": \"The paddle movement should be smooth and responsive to user input.\"}\n] }"
+}
