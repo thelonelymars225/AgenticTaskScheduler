@@ -352,9 +352,7 @@ def validate_code(code: str, task: TaskPlan) -> ValidationResult:
 
 def write_acceptance_tests(code: str, task: TaskPlan) -> str:
     """Ask an independent QA role for a standard-library executable test harness."""
-    text = _chat(
-        QA_MODEL,
-        [
+    messages = [
             {"role": "system", "content": (
                 "Return only a complete Python test script using the standard library. The generated candidate path "
                 "is in os.environ['CANDIDATE_PATH']. The script MUST import and execute that candidate via "
@@ -372,7 +370,10 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
             {"role": "user", "content": (
                 f"{task.as_markdown()}\n\nCandidate:\n```python\n{code}\n```"
             )},
-        ],
+        ]
+    text = _chat(
+        QA_MODEL,
+        messages,
         num_predict=1800,
         temperature=0.0,
     )
