@@ -1,7 +1,6 @@
 import os
 import json
 from collections import Counter
-import sys
 
 def count_lines(text):
     return len(text.splitlines())
@@ -14,8 +13,6 @@ def count_characters(text):
 
 def word_frequencies(text):
     words = text.lower().split()
-    # Remove punctuation from words
-    words = [word.strip('.,!?;:()[]{}"\'') for word in words]
     return dict(Counter(words))
 
 def analyze_text(text):
@@ -37,6 +34,7 @@ if __name__ == '__main__':
     if os.getenv('AGENT_SMOKE_TEST') == '1':
         exit(0)
 
+    import sys
     import argparse
 
     parser = argparse.ArgumentParser(description='Analyze text statistics from a file.')
@@ -45,18 +43,12 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     try:
-        if not os.path.isfile(args.filename):
-            raise FileNotFoundError(f"The file '{args.filename}' does not exist.")
-        
         with open(args.filename, 'r', encoding='utf-8') as file:
             text = file.read()
             result = analyze_text(text)
             json.dump(result, sys.stdout, ensure_ascii=False, indent=4)
-    except FileNotFoundError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
-    except PermissionError:
-        print(f"Error: The file '{args.filename}' is not readable.", file=sys.stderr)
+    except FileNotFoundError:
+        print(f"Error: The file '{args.filename}' does not exist.", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)

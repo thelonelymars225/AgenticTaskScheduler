@@ -1,0 +1,31 @@
+{
+  "task": "## Specification\n- Write a standard-library Python text statistics tool. It must expose importable functions that count lines, words, characters, and case-insensitive word frequencies, handle empty Unicode text, and provide a command-line interface that reads a UTF-8 file and emits JSON.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "text_statistics",
+  "final_verdict": "VERDICT: FAIL\n- The program does not handle non-UTF-8 encoded files correctly. \u2014 The `open` function is used with the `encoding='utf-8'` parameter, but it should be able to handle other encodings.\n- The word frequency count is incorrect for text with multiple lines and punctuation. \u2014 The `word_frequencies` function does not correctly remove punctuation from words.\n- The program does not handle permission errors when trying to read a file. \u2014 The `open` function is used without checking if the file can be read.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 3,
+      "path": "attempt-03",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    }
+  ]
+}

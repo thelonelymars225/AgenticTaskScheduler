@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "The `analyze_text` function is not defined as a module-level function, but rather as an instance method of the main class. \u2014 The code should be refactored to define `analyze_text` as a standalone function or a static method.",
+    "The `analyze_text` function does not handle empty Unicode text correctly. It will return incorrect results for an empty string. \u2014 Add input validation to check if the text is empty before processing it.",
+    "The code does not provide a command-line interface that reads a UTF-8 file and emits JSON as specified in the requirements. \u2014 Implement the required functionality using the `argparse` library or another suitable method.",
+    "The program does not handle invalid filenames correctly. It will throw an exception when trying to open a non-existent file. \u2014 Add error handling to catch and handle exceptions that occur when opening files."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"issue\": \"The `analyze_text` function is not defined as a module-level function, but rather as an instance method of the main class.\", \n     \"root_cause\": \"The code should be refactored to define `analyze_text` as a standalone function or a static method.\"}, \n    {\"issue\": \"The `analyze_text` function does not handle empty Unicode text correctly. It will return incorrect results for an empty string.\", \n     \"root_cause\": \"Add input validation to check if the text is empty before processing it.\"}, \n    {\"issue\": \"The code does not provide a command-line interface that reads a UTF-8 file and emits JSON as specified in the requirements.\", \n     \"root_cause\": \"Implement the required functionality using the `argparse` library or another suitable method.\"}, \n    {\"issue\": \"The program does not handle invalid filenames correctly. It will throw an exception when trying to open a non-existent file.\", \n     \"root_cause\": \"Add error handling to catch and handle exceptions that occur when opening files.\"}\n] }"
+}

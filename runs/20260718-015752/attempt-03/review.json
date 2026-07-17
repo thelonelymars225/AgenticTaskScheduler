@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle non-UTF-8 encoded files correctly. \u2014 The `open` function is used with the `encoding='utf-8'` parameter, but it should be able to handle other encodings.",
+    "The word frequency count is incorrect for text with multiple lines and punctuation. \u2014 The `word_frequencies` function does not correctly remove punctuation from words.",
+    "The program does not handle permission errors when trying to read a file. \u2014 The `open` function is used without checking if the file can be read."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"issue\": \"The program does not handle non-UTF-8 encoded files correctly.\", \n     \"root_cause\": \"The `open` function is used with the `encoding='utf-8'` parameter, but it should be able to handle other encodings.\"},\n    {\"issue\": \"The word frequency count is incorrect for text with multiple lines and punctuation.\", \n     \"root_cause\": \"The `word_frequencies` function does not correctly remove punctuation from words.\"},\n    {\"issue\": \"The program does not handle permission errors when trying to read a file.\", \n     \"root_cause\": \"The `open` function is used without checking if the file can be read.\"}\n] }"
+}
