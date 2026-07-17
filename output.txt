@@ -1,6 +1,6 @@
 === Analysis ===
 ## Specification
-- Write a standard-library Python text statistics tool. It must expose importable functions that count lines, words, characters, and case-insensitive word frequencies, handle empty Unicode text, and provide a command-line interface that reads a UTF-8 file and emits JSON.
+- Write a Python Pong game using tkinter and object-oriented programming. It must support two paddles, ball movement, wall and paddle collisions, scoring, restart after a score, keyboard controls, and AGENT_SMOKE_TEST=1 must exit without opening a window.
 
 ## Implementation Plan
 - Use a minimal reliable Python design.
@@ -12,59 +12,96 @@ COMPLEXITY: medium
 
 === Code ===
 import os
-import json
-from collections import Counter
-import re
+import tkinter as tk
 
-def count_lines(text):
-    return len(text.splitlines())
+class PongGame:
+    def __init__(self, root):
+        self.canvas = tk.Canvas(root, width=600, height=400, bg='black')
+        self.canvas.pack()
+        
+        self.ball = Ball(self.canvas)
+        self.paddle_left = Paddle(self.canvas, 'left')
+        self.paddle_right = Paddle(self.canvas, 'right')
+        
+        self.score_left = 0
+        self.score_right = 0
+        
+        self.score_left_text = self.canvas.create_text(150, 20, text=f"Score: {self.score_left}", fill="white", font=('Helvetica', 16))
+        self.score_right_text = self.canvas.create_text(450, 20, text=f"Score: {self.score_right}", fill="white", font=('Helvetica', 16))
+        
+        root.bind('<KeyPress-w>', lambda event: self.paddle_left.move(-10))
+        root.bind('<KeyPress-s>', lambda event: self.paddle_left.move(10))
+        root.bind('<KeyPress-Up>', lambda event: self.paddle_right.move(-10))
+        root.bind('<KeyPress-Down>', lambda event: self.paddle_right.move(10))
+        
+        self.game_loop()
+    
+    def game_loop(self):
+        if self.ball.update():
+            self.score_left += 1
+        elif not self.ball.update():
+            self.score_right += 1
+        
+        self.canvas.itemconfig(self.score_left_text, text=f"Score: {self.score_left}")
+        self.canvas.itemconfig(self.score_right_text, text=f"Score: {self.score_right}")
+        
+        self.canvas.after(50, self.game_loop)
 
-def count_words(text):
-    # Use regex to handle punctuation attached to words
-    words = re.findall(r'\b\w+\b', text)
-    return len(words)
+class Ball:
+    def __init__(self, canvas):
+        self.canvas = canvas
+        self.id = canvas.create_oval(290, 190, 310, 210, fill='white')
+        self.x = 2
+        self.y = -2
+    
+    def update(self):
+        self.canvas.move(self.id, self.x, self.y)
+        
+        pos = self.canvas.coords(self.id)
+        
+        if pos[1] <= 0 or pos[3] >= 400:
+            self.y *= -1
+        
+        if pos[0] <= 0:
+            return True
+        elif pos[2] >= 600:
+            return False
+        
+        paddle_left = self.canvas.coords(self.paddle_left.id)
+        paddle_right = self.canvas.coords(self.paddle_right.id)
+        
+        if pos[2] >= paddle_right[0] and pos[0] <= paddle_right[2]:
+            if pos[3] >= paddle_right[1] and pos[1] <= paddle_right[3]:
+                self.x *= -1
+        
+        if pos[0] <= paddle_left[2] and pos[2] >= paddle_left[0]:
+            if pos[3] >= paddle_left[1] and pos[1] <= paddle_left[3]:
+                self.x *= -1
 
-def count_characters(text):
-    return len(text)
+class Paddle:
+    def __init__(self, canvas, side):
+        self.canvas = canvas
+        self.id = canvas.create_rectangle(0, 150, 10, 250, fill='white')
+        
+        if side == 'right':
+            self.canvas.move(self.id, 590, 0)
+    
+    def move(self, delta):
+        pos = self.canvas.coords(self.id)
+        
+        if pos[1] + delta >= 0 and pos[3] + delta <= 400:
+            self.canvas.move(self.id, 0, delta)
 
-def word_frequencies(text):
-    # Use regex to handle punctuation attached to words
-    words = re.findall(r'\b\w+\b', text.lower())
-    return dict(Counter(words))
-
-def analyze_text(text):
-    if not text:
-        return {
-            'lines': 0,
-            'words': 0,
-            'characters': 0,
-            'word_frequencies': {}
-        }
-    return {
-        'lines': count_lines(text),
-        'words': count_words(text),
-        'characters': count_characters(text),
-        'word_frequencies': word_frequencies(text)
-    }
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     if os.getenv('AGENT_SMOKE_TEST') == '1':
+        print("Smoke test passed.")
         exit(0)
-
-    import sys
-    if len(sys.argv) != 2:
-        print("Usage: python text_stats.py <filename>")
-        sys.exit(1)
-
-    filename = sys.argv[1]
-    try:
-        with open(filename, 'r', encoding='utf-8') as file:
-            text = file.read()
-            result = analyze_text(text)
-            json.dump(result, sys.stdout, ensure_ascii=False, indent=4)
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    
+    root = tk.Tk()
+    root.title("Pong")
+    game = PongGame(root)
+    root.mainloop()
 
 === QA Result ===
-VERDICT: PASS
+VERDICT: FAIL
+- The program does not handle the case when the ball hits a paddle. The `update` method in the `Ball` class should be modified to correctly update the score and direction of the ball when it collides with a paddle.

@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case when the ball hits a paddle. The `update` method in the `Ball` class should be modified to correctly update the score and direction of the ball when it collides with a paddle."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The program does not handle the case when the ball hits a paddle. The `update` method in the `Ball` class should be modified to correctly update the score and direction of the ball when it collides with a paddle.\"]}"
+}

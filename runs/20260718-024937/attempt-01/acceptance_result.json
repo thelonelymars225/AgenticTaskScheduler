@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-oany8hss/acceptance_tests.py\", line 48, in <module>\n    unittest.main(argv=[], exit=False)\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/unittest/main.py\", line 103, in __init__\n    self.progName = os.path.basename(argv[0])\n                                     ~~~~^^^\nIndexError: list index out of range"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-oany8hss/acceptance_tests.py\", line 48, in <module>\n    unittest.main(argv=[], exit=False)\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/unittest/main.py\", line 103, in __init__\n    self.progName = os.path.basename(argv[0])\n                                     ~~~~^^^\nIndexError: list index out of range\n",
+  "executed": true
+}

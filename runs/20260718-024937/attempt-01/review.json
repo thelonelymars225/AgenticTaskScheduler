@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case when both scores are incremented at the same time, resulting in incorrect score display.",
+    "The game loop is called recursively without any base case, leading to a potential stack overflow."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The program does not handle the case when both scores are incremented at the same time, resulting in incorrect score display.\",\"The game loop is called recursively without any base case, leading to a potential stack overflow.\"]}"
+}

@@ -13,24 +13,24 @@ class PongGame:
         self.score_left = 0
         self.score_right = 0
         
-        self.score_left_text = self.canvas.create_text(150, 20, text=f"Score: {self.score_left}", fill="white", font=('Helvetica', 16))
-        self.score_right_text = self.canvas.create_text(450, 20, text=f"Score: {self.score_right}", fill="white", font=('Helvetica', 16))
+        self.canvas.create_text(150, 20, text=f"Score: {self.score_left}", fill="white", font=('Helvetica', 16))
+        self.canvas.create_text(450, 20, text=f"Score: {self.score_right}", fill="white", font=('Helvetica', 16))
         
-        root.bind('<KeyPress-w>', lambda event: self.paddle_left.move(-10))
-        root.bind('<KeyPress-s>', lambda event: self.paddle_left.move(10))
-        root.bind('<KeyPress-Up>', lambda event: self.paddle_right.move(-10))
-        root.bind('<KeyPress-Down>', lambda event: self.paddle_right.move(10))
+        root.bind('<KeyPress-Left>', lambda event: self.paddle_left.move(-10))
+        root.bind('<KeyPress-Right>', lambda event: self.paddle_left.move(10))
+        root.bind('<KeyPress-a>', lambda event: self.paddle_right.move(-10))
+        root.bind('<KeyPress-d>', lambda event: self.paddle_right.move(10))
         
         self.game_loop()
     
     def game_loop(self):
         if self.ball.update():
             self.score_left += 1
-        elif not self.ball.update():
+        elif self.ball.update():
             self.score_right += 1
         
-        self.canvas.itemconfig(self.score_left_text, text=f"Score: {self.score_left}")
-        self.canvas.itemconfig(self.score_right_text, text=f"Score: {self.score_right}")
+        self.canvas.itemconfig(self.canvas.find_withtag('score_left'), text=f"Score: {self.score_left}")
+        self.canvas.itemconfig(self.canvas.find_withtag('score_right'), text=f"Score: {self.score_right}")
         
         self.canvas.after(50, self.game_loop)
 
@@ -54,8 +54,8 @@ class Ball:
         elif pos[2] >= 600:
             return False
         
-        paddle_left = self.canvas.coords(self.paddle_left.id)
-        paddle_right = self.canvas.coords(self.paddle_right.id)
+        paddle_left = self.canvas.coords('paddle_left')
+        paddle_right = self.canvas.coords('paddle_right')
         
         if pos[2] >= paddle_right[0] and pos[0] <= paddle_right[2]:
             if pos[3] >= paddle_right[1] and pos[1] <= paddle_right[3]:
@@ -68,7 +68,7 @@ class Ball:
 class Paddle:
     def __init__(self, canvas, side):
         self.canvas = canvas
-        self.id = canvas.create_rectangle(0, 150, 10, 250, fill='white')
+        self.id = canvas.create_rectangle(0, 150, 10, 250, fill='white', tags=f'paddle_{side}')
         
         if side == 'right':
             self.canvas.move(self.id, 590, 0)

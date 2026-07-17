@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The code does not handle the case when the ball hits a paddle. The collision detection is incorrect and will cause the game to crash."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The code does not handle the case when the ball hits a paddle. The collision detection is incorrect and will cause the game to crash.\"]}"
+}
