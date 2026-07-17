@@ -376,7 +376,26 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
         num_predict=1800,
         temperature=0.0,
     )
-    return _strip_code_blocks(text)
+    tests = _strip_code_blocks(text)
+    if _acceptance_harness_violations(tests):
+        correction = (
+            "Your previous test script violated the harness contract. Regenerate it now. "
+            "It must import CANDIDATE_PATH with spec_from_file_location, never instantiate tkinter.Tk or tkinter.Canvas, "
+            "and must exercise a valid and invalid case without relying on empty argv. Return only the corrected script."
+        )
+        retry_messages = [*messages, {"role": "user", "content": correction}]
+        tests = _strip_code_blocks(_chat(QA_MODEL, retry_messages, num_predict=1800, temperature=0.0))
+    return tests
+
+
+def _acceptance_harness_violations(tests: str) -> list[str]:
+    """Return deterministic contract violations before running a test harness."""
+    violations: list[str] = []
+    if "CANDIDATE_PATH" not in tests or "spec_from_file_location" not in tests:
+        violations.append("it must import the candidate through CANDIDATE_PATH")
+    if re.search(r"(?:tkinter|tk)\.(?:Tk|Canvas)\s*\(", tests):
+        violations.append("it must not instantiate GUI objects in headless acceptance")
+    return violations
 
 
 def run_acceptance_tests(code: str, tests: str,
@@ -384,10 +403,11 @@ def run_acceptance_tests(code: str, tests: str,
     """Run generated acceptance tests in an isolated temporary directory."""
     if not tests.strip():
         return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."], executed=True)
-    if "CANDIDATE_PATH" not in tests or "spec_from_file_location" not in tests:
+    violations = _acceptance_harness_violations(tests)
+    if violations:
         return AcceptanceTestResult(
             False,
-            ["Invalid acceptance harness: it must import the candidate through CANDIDATE_PATH."],
+            ["Invalid acceptance harness: " + "; ".join(violations) + "."],
             executed=True,
         )
     with tempfile.TemporaryDirectory(prefix="agentic-acceptance-") as directory:

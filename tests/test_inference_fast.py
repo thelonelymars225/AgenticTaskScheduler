@@ -184,6 +184,16 @@ class PipelineHelperTests(unittest.TestCase):
         self.assertFalse(result.passed)
         self.assertIn("Invalid acceptance harness", result.failures[0])
 
+    def test_acceptance_harness_rejects_gui_construction(self) -> None:
+        result = run_acceptance_tests(
+            "value = 1\n",
+            "import importlib.util, os, tkinter as tk\n"
+            "spec = importlib.util.spec_from_file_location('candidate', os.environ['CANDIDATE_PATH'])\n"
+            "root = tk.Tk()\n",
+        )
+        self.assertFalse(result.passed)
+        self.assertIn("GUI objects", result.failures[0])
+
 
 if __name__ == "__main__":
     unittest.main()
