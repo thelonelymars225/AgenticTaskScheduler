@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The `PongGame` class does not handle the case where the ball goes out of bounds on the right side.",
+    "The `Ball` class does not correctly update the score when the ball goes out of bounds.",
+    "The `Paddle` class does not move the paddle when the user presses the corresponding key.",
+    "The game loop is not properly synchronized, causing the game to freeze or behave erratically.",
+    "The `AGENT_SMOKE_TEST=1` condition is not correctly implemented, allowing the game window to open even when it should exit immediately.",
+    "The code does not handle the case where the user closes the game window while the game is running."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `PongGame` class does not handle the case where the ball goes out of bounds on the right side.\",\n    \"The `Ball` class does not correctly update the score when the ball goes out of bounds.\",\n    \"The `Paddle` class does not move the paddle when the user presses the corresponding key.\",\n    \"The game loop is not properly synchronized, causing the game to freeze or behave erratically.\",\n    \"The `AGENT_SMOKE_TEST=1` condition is not correctly implemented, allowing the game window to open even when it should exit immediately.\",\n    \"The code does not handle the case where the user closes the game window while the game is running.\"\n] }"
+}

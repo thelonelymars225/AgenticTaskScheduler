@@ -1,16 +1,3 @@
-=== Analysis ===
-## Specification
-- Write a Python Pong game using tkinter and object-oriented programming. It must support two paddles, ball movement, wall and paddle collisions, scoring, restart after a score, keyboard controls, and AGENT_SMOKE_TEST=1 must exit without opening a window.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import tkinter as tk
 
@@ -30,10 +17,10 @@ class PongGame:
         self.score_label = tk.Label(root, text=f"{self.score_left} : {self.score_right}", font=('Arial', 24), fg='white', bg='black')
         self.score_label.pack()
         
-        self.root.bind('<KeyPress-w>', lambda e: self.paddle_left.move(-10))
-        self.root.bind('<KeyPress-s>', lambda e: self.paddle_left.move(10))
-        self.root.bind('<KeyPress-Up>', lambda e: self.paddle_right.move(-10))
-        self.root.bind('<KeyPress-Down>', lambda e: self.paddle_right.move(10))
+        self.root.bind('<KeyPress-Left>', lambda e: self.paddle_left.move(-10))
+        self.root.bind('<KeyPress-Right>', lambda e: self.paddle_left.move(10))
+        self.root.bind('<KeyPress-a>', lambda e: self.paddle_right.move(-10))
+        self.root.bind('<KeyPress-d>', lambda e: self.paddle_right.move(10))
         
         self.game_loop()
     
@@ -66,8 +53,8 @@ class Ball:
         elif pos[2] >= 600:
             return False
         
-        paddle_left = self.canvas.coords(self.paddle_left.id)
-        paddle_right = self.canvas.coords(self.paddle_right.id)
+        paddle_left = self.canvas.coords('paddle_left')
+        paddle_right = self.canvas.coords('paddle_right')
         
         if pos[2] >= paddle_right[0] and pos[0] <= paddle_right[2]:
             if pos[3] >= paddle_right[1] and pos[1] <= paddle_right[3]:
@@ -100,13 +87,3 @@ if __name__ == "__main__":
     root.title("Pong")
     game = PongGame(root)
     root.mainloop()
-
-=== QA Result ===
-VERDICT: FAIL
-- The `PongGame` class does not handle the case where the ball goes out of bounds on the right side.
-- The `Ball` class does not correctly update the score when the ball goes out of bounds.
-- The `Paddle` class does not move the paddle when the user presses the corresponding key.
-- The game loop is not properly synchronized, causing the game to freeze or behave erratically.
-- The `AGENT_SMOKE_TEST=1` condition is not correctly implemented, allowing the game window to open even when it should exit immediately.
-- The code does not handle the case where the user closes the game window while the game is running.
-- Repair returned an unchanged candidate; stopping the loop.

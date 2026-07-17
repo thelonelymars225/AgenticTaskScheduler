@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The code does not handle the case when the ball hits a paddle, it should reverse the direction of the ball when it hits a paddle. The game loop is also incorrect as it only increments the score when the ball hits the left or right edge of the screen, but it should increment the score for both sides."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The code does not handle the case when the ball hits a paddle, it should reverse the direction of the ball when it hits a paddle. The game loop is also incorrect as it only increments the score when the ball hits the left or right edge of the screen, but it should increment the score for both sides.\"]}"
+}
