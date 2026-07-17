@@ -5,16 +5,18 @@ environment variables: the pipeline should run predictably from its source.
 """
 
 PRIMARY_MODEL = "qwen2.5-coder:14b"
-PLANNER_MODEL = PRIMARY_MODEL
+# Use different roles so the reviewer is less likely to repeat the coder's
+# blind spots. These models are expected to be available on the runtime PC.
+PLANNER_MODEL = "llama3.1:8b"
 CODER_MODEL = PRIMARY_MODEL
-QA_MODEL = PRIMARY_MODEL
+QA_MODEL = "deepseek-r1:8b"
 
 MODEL_KEEP_ALIVE = "30m"
-MAX_REPAIRS = 1
+MAX_REPAIRS = 2
 STARTUP_GRACE_SECONDS = 1.0
 
-# Keep the fast path to a single model call. Enable these only when a task
-# benefits from the additional latency and model work.
-ENABLE_PLANNING = False
-ENABLE_LLM_REVIEW = False
+# Quality-first default: plan the task, generate, review against the plan,
+# then make targeted repairs. Disable these only for throwaway generations.
+ENABLE_PLANNING = True
+ENABLE_LLM_REVIEW = True
 ESCALATION_MODEL = ""

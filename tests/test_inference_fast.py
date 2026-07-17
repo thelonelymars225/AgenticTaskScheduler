@@ -44,9 +44,19 @@ from inference.inferenceFast import (  # noqa: E402
     runtime_check,
     validate_syntax,
 )
+from inference.pipeline_config import (  # noqa: E402
+    ENABLE_LLM_REVIEW,
+    ENABLE_PLANNING,
+    MAX_REPAIRS,
+)
 
 
 class PipelineHelperTests(unittest.TestCase):
+    def test_default_profile_prioritizes_quality(self) -> None:
+        self.assertTrue(ENABLE_PLANNING)
+        self.assertTrue(ENABLE_LLM_REVIEW)
+        self.assertGreaterEqual(MAX_REPAIRS, 2)
+
     def test_plan_parser_uses_structured_values(self) -> None:
         plan = _parse_plan_payload(
             '{"specification":["A"],"implementation_plan":["B"],'
