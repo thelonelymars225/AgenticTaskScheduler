@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The current implementation does not handle conflicting scalar values. It always returns the value from the second object, which may lead to unexpected results. \u2014 Deterministic behavior for conflicting scalar values",
+    "The CLI does not handle invalid input correctly. If the user provides less than two command-line arguments, it prints an error message but still exits with code 0. \u2014 Command-line interface (CLI)",
+    "The current implementation does not handle recursion correctly. It may lead to a stack overflow if the JSON objects are deeply nested. \u2014 Recursion for nested objects"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  {\n    \"class\": \"merge_json\",\n    \"function\": \"merge_json\",\n    \"behavior\": \"Deterministic behavior for conflicting scalar values\",\n    \"cause\": \"The current implementation does not handle conflicting scalar values. It always returns the value from the second object, which may lead to unexpected results.\"\n  },\n  {\n    \"class\": \"main\",\n    \"function\": \"__name__ == '__main__'\",\n    \"behavior\": \"Command-line interface (CLI)\",\n    \"cause\": \"The CLI does not handle invalid input correctly. If the user provides less than two command-line arguments, it prints an error message but still exits with code 0.\"\n  },\n  {\n    \"class\": \"merge_json\",\n    \"function\": \"merge_json\",\n    \"behavior\": \"Recursion for nested objects\",\n    \"cause\": \"The current implementation does not handle recursion correctly. It may lead to a stack overflow if the JSON objects are deeply nested.\"\n  }\n] }"
+}

@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-9hliinfj/acceptance_tests.py\", line 11, in <module>\n    merge_json = importlib.util.module_from_spec(spec).merge_json\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'merge_json' has no attribute 'merge_json'"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-9hliinfj/acceptance_tests.py\", line 11, in <module>\n    merge_json = importlib.util.module_from_spec(spec).merge_json\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'merge_json' has no attribute 'merge_json'\n",
+  "executed": true
+}
