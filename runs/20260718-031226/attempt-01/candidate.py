@@ -7,7 +7,7 @@ def summarize(log_lines):
     for line in log_lines:
         parts = line.split(maxsplit=1)
         if len(parts) > 0:
-            level = parts[0].rstrip(':')  # Remove colon from log levels
+            level = parts[0]
             level_counts[level] = level_counts.get(level, 0) + 1
         else:
             level_counts[''] = level_counts.get('', 0) + 1

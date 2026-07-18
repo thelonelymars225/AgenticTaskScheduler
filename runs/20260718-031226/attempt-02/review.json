@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where the input is empty.",
+    "The `summarize` function does not correctly parse timestamped level/message lines."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The program does not handle the case where the input is empty.\",\n  \"The `summarize` function does not correctly parse timestamped level/message lines.\"\n] }"
+}

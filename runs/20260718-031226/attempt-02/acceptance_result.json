@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-cnw713y8/acceptance_tests.py\", line 98, in <module>\n    test_summarize()\n  File \"/tmp/agentic-acceptance-cnw713y8/acceptance_tests.py\", line 32, in test_summarize\n    actual_output = json.load(f)\n                    ^^^^^^^^^^^^\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\n                 ^^^^^^^^^\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/tempfile.py\", line 499, in func_wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\nio.UnsupportedOperation: not readable"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-cnw713y8/acceptance_tests.py\", line 98, in <module>\n    test_summarize()\n  File \"/tmp/agentic-acceptance-cnw713y8/acceptance_tests.py\", line 32, in test_summarize\n    actual_output = json.load(f)\n                    ^^^^^^^^^^^^\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/json/__init__.py\", line 293, in load\n    return loads(fp.read(),\n                 ^^^^^^^^^\n  File \"/home/meshari/.local/share/uv/python/cpython-3.12.13-linux-x86_64-gnu/lib/python3.12/tempfile.py\", line 499, in func_wrapper\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\nio.UnsupportedOperation: not readable\n",
+  "executed": true
+}

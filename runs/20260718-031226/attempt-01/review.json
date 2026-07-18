@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle empty input correctly.",
+    "The `summarize` function does not remove the colon from log levels.",
+    "The `main` function does not properly read UTF-8 input."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The program does not handle empty input correctly.\",\n    \"The `summarize` function does not remove the colon from log levels.\",\n    \"The `main` function does not properly read UTF-8 input.\"\n] }"
+}
