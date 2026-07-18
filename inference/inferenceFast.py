@@ -431,7 +431,7 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
         violations.append("the candidate must be loaded before test functions; do not duplicate its implementation")
     if re.search(r"(?:import\s+tkinter|from\s+tkinter|(?:tkinter|tk)\.(?:Tk|Canvas)\s*\()", tests):
         violations.append("it must not import or instantiate GUI objects in headless acceptance")
-    if "NamedTemporaryFile" in tests and not re.search(r"NamedTemporaryFile\([^)]*mode\s*=\s*['\"]w['\"]", tests):
+    if "NamedTemporaryFile" in tests and not re.search(r"NamedTemporaryFile\([^)]*mode\s*=\s*['\"]w\+?['\"]", tests):
         violations.append("text JSON must not be written to a binary NamedTemporaryFile")
     if re.search(r"NamedTemporaryFile\([^)]*mode\s*=\s*['\"]w['\"]", tests) and re.search(r"json\.load\s*\(\s*\w+\s*\)", tests):
         violations.append("a write-only temporary file must not be read; use mode='w+' or reopen it")
