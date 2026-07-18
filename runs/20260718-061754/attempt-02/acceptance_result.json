@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Invalid acceptance harness: temporary file f1 must be rewound before json.load; temporary file f2 must be rewound before json.load; temporary file f1 must be rewound before json.load; temporary file f2 must be rewound before json.load; temporary file f1 must be rewound before json.load; temporary file f2 must be rewound before json.load; temporary file f_out must be rewound before json.load."
+  ],
+  "stdout": "",
+  "stderr": "",
+  "executed": true
+}
