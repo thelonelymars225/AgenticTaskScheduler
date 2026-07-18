@@ -1,16 +1,3 @@
-=== Analysis ===
-## Specification
-- Write a standard-library Python configuration validator. It must load JSON from a file, validate required string, integer-range, and boolean fields, report all validation errors, provide an importable validate_config function, and include a command-line interface with useful exit codes.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import json
 import os
 import sys
@@ -51,14 +38,14 @@ def main():
         with open(config_file, 'r') as f:
             config = json.load(f)
     except (json.JSONDecodeError, FileNotFoundError) as e:
-        print(f"Error reading configuration file: {e}", file=sys.stderr)
+        print(f"Error reading configuration file: {e}")
         sys.exit(2)
 
     errors = validate_config(config)
 
     if errors:
         for error in errors:
-            print(error, file=sys.stderr)
+            print(error)
         sys.exit(3)
 
     print("Configuration is valid.")
@@ -66,6 +53,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-=== QA Result ===
-VERDICT: PASS
