@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The `summarize` function does not handle cases where the log line is not split into two parts.",
+    "The `main` function does not check if the input from `sys.stdin` is empty before passing it to the `summarize` function.",
+    "The `summarize` function does not handle cases where the level is not one of the standard logging levels (e.g., 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL').",
+    "The `main` function does not check if the environment variable 'AGENT_SMOKE_TEST' is set to 1 before exiting.",
+    "The `summarize` function does not handle cases where the log line has a level that is not a string (e.g., an integer or a float).",
+    "The `main` function does not check if the output from `json.dump` is valid JSON."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `summarize` function does not handle cases where the log line is not split into two parts.\",\n    \"The `main` function does not check if the input from `sys.stdin` is empty before passing it to the `summarize` function.\",\n    \"The `summarize` function does not handle cases where the level is not one of the standard logging levels (e.g., 'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL').\",\n    \"The `main` function does not check if the environment variable 'AGENT_SMOKE_TEST' is set to 1 before exiting.\",\n    \"The `summarize` function does not handle cases where the log line has a level that is not a string (e.g., an integer or a float).\",\n    \"The `main` function does not check if the output from `json.dump` is valid JSON.\"\n] }"
+}

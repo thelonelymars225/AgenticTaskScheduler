@@ -1,0 +1,31 @@
+{
+  "task": "## Specification\n- Write a standard-library Python log summarizer. It must parse timestamped level/message lines, count levels including empty input, expose an importable summarize function, and provide a CLI that reads UTF-8 input and emits stable JSON.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "log_summary",
+  "final_verdict": "VERDICT: FAIL\n- The code does not handle the case where a log line has an invalid level. It prints an error message to stderr but continues processing the rest of the lines.\n- The code does not count empty input as a valid log level, which is likely the intention.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 3,
+      "path": "attempt-03",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    }
+  ]
+}

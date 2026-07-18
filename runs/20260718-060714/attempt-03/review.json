@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The code does not handle the case where a log line has an invalid level. It prints an error message to stderr but continues processing the rest of the lines.",
+    "The code does not count empty input as a valid log level, which is likely the intention."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The code does not handle the case where a log line has an invalid level. It prints an error message to stderr but continues processing the rest of the lines.\",\n  \"The code does not count empty input as a valid log level, which is likely the intention.\"\n] }"
+}

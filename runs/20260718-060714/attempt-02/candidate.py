@@ -13,11 +13,10 @@ def summarize(log_lines):
         level, message = parts
         valid_levels = {'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'}
         
-        if not isinstance(level, str) or level.upper() not in valid_levels:
+        if not isinstance(level, str) or level not in valid_levels:
             print(f"Invalid log level: {level} in line: {line}", file=sys.stderr)
             continue
         
-        level = level.upper()
         if level not in level_counts:
             level_counts[level] = 0
         level_counts[level] += 1
@@ -30,11 +29,7 @@ def main():
 
     log_lines = []
     for line in sys.stdin:
-        try:
-            log_lines.append(line.decode('utf-8').strip())
-        except UnicodeDecodeError:
-            print(f"Non-UTF-8 encoded input: {line}", file=sys.stderr)
-            continue
+        log_lines.append(line.strip())
 
     if not log_lines:
         print("No input provided", file=sys.stderr)

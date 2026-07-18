@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Invalid log level: DEBUG: in line: DEBUG: This is a debug message\nInvalid log level: INFO: in line: INFO: This is an info message\nInvalid log level: WARNING: in line: WARNING: This is a warning message\nInvalid log level: ERROR: in line: ERROR: This is an error message\nInvalid log level: CRITICAL: in line: CRITICAL: This is a critical message\nTraceback (most recent call last):\n  File \"/tmp/agentic-acceptance-yzd55vzj/acceptance_tests.py\", line 95, in <module>\n    test_summarize()\n  File \"/tmp/agentic-acceptance-yzd55vzj/acceptance_tests.py\", line 30, in test_summarize\n    assert json.dumps(actual_output) == json.dumps(expected_output)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Invalid log level: DEBUG: in line: DEBUG: This is a debug message\nInvalid log level: INFO: in line: INFO: This is an info message\nInvalid log level: WARNING: in line: WARNING: This is a warning message\nInvalid log level: ERROR: in line: ERROR: This is an error message\nInvalid log level: CRITICAL: in line: CRITICAL: This is a critical message\nTraceback (most recent call last):\n  File \"/tmp/agentic-acceptance-yzd55vzj/acceptance_tests.py\", line 95, in <module>\n    test_summarize()\n  File \"/tmp/agentic-acceptance-yzd55vzj/acceptance_tests.py\", line 30, in test_summarize\n    assert json.dumps(actual_output) == json.dumps(expected_output)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true
+}
