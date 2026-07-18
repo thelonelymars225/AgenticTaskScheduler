@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Invalid acceptance harness: text JSON must not be written to a binary NamedTemporaryFile."
+  ],
+  "stdout": "",
+  "stderr": "",
+  "executed": true
+}

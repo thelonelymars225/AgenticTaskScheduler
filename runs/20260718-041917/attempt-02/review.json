@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle empty Unicode text correctly.",
+    "The `analyze_text` function returns a dictionary with keys that are not consistent with the problem statement (e.g., 'line_count' instead of 'lines').",
+    "The `word_frequencies` function uses the `Counter` class from the `collections` module, but it does not handle punctuation attached to words correctly.",
+    "The program does not provide a command-line interface that reads a UTF-8 file and emits JSON as specified in the problem statement.",
+    "The program does not ignore optional improvements as specified in the problem statement.",
+    "The program does not verify event bindings, scheduled update loop, rendering, collision/state changes, restart behavior, and AGENT_SMOKE_TEST=1 exit path when applicable for GUI or interactive code."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The program does not handle empty Unicode text correctly.\",\n    \"The `analyze_text` function returns a dictionary with keys that are not consistent with the problem statement (e.g., 'line_count' instead of 'lines').\",\n    \"The `word_frequencies` function uses the `Counter` class from the `collections` module, but it does not handle punctuation attached to words correctly.\",\n    \"The program does not provide a command-line interface that reads a UTF-8 file and emits JSON as specified in the problem statement.\",\n    \"The program does not ignore optional improvements as specified in the problem statement.\",\n    \"The program does not verify event bindings, scheduled update loop, rendering, collision/state changes, restart behavior, and AGENT_SMOKE_TEST=1 exit path when applicable for GUI or interactive code.\"\n] }"
+}

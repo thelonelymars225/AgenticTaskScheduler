@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle empty Unicode text correctly.",
+    "The `analyze_text` function returns a dictionary with the wrong keys for word frequencies.",
+    "The `word_frequencies` function does not remove punctuation from words correctly.",
+    "The command-line interface does not check if the file path is valid before trying to open it.",
+    "The program does not handle non-UTF-8 files correctly.",
+    "The program does not provide a way to specify the encoding of the input file."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The program does not handle empty Unicode text correctly.\",\n    \"The `analyze_text` function returns a dictionary with the wrong keys for word frequencies.\",\n    \"The `word_frequencies` function does not remove punctuation from words correctly.\",\n    \"The command-line interface does not check if the file path is valid before trying to open it.\",\n    \"The program does not handle non-UTF-8 files correctly.\",\n    \"The program does not provide a way to specify the encoding of the input file.\"\n] }"
+}

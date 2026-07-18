@@ -13,8 +13,6 @@ def count_characters(text):
 
 def word_frequencies(text):
     words = text.lower().split()
-    # Remove punctuation from words
-    words = [word.strip('.,!?;:()[]{}"\'') for word in words]
     return dict(Counter(words))
 
 def analyze_text(text):
