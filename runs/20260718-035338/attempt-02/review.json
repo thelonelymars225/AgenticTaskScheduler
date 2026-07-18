@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The function does not handle empty Unicode text correctly.",
+    "The function does not count lines correctly for files with a single newline character at the end."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  {\n    \"class\": \"analyze_text\",\n    \"method\": \"word_frequencies\",\n    \"issue\": \"The function does not handle empty Unicode text correctly.\"\n  },\n  {\n    \"class\": \"analyze_text\",\n    \"method\": \"count_lines\",\n    \"issue\": \"The function does not count lines correctly for files with a single newline character at the end.\"\n  }\n] }"
+}

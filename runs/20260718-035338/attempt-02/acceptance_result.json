@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-83s8jl8d/acceptance_tests.py\", line 9, in <module>\n    spec = importlib.util.spec_from_file_location(\"candidate\", os.environ['CANDIDATE_PATH'])\n                                                               ^^\nNameError: name 'os' is not defined. Did you forget to import 'os'?"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-83s8jl8d/acceptance_tests.py\", line 9, in <module>\n    spec = importlib.util.spec_from_file_location(\"candidate\", os.environ['CANDIDATE_PATH'])\n                                                               ^^\nNameError: name 'os' is not defined. Did you forget to import 'os'?\n",
+  "executed": true
+}
