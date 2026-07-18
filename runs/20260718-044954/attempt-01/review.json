@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "Temporary files are not rewound after reading, causing subsequent reads to fail.",
+    "Temporary files are not rewound after reading, causing subsequent reads to fail."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  {\"cause\": \"Temporary files are not rewound after reading, causing subsequent reads to fail.\", \n   \"location\": \"main() -> with open(sys.argv[1], 'r') as f1\"},\n  {\"cause\": \"Temporary files are not rewound after reading, causing subsequent reads to fail.\", \n   \"location\": \"main() -> with open(sys.argv[2], 'r') as f2\"}\n] }"
+}

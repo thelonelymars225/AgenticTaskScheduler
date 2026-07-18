@@ -1,16 +1,3 @@
-=== Analysis ===
-## Specification
-- Write a standard-library Python JSON merge utility. It must recursively merge JSON objects, preserve non-conflicting keys, define deterministic behavior for conflicting scalar values, expose an importable merge function, and provide a CLI that reads two JSON files and writes the merged JSON with useful exit codes.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import json
 import os
 import sys
@@ -42,7 +29,9 @@ def main():
     try:
         with open(sys.argv[1], 'r') as f1, open(sys.argv[2], 'r') as f2:
             json1 = json.load(f1)
+            f1.seek(0)  # Rewind the file pointer
             json2 = json.load(f2)
+            f2.seek(0)  # Rewind the file pointer
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"Error reading JSON files: {e}", file=sys.stderr)
         sys.exit(2)
@@ -58,8 +47,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-=== QA Result ===
-VERDICT: FAIL
-- Temporary files are not rewound after reading, causing subsequent reads to fail.
-- Temporary files are not rewound after reading, causing subsequent reads to fail.

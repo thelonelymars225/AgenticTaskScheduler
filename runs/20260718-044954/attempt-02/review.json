@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "rewinding file pointers after reading JSON files",
+    "rewinding file pointers before json.load"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding file pointers after reading JSON files\" },\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding file pointers before json.load\" }\n] }"
+}
