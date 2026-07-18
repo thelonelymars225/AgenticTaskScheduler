@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-nyj7fbzk/acceptance_tests.py\", line 11, in <module>\n    spec.loader.exec_module(todo_module)\n  File \"<frozen importlib._bootstrap_external>\", line 995, in exec_module\n  File \"<frozen importlib._bootstrap_external>\", line 1132, in get_code\n  File \"<frozen importlib._bootstrap_external>\", line 1190, in get_data\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/agentic-acceptance-nyj7fbzk/path/to/todo.py'"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-nyj7fbzk/acceptance_tests.py\", line 11, in <module>\n    spec.loader.exec_module(todo_module)\n  File \"<frozen importlib._bootstrap_external>\", line 995, in exec_module\n  File \"<frozen importlib._bootstrap_external>\", line 1132, in get_code\n  File \"<frozen importlib._bootstrap_external>\", line 1190, in get_data\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/agentic-acceptance-nyj7fbzk/path/to/todo.py'\n",
+  "executed": true
+}

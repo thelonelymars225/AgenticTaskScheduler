@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where the todo list is empty when trying to complete or remove a task.",
+    "The program does not handle the case where the user tries to add a task with an empty string as its name.",
+    "The program does not handle the case where the user tries to complete or remove a non-existent task.",
+    "The program does not handle the case where the todo list file cannot be written to due to permissions issues.",
+    "The program does not handle the case where the user tries to add a task with a very long name that exceeds the maximum allowed length.",
+    "The program does not handle the case where the user tries to complete or remove a task without specifying an index."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"issue\": \"The program does not handle the case where the todo list is empty when trying to complete or remove a task.\", \n     \"root_cause\": [\"In the `complete_task` and `remove_task` functions, the code assumes that the index is valid even if the todo list is empty.\"]},\n    {\"issue\": \"The program does not handle the case where the user tries to add a task with an empty string as its name.\", \n     \"root_cause\": [\"In the `add_task` function, the code does not check for empty strings when adding tasks.\"]},\n    {\"issue\": \"The program does not handle the case where the user tries to complete or remove a non-existent task.\", \n     \"root_cause\": [\"In the `complete_task` and `remove_task` functions, the code assumes that the index is valid even if it's out of range.\"]},\n    {\"issue\": \"The program does not handle the case where the todo list file cannot be written to due to permissions issues.\", \n     \"root_cause\": [\"In the `save_todos` function, the code does not check for permission errors when writing to the todo list file.\"]},\n    {\"issue\": \"The program does not handle the case where the user tries to add a task with a very long name that exceeds the maximum allowed length.\", \n     \"root_cause\": [\"In the `add_task` function, the code does not check for tasks with names longer than the maximum allowed length.\"]},\n    {\"issue\": \"The program does not handle the case where the user tries to complete or remove a task without specifying an index.\", \n     \"root_cause\": [\"In the `complete_task` and `remove_task` functions, the code assumes that an index is always provided.\"]}\n] }"
+}

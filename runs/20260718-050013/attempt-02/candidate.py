@@ -1,16 +1,3 @@
-=== Analysis ===
-## Specification
-- Write a standard-library Python command-line todo application. It must persist tasks as JSON, support add, list, complete, and remove commands, validate malformed stored data, return useful exit codes, and expose the storage operations as importable functions for tests.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import json
 import sys
@@ -100,27 +87,16 @@ if __name__ == '__main__':
         list_tasks()
     elif command == 'complete' and len(sys.argv) > 2:
         try:
-            index = int(sys.argv[2])
-            if index < 1:
-                print("Index must be greater than 0", file=sys.stderr)
-                sys.exit(1)
-            complete_task(index)
+            complete_task(int(sys.argv[2]))
         except ValueError:
             print("Index must be an integer", file=sys.stderr)
             sys.exit(1)
     elif command == 'remove' and len(sys.argv) > 2:
         try:
-            index = int(sys.argv[2])
-            if index < 1:
-                print("Index must be greater than 0", file=sys.stderr)
-                sys.exit(1)
-            remove_task(index)
+            remove_task(int(sys.argv[2]))
         except ValueError:
             print("Index must be an integer", file=sys.stderr)
             sys.exit(1)
     else:
         print(f"Unknown command: {command}", file=sys.stderr)
         sys.exit(1)
-
-=== QA Result ===
-VERDICT: PASS
