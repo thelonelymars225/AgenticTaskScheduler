@@ -24,3 +24,8 @@ ENABLE_PLANNING = True
 ENABLE_LLM_REVIEW = True
 ENABLE_ACCEPTANCE_TESTS = True
 ESCALATION_MODEL = ""
+# DeepSeek is an optional, bounded escalation role.  It is never used for
+# planning, default generation, acceptance generation, or trusted QA.
+DEEPSEEK_ESCALATION_ENABLED = True
+DEEPSEEK_ESCALATION_MODEL = "deepseek-chat"
+DEEPSEEK_MAX_CALLS_PER_RUN = 1

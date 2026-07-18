@@ -29,7 +29,12 @@ from inference.pipeline_config import (
     PRIMARY_MODEL,
     QA_MODEL,
     STARTUP_GRACE_SECONDS,
+    DEEPSEEK_ESCALATION_ENABLED,
+    DEEPSEEK_ESCALATION_MODEL,
+    DEEPSEEK_MAX_CALLS_PER_RUN,
 )
+from inference.deepseek_api import available as deepseek_available
+from inference.deepseek_api import repair_code as deepseek_repair_code
 from inference.trusted_benchmarks import get_trusted_suite
 from timer import Timer
 
@@ -725,6 +730,7 @@ def project_management_with_attempts(
     repair_events: list[RepairEvent] = []
     review = ReviewResult(False, ["Pipeline did not complete."])
     repair_status_for_attempt = "NOT_ATTEMPTED"
+    deepseek_calls = 0
     for attempt in range(max_retries + 1):
         with Timer(f"pipeline.validate.{attempt + 1}"):
             validation = validate_code(code, task)
@@ -791,9 +797,35 @@ def project_management_with_attempts(
             trigger = [item for item in trigger if item][:8]
             before_sha256 = _sha256(code)
             repair_started = time.perf_counter()
+            repair_model = CODER_MODEL
             try:
                 with Timer(f"pipeline.repair.{len(repair_events) + 1}"):
                     repaired = repair_code(code, task, trigger)
+                    # Escalate only after a valid executable measurement has
+                    # failed.  This preserves cheap local generation while
+                    # giving difficult candidates one stronger repair pass.
+                    if (
+                        DEEPSEEK_ESCALATION_ENABLED
+                        and trusted_suite is not None
+                        and acceptance.measurement_status == "VALID"
+                        and deepseek_available()
+                        and deepseek_calls < DEEPSEEK_MAX_CALLS_PER_RUN
+                    ):
+                        def record_deepseek_call(metadata: dict[str, Any]) -> None:
+                            metadata["call_number"] = len(_MODEL_CALL_EVENTS) + 1
+                            _MODEL_CALL_EVENTS.append(metadata)
+
+                        escalated = deepseek_repair_code(
+                            code,
+                            task.as_markdown(),
+                            trigger,
+                            model=DEEPSEEK_ESCALATION_MODEL,
+                            record_call=record_deepseek_call,
+                        )
+                        if escalated:
+                            repaired = escalated
+                            deepseek_calls += 1
+                            repair_model = f"{CODER_MODEL} -> deepseek-api:{DEEPSEEK_ESCALATION_MODEL}"
             except Exception as exc:
                 duration = time.perf_counter() - repair_started
                 repair_events.append(RepairEvent(
@@ -803,7 +835,7 @@ def project_management_with_attempts(
                     before_sha256,
                     before_sha256,
                     False,
-                    CODER_MODEL,
+                    repair_model,
                     "FAILED",
                     duration,
                 ))
@@ -819,7 +851,7 @@ def project_management_with_attempts(
                 before_sha256,
                 _sha256(repaired),
                 changed,
-                CODER_MODEL,
+                repair_model,
                 status,
                 duration,
             ))
