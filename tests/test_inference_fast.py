@@ -41,6 +41,7 @@ from inference.inferenceFast import (  # noqa: E402
     _parse_plan_payload,
     _parse_review_payload,
     _strip_code_blocks,
+    _normalize_acceptance_harness,
     _fast_task_plan,
     analyze_task,
     PipelineResult,
@@ -177,6 +178,33 @@ class PipelineHelperTests(unittest.TestCase):
         )
         self.assertTrue(result.passed)
         self.assertTrue(result.executed)
+        self.assertEqual(result.test_count, 1)
+        self.assertEqual(result.exit_code, 0)
+
+    def test_acceptance_runner_invokes_collected_test_functions(self) -> None:
+        result = run_acceptance_tests(
+            "value = 1\n",
+            "import importlib.util, os\n"
+            "spec = importlib.util.spec_from_file_location('candidate', os.environ['CANDIDATE_PATH'])\n"
+            "module = importlib.util.module_from_spec(spec)\n"
+            "spec.loader.exec_module(module)\n"
+            "def test_candidate_value():\n"
+            "    assert module.value == 2\n",
+        )
+        self.assertFalse(result.passed)
+        self.assertEqual(result.test_count, 1)
+        self.assertNotEqual(result.exit_code, 0)
+
+    def test_json_temporary_handles_are_rewound_before_each_load(self) -> None:
+        source = (
+            "import json, tempfile\n"
+            "with tempfile.NamedTemporaryFile(mode='w+', encoding='utf-8') as handle:\n"
+            "    json.dump({}, handle)\n"
+            "    value = json.load(handle)\n"
+        )
+        normalized = _normalize_acceptance_harness(source)
+        self.assertIn("handle.flush()\n    handle.seek(0)\n    value = json.load(handle)", normalized)
+        self.assertNotIn("rewound before json.load", " ".join(_acceptance_harness_violations(normalized)))
 
     def test_acceptance_test_failure_is_reported(self) -> None:
         result = run_acceptance_tests(

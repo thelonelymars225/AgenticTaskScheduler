@@ -9,19 +9,50 @@ from pathlib import Path
 
 from inference.benchmarks import select_benchmark
 from inference.inferenceFast import PipelineResult, _strip_code_blocks, project_management_with_attempts
+from inference.pipeline_config import CODER_MODEL
 from timer import Timer
+
+
+def _attempt_classification(result: PipelineResult) -> str:
+    """Classify the final attempt from executable evidence, failing closed."""
+    attempt = result.attempts[-1]
+    acceptance = attempt.acceptance_result
+    if (
+        attempt.validation.passed
+        and acceptance.executed
+        and acceptance.test_count > 0
+        and acceptance.exit_code == 0
+        and acceptance.passed
+        and attempt.review.passed
+    ):
+        return "PASS"
+    if any("unchanged candidate" in issue.lower() for issue in result.review.issues):
+        return "UNCHANGED_REPAIR"
+    if any(failure.startswith("Invalid acceptance harness:") for failure in acceptance.failures):
+        return "HARNESS_FAIL"
+    if not acceptance.executed:
+        return "NO_TESTS_COLLECTED" if acceptance.test_count == 0 else "NOT_EXECUTED"
+    return "CANDIDATE_FAIL"
+
 
 def _write_attempt_artifacts(output_dir: Path, result: PipelineResult, benchmark_id: str | None = None) -> Path:
     """Persist every generated candidate and its evidence for later analysis."""
-    run_dir = output_dir / "runs" / datetime.now().strftime("%Y%m%d-%H%M%S")
+    started_at = datetime.now().astimezone()
+    run_dir = output_dir / "runs" / started_at.strftime("%Y%m%d-%H%M%S")
     run_dir.mkdir(parents=True, exist_ok=True)
     manifest: dict[str, object] = {
         "task": result.task.as_markdown(),
         "benchmark_id": benchmark_id,
+        "run_timestamp": started_at.isoformat(),
+        "attempt_count": len(result.attempts),
+        "model_used": CODER_MODEL,
+        "selected_candidate": result.attempts[-1].number,
+        "repair_count": max(0, len(result.attempts) - 1),
+        "final_classification": _attempt_classification(result),
         "final_verdict": result.review.as_text(),
         "attempts": [],
     }
-    for attempt in result.attempts:
+    for index, attempt in enumerate(result.attempts):
         attempt_dir = run_dir / f"attempt-{attempt.number:02d}"
         attempt_dir.mkdir()
         (attempt_dir / "candidate.py").write_text(_strip_code_blocks(attempt.code), encoding="utf-8")
@@ -38,6 +69,8 @@ def _write_attempt_artifacts(output_dir: Path, result: PipelineResult, benchmark
             "stdout": attempt.acceptance_result.stdout,
             "stderr": attempt.acceptance_result.stderr,
             "executed": attempt.acceptance_result.executed,
+            "test_count": attempt.acceptance_result.test_count,
+            "exit_code": attempt.acceptance_result.exit_code,
         }
         review = {
             "passed": attempt.review.passed,
@@ -53,7 +86,10 @@ def _write_attempt_artifacts(output_dir: Path, result: PipelineResult, benchmark
             "validation_passed": attempt.validation.passed,
             "acceptance_passed": attempt.acceptance_result.passed,
             "acceptance_executed": attempt.acceptance_result.executed,
+            "collected_test_count": attempt.acceptance_result.test_count,
+            "acceptance_exit_code": attempt.acceptance_result.exit_code,
             "review_passed": attempt.review.passed,
+            "repair_changed_code": index == 0 or attempt.code.strip() != result.attempts[index - 1].code.strip(),
         })
     (run_dir / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return run_dir

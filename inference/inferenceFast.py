@@ -1,6 +1,7 @@
 """Fast, reliability-first local code-generation pipeline using Ollama."""
 from __future__ import annotations
 
+import ast
 import json
 import os
 import re
@@ -84,6 +85,8 @@ class AcceptanceTestResult:
     stdout: str = ""
     stderr: str = ""
     executed: bool = False
+    test_count: int = 0
+    exit_code: int | None = None
 
 
 @dataclass
@@ -364,8 +367,9 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
                 "test pure logic with fakes or mocks only. If no headless interface can be exercised, raise one clear "
                 "AssertionError without opening a window. If testing a CLI, create its temporary input and invoke it "
                 "with explicit arguments (or call its public functions); never rely on the test runner's empty argv. "
-                "When writing JSON or text to temporary files, use pathlib.Path or tempfile.NamedTemporaryFile(mode='w', "
-                "encoding='utf-8'); use mode='w+' when the same handle must later be read; do not pass text to a binary temporary file. "
+                "When writing JSON test data, prefer a temporary pathlib.Path: write with Path.write_text(json.dumps(...), "
+                "encoding='utf-8') and read it through the candidate using explicit paths. If a temporary handle is unavoidable, "
+                "use mode='w+', encoding='utf-8', then flush() and seek(0) before every read. Do not pass text to a binary temporary file. "
                 "For subprocess stdin, pass an open file handle or input text, never a filename string. If using sys.argv or sys.executable, "
                 "include the corresponding import. "
                 "Exercise at least one valid case and one invalid/edge case. Avoid network calls, sleeps, and third-party packages. Exit non-zero "
@@ -388,8 +392,8 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
             "Your previous test script violated the harness contract. Regenerate it now. "
             "It must import CANDIDATE_PATH with spec_from_file_location, never instantiate tkinter.Tk or tkinter.Canvas, "
             "must load the candidate before defining test functions and must not copy its implementation, "
-            "must use text-mode temporary files (NamedTemporaryFile(mode='w', encoding='utf-8') or pathlib.Path), "
-            "use mode='w+' when reading back through the same handle, pass a file handle or input text to subprocess stdin, "
+            "must prefer pathlib.Path for JSON fixtures or use text-mode NamedTemporaryFile(mode='w+', encoding='utf-8'), "
+            "flush and seek(0) before every same-handle read, pass a file handle or input text to subprocess stdin, "
             "must import every module it references, and must exercise a valid and invalid case without relying on empty argv. "
             "Return only the corrected script."
         )
@@ -408,16 +412,67 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
             tests,
         )
     tests = re.sub(
-        r"(?m)^(\s*)(\w+)\.flush\(\)\s*\n(\s*(?:\w+\s*=\s*)?json\.load\s*\()",
-        r"\1\2.flush()\n\1\2.seek(0)\n\3",
-        tests,
-    )
-    tests = re.sub(
         r"(?m)^(\s*os\.environ\[[^\n]+\]\s*=\s*)Path\((.*)\)\s*$",
         r"\1str(Path(\2))",
         tests,
     )
-    return tests
+    return _normalize_acceptance_harness(tests)
+
+
+def _normalize_acceptance_harness(tests: str) -> str:
+    """Apply safe mechanical fixes before validating or executing a harness."""
+    lines = tests.splitlines()
+    temp_vars = re.findall(r"NamedTemporaryFile\([^\n]*\)\s+as\s+(\w+)", tests)
+    normalized: list[str] = []
+    for line in lines:
+        matched_var = next(
+            (variable for variable in temp_vars if re.search(rf"json\.load\s*\(\s*{variable}\s*\)", line)),
+            None,
+        )
+        if matched_var:
+            indent = line[: len(line) - len(line.lstrip())]
+            recent = normalized[-3:]
+            if not any(re.search(rf"\b{matched_var}\.seek\s*\(\s*0\s*\)", item) for item in recent):
+                normalized.extend([f"{indent}{matched_var}.flush()", f"{indent}{matched_var}.seek(0)"])
+        normalized.append(line)
+    return "\n".join(normalized) + ("\n" if tests.endswith("\n") else "")
+
+
+def _acceptance_test_inventory(tests: str) -> tuple[list[str], list[str], int]:
+    """Return runnable plain functions, unittest classes, and check count."""
+    try:
+        tree = ast.parse(tests)
+    except SyntaxError:
+        return [], [], 0
+    test_names = [
+        node.name for node in tree.body
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_")
+    ]
+    test_classes: list[str] = []
+    class_method_count = 0
+    for node in tree.body:
+        if not isinstance(node, ast.ClassDef):
+            continue
+        count = sum(
+            isinstance(item, (ast.FunctionDef, ast.AsyncFunctionDef)) and item.name.startswith("test_")
+            for item in node.body
+        )
+        if count:
+            test_classes.append(node.name)
+            class_method_count += count
+    if test_names or test_classes:
+        return test_names, test_classes, len(test_names) + class_method_count
+    top_level_checks = sum(
+        isinstance(node, ast.Assert)
+        or (
+            isinstance(node, ast.Raise)
+            and isinstance(node.exc, ast.Call)
+            and isinstance(node.exc.func, ast.Name)
+            and node.exc.func.id == "AssertionError"
+        )
+        for node in tree.body
+    )
+    return [], [], top_level_checks
 
 
 def _acceptance_harness_violations(tests: str) -> list[str]:
@@ -435,15 +490,16 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
         violations.append("text JSON must not be written to a binary NamedTemporaryFile")
     if re.search(r"NamedTemporaryFile\([^)]*mode\s*=\s*['\"]w['\"]", tests) and re.search(r"json\.load\s*\(\s*\w+\s*\)", tests):
         violations.append("a write-only temporary file must not be read; use mode='w+' or reopen it")
+    lines = tests.splitlines()
     temp_vars = re.findall(r"NamedTemporaryFile\([^\n]*\)\s+as\s+(\w+)", tests)
     for variable in temp_vars:
-        tests = re.sub(
-            rf"(?m)^(\s*)(json\.load\s*\(\s*{variable}\s*\))",
-            rf"\1{variable}.seek(0)\n\1\2",
-            tests,
-        )
-        if re.search(rf"json\.load\s*\(\s*{variable}\s*\)", tests) and not re.search(rf"{variable}\.seek\s*\(", tests):
-            violations.append(f"temporary file {variable} must be rewound before json.load")
+        for index, line in enumerate(lines):
+            if not re.search(rf"json\.load\s*\(\s*{variable}\s*\)", line):
+                continue
+            preceding = lines[max(0, index - 3):index]
+            if not any(re.search(rf"\b{variable}\.seek\s*\(\s*0\s*\)", item) for item in preceding):
+                violations.append(f"temporary file {variable} must be rewound before json.load")
+                break
     if re.search(r"subprocess\.run\([^\n]*stdin\s*=\s*\w+\.name", tests):
         violations.append("subprocess stdin must be a file handle or input text, not a filename string")
     if re.search(r"\bsys\.", tests) and not re.search(r"^\s*import\s+sys\b", tests, re.MULTILINE):
@@ -455,40 +511,65 @@ def run_acceptance_tests(code: str, tests: str,
                          timeout: float = ACCEPTANCE_TEST_TIMEOUT_SECONDS) -> AcceptanceTestResult:
     """Run generated acceptance tests in an isolated temporary directory."""
     if not tests.strip():
-        return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."], executed=True)
+        return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."])
+    tests = _normalize_acceptance_harness(tests)
     violations = _acceptance_harness_violations(tests)
     if violations:
         return AcceptanceTestResult(
             False,
             ["Invalid acceptance harness: " + "; ".join(violations) + "."],
-            executed=True,
         )
+    test_names, test_classes, test_count = _acceptance_test_inventory(tests)
+    if test_count == 0:
+        return AcceptanceTestResult(False, ["No executable acceptance tests were collected."])
     with tempfile.TemporaryDirectory(prefix="agentic-acceptance-") as directory:
         root = Path(directory)
         candidate = root / "candidate.py"
         test_file = root / "acceptance_tests.py"
+        runner = root / "acceptance_runner.py"
         candidate.write_text(code, encoding="utf-8")
         test_file.write_text(tests, encoding="utf-8")
+        runner.write_text(
+            "import pathlib\nimport unittest\n"
+            f"script = pathlib.Path({str(test_file)!r})\n"
+            "namespace = {'__name__': 'acceptance_harness', '__file__': str(script)}\n"
+            "exec(compile(script.read_text(encoding='utf-8'), str(script), 'exec'), namespace)\n"
+            f"for name in {test_names!r}:\n"
+            "    namespace[name]()\n"
+            f"suite = unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromTestCase(namespace[name]) for name in {test_classes!r})\n"
+            "if suite.countTestCases() and not unittest.TextTestRunner(verbosity=1).run(suite).wasSuccessful():\n"
+            "    raise SystemExit(1)\n",
+            encoding="utf-8",
+        )
         env = os.environ.copy()
         env["CANDIDATE_PATH"] = str(candidate)
         try:
             result = subprocess.run(
-                [sys.executable, str(test_file)], cwd=root, env=env,
+                [sys.executable, str(runner)], cwd=root, env=env,
                 capture_output=True, text=True, timeout=timeout,
             )
         except subprocess.TimeoutExpired as exc:
             return AcceptanceTestResult(
                 False, [f"Acceptance tests timed out after {timeout:g} seconds."],
-                exc.stdout or "", exc.stderr or "", True,
+                exc.stdout or "", exc.stderr or "", True, test_count, None,
             )
         except OSError as exc:
-            return AcceptanceTestResult(False, [f"Could not run acceptance tests: {exc}"], executed=True)
+            return AcceptanceTestResult(
+                False, [f"Could not run acceptance tests: {exc}"],
+                executed=False, test_count=test_count,
+            )
     stdout = result.stdout[-4000:]
     stderr = result.stderr[-4000:]
     if result.returncode != 0:
         detail = stderr.strip() or stdout.strip() or f"Test process exited with code {result.returncode}."
-        return AcceptanceTestResult(False, [f"Acceptance failure: {detail}"], stdout, stderr, True)
-    return AcceptanceTestResult(True, stdout=stdout, stderr=stderr, executed=True)
+        return AcceptanceTestResult(
+            False, [f"Acceptance failure: {detail}"], stdout, stderr,
+            True, test_count, result.returncode,
+        )
+    return AcceptanceTestResult(
+        True, stdout=stdout, stderr=stderr, executed=True,
+        test_count=test_count, exit_code=result.returncode,
+    )
 
 
 def _review_response_is_invalid(text: str, review: ReviewResult) -> bool:
