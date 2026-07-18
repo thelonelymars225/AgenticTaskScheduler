@@ -20,6 +20,7 @@ import ollama
 from inference.pipeline_config import (
     ACCEPTANCE_TEST_TIMEOUT_SECONDS,
     CODER_MODEL,
+    LOCAL_CODER_FALLBACK_MODEL,
     ENABLE_ACCEPTANCE_TESTS,
     ENABLE_LLM_REVIEW,
     ENABLE_PLANNING,
@@ -34,6 +35,7 @@ from inference.pipeline_config import (
     DEEPSEEK_MAX_CALLS_PER_RUN,
 )
 from inference.deepseek_api import available as deepseek_available
+from inference.deepseek_api import generate_code as deepseek_generate_code
 from inference.deepseek_api import repair_code as deepseek_repair_code
 from inference.trusted_benchmarks import get_trusted_suite
 from timer import Timer
@@ -322,9 +324,7 @@ def write_code(prompt: str, task: TaskPlan, model: str = CODER_MODEL,
     failure_text = ""
     if failures:
         failure_text = "\nPrevious failures:\n" + "\n".join(f"- {x[:800]}" for x in failures[-8:])
-    text = _chat(
-        model,
-        [
+    messages = [
             {"role": "system", "content": (
                 "Return only complete executable Python source. Build the smallest reliable solution. "
                 "The program must compile and start. When AGENT_SMOKE_TEST=1, perform only a safe startup/liveness "
@@ -335,18 +335,29 @@ def write_code(prompt: str, task: TaskPlan, model: str = CODER_MODEL,
                 f"Keep source below {task.char_limit} characters."
             )},
             {"role": "user", "content": f"Request:\n{prompt}\n\n{task.as_markdown()}{failure_text}"},
-        ],
-        num_predict=_token_budget(task),
-        temperature=0.1,
-    )
+        ]
+    if model.startswith("deepseek-api:") and deepseek_available():
+        generated = deepseek_generate_code(
+            prompt,
+            task.as_markdown() + failure_text,
+            model=model.split(":", 1)[1],
+            record_call=_record_external_call,
+        )
+        if generated:
+            return generated
+        model = LOCAL_CODER_FALLBACK_MODEL
+    text = _chat(model, messages, num_predict=_token_budget(task), temperature=0.1)
     return _strip_code_blocks(text)
+
+
+def _record_external_call(metadata: dict[str, Any]) -> None:
+    metadata["call_number"] = len(_MODEL_CALL_EVENTS) + 1
+    _MODEL_CALL_EVENTS.append(metadata)
 
 
 def repair_code(code: str, task: TaskPlan, failures: list[str]) -> str:
     failure_text = "\n".join(f"- {x[:1000]}" for x in failures[-8:])
-    text = _chat(
-        CODER_MODEL,
-        [
+    messages = [
             {"role": "system", "content": (
                 "Return only the complete corrected Python source. Make the smallest changes needed to fix every "
                 "reported failure as one coherent fix; do not address only the first bullet or add cosmetic no-op "
@@ -356,10 +367,18 @@ def repair_code(code: str, task: TaskPlan, failures: list[str]) -> str:
             {"role": "user", "content": (
                 f"{task.as_markdown()}\n\nFailures:\n{failure_text}\n\nCurrent code:\n```python\n{code}\n```"
             )},
-        ],
-        num_predict=_token_budget(task),
-        temperature=0.05,
-    )
+        ]
+    if CODER_MODEL.startswith("deepseek-api:") and deepseek_available():
+        repaired = deepseek_repair_code(
+            code,
+            task.as_markdown(),
+            failures,
+            model=CODER_MODEL.split(":", 1)[1],
+            record_call=_record_external_call,
+        )
+        if repaired:
+            return repaired
+    text = _chat(LOCAL_CODER_FALLBACK_MODEL, messages, num_predict=_token_budget(task), temperature=0.05)
     return _strip_code_blocks(text)
 
 

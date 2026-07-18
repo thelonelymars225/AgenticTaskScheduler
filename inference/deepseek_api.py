@@ -1,8 +1,8 @@
-"""Optional DeepSeek API escalation for hard, already-measured candidates.
+"""Bounded DeepSeek API roles for candidate generation and repair.
 
-This module is deliberately not part of planning, default generation, QA, or
-acceptance.  It is a bounded last-mile repair role.  A missing key or an API
-failure always falls back to the local pipeline.
+The API is used for coding only. Planning, review, and acceptance remain
+local/deterministic. A missing key or API failure falls back to the local
+coding model.
 """
 
 from __future__ import annotations
@@ -99,6 +99,47 @@ def repair_code(
         content = response.choices[0].message.content if response.choices else ""
         repaired = _strip_code_blocks(content)
         return repaired or None
+    except Exception:
+        if record_call is not None:
+            record_call({"model": f"deepseek-api:{model}", "error": "request_failed"})
+        return None
+
+
+def generate_code(
+    prompt: str,
+    task_markdown: str,
+    *,
+    model: str = "deepseek-chat",
+    record_call: Callable[[dict[str, Any]], None] | None = None,
+) -> str | None:
+    """Generate a complete candidate through the DeepSeek coding API."""
+    client = _client()
+    if client is None:
+        return None
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Return only complete executable Python source. Implement the supplied contract exactly. "
+                "Build the smallest reliable solution, handle explicit edge cases, and keep the source below the "
+                "requested limit. When AGENT_SMOKE_TEST=1, exit 0 after a safe liveness probe. Do not put behavioral "
+                "assertions or hand-calculated expected outputs in the smoke path."
+            ),
+        },
+        {"role": "user", "content": f"Request:\n{prompt}\n\n{task_markdown}\n\nReturn the complete Python file."},
+    ]
+    try:
+        response = client.chat.completions.create(model=model, messages=messages, temperature=0.1)
+        usage = getattr(response, "usage", None)
+        if record_call is not None:
+            record_call({
+                "model": f"deepseek-api:{model}",
+                "prompt_tokens": getattr(usage, "prompt_tokens", None),
+                "output_tokens": getattr(usage, "completion_tokens", None),
+            })
+        content = response.choices[0].message.content if response.choices else ""
+        generated = _strip_code_blocks(content)
+        return generated or None
     except Exception:
         if record_call is not None:
             record_call({"model": f"deepseek-api:{model}", "error": "request_failed"})

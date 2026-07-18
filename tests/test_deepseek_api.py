@@ -33,3 +33,16 @@ class DeepSeekEscalationTests(unittest.TestCase):
         self.assertEqual(events[0]["prompt_tokens"], 10)
         self.assertEqual(events[0]["output_tokens"], 4)
 
+    def test_generate_extracts_source_and_records_usage(self) -> None:
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content="```python\nprint('ok')\n```"))],
+            usage=SimpleNamespace(prompt_tokens=12, completion_tokens=6),
+        )
+        client = SimpleNamespace(
+            chat=SimpleNamespace(completions=SimpleNamespace(create=lambda **kwargs: response))
+        )
+        events: list[dict[str, object]] = []
+        with patch.object(deepseek_api, "_CLIENT", client):
+            generated = deepseek_api.generate_code("say ok", "contract", record_call=events.append)
+        self.assertEqual(generated, "print('ok')")
+        self.assertEqual(events[0]["model"], "deepseek-api:deepseek-chat")

@@ -55,10 +55,13 @@ from inference.inferenceFast import (  # noqa: E402
     validate_syntax,
 )
 from inference.pipeline_config import (  # noqa: E402
+    CODER_MODEL,
     ENABLE_ACCEPTANCE_TESTS,
     ENABLE_LLM_REVIEW,
     ENABLE_PLANNING,
     MAX_REPAIRS,
+    PLANNER_MODEL,
+    QA_MODEL,
 )
 
 
@@ -93,6 +96,11 @@ class PipelineHelperTests(unittest.TestCase):
         self.assertTrue(ENABLE_LLM_REVIEW)
         self.assertEqual(MAX_REPAIRS, 2)
         self.assertTrue(ENABLE_ACCEPTANCE_TESTS)
+
+    def test_api_profile_routes_coding_and_local_deepseek_routes_reasoning(self) -> None:
+        self.assertEqual(CODER_MODEL, "deepseek-api:deepseek-chat")
+        self.assertEqual(PLANNER_MODEL, "deepseek-r1:8b")
+        self.assertEqual(QA_MODEL, "deepseek-r1:8b")
 
     def test_plan_parser_uses_structured_values(self) -> None:
         plan = _parse_plan_payload(
