@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The `analyze_text` function does not handle the case where the input text is empty. It should return a dictionary with default values for lines, words, characters, and word frequencies.",
+    "The `word_frequencies` function uses the `Counter` class from the `collections` module to count the frequency of each word. However, it does not handle punctuation attached to words. For example, if the input text is 'hello world!', the function will treat 'world!' as a single word. It should remove punctuation before counting word frequencies.",
+    "The command-line interface does not handle non-existent files or permission errors when trying to open the file specified by the user. It should catch these exceptions and print an error message with the relevant details."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `analyze_text` function does not handle the case where the input text is empty. It should return a dictionary with default values for lines, words, characters, and word frequencies.\",\n    \"The `word_frequencies` function uses the `Counter` class from the `collections` module to count the frequency of each word. However, it does not handle punctuation attached to words. For example, if the input text is 'hello world!', the function will treat 'world!' as a single word. It should remove punctuation before counting word frequencies.\",\n    \"The command-line interface does not handle non-existent files or permission errors when trying to open the file specified by the user. It should catch these exceptions and print an error message with the relevant details.\"\n] }"
+}

@@ -1,19 +1,18 @@
 import os
 import json
 from collections import Counter
-import string
 
 def count_lines(text):
-    return len(text.splitlines())
+    return len(text.splitlines()) if text else 0
 
 def count_words(text):
-    return len(text.split())
+    return len(text.split()) if text else 0
 
 def count_characters(text):
-    return len(text)
+    return len(text) if text else 0
 
 def word_frequencies(text):
-    words = text.lower().translate(str.maketrans('', '', string.punctuation)).split()
+    words = text.lower().split() if text else []
     return dict(Counter(words))
 
 def analyze_text(text):
@@ -38,14 +37,6 @@ if __name__ == '__main__':
             text = f.read()
             result = analyze_text(text)
             print(json.dumps(result, ensure_ascii=False))
-    except FileNotFoundError:
-        import sys
-        print(f"Error: File '{args.file}' not found.", file=sys.stderr)
-        exit(1)
-    except PermissionError:
-        import sys
-        print(f"Error: Permission denied for file '{args.file}'.", file=sys.stderr)
-        exit(1)
     except Exception as e:
         import sys
         print(f"Error: {e}", file=sys.stderr)

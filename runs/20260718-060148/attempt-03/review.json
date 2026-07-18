@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "word counting logic is incorrect \u2014 counts words correctly",
+    "word frequency calculation logic is incorrect \u2014 calculates word frequencies correctly",
+    "try-except block does not catch FileNotFoundError \u2014 raises FileNotFoundError when file not found",
+    "try-except block does not catch PermissionError \u2014 raises PermissionError when permission denied"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"class\": \"count_words\", \"function\": \"analyze_text\", \"behavior\": \"counts words correctly\", \"cause\": \"word counting logic is incorrect\"},\n    {\"class\": \"word_frequencies\", \"function\": \"analyze_text\", \"behavior\": \"calculates word frequencies correctly\", \"cause\": \"word frequency calculation logic is incorrect\"},\n    {\"class\": \"FileNotFoundError\", \"function\": \"main\", \"behavior\": \"raises FileNotFoundError when file not found\", \"cause\": \"try-except block does not catch FileNotFoundError\"},\n    {\"class\": \"PermissionError\", \"function\": \"main\", \"behavior\": \"raises PermissionError when permission denied\", \"cause\": \"try-except block does not catch PermissionError\"}\n] }"
+}
