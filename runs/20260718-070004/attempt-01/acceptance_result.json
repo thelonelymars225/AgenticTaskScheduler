@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-5ub6sw0c/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-5ub6sw0c/acceptance_tests.py\", line 24, in test_frequency_mapping\n    assert len(freq_map) == 4\n           ^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-5ub6sw0c/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-5ub6sw0c/acceptance_tests.py\", line 24, in test_frequency_mapping\n    assert len(freq_map) == 4\n           ^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true,
+  "test_count": 7,
+  "exit_code": 1
+}

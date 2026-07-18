@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "Quality review did not approve the implementation."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  {\n    \"class\": \"frequency_mapping\",\n    \"description\": \"The function does not handle the case where the input text is empty or whitespace-only. In this case, it should return an empty frequency mapping.\",\n    \"actionable\": true\n  },\n  {\n    \"class\": \"analyze_text\",\n    \"description\": \"The function does not check if the input text is None before calling tokenize and frequency_mapping functions. This can lead to a TypeError when these functions are called with None as input.\",\n    \"actionable\": true\n  }\n] }"
+}
