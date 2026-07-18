@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "Does not handle empty Unicode text correctly",
+    "Not imported before use in main block",
+    "Incorrect word count for certain inputs"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"class\": \"analyze_text\", \"issue\": \"Does not handle empty Unicode text correctly\"},\n    {\"class\": \"argparse\", \"issue\": \"Not imported before use in main block\"},\n    {\"class\": \"count_words\", \"issue\": \"Incorrect word count for certain inputs\"}\n] }"
+}
