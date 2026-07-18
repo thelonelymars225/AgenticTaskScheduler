@@ -26,9 +26,6 @@ def save_todos(todos):
         sys.exit(1)
 
 def add_todo(todo_text):
-    if not todo_text.strip():
-        print("Todo text cannot be empty", file=sys.stderr)
-        sys.exit(1)
     todos = load_todos()
     todos.append({'text': todo_text, 'completed': False})
     save_todos(todos)
@@ -40,12 +37,6 @@ def list_todos():
         print(f"{i}. {status} {todo['text']}")
 
 def complete_todo(index):
-    try:
-        index = int(index)
-    except ValueError:
-        print("Index must be an integer", file=sys.stderr)
-        sys.exit(1)
-
     todos = load_todos()
     if 0 < index <= len(todos):
         todos[index - 1]['completed'] = True
@@ -55,12 +46,6 @@ def complete_todo(index):
         sys.exit(1)
 
 def remove_todo(index):
-    try:
-        index = int(index)
-    except ValueError:
-        print("Index must be an integer", file=sys.stderr)
-        sys.exit(1)
-
     todos = load_todos()
     if 0 < index <= len(todos):
         del todos[index - 1]
@@ -69,7 +54,7 @@ def remove_todo(index):
         print("Invalid todo index", file=sys.stderr)
         sys.exit(1)
 
-def main():
+if __name__ == '__main__':
     if os.getenv('AGENT_SMOKE_TEST') == '1':
         sys.exit(0)
 
@@ -82,13 +67,18 @@ def main():
         add_todo(' '.join(sys.argv[2:]))
     elif command == 'list':
         list_todos()
-    elif command == 'complete' and len(sys.argv) == 3:
-        complete_todo(sys.argv[2])
-    elif command == 'remove' and len(sys.argv) == 3:
-        remove_todo(sys.argv[2])
+    elif command == 'complete' and len(sys.argv) > 2:
+        try:
+            complete_todo(int(sys.argv[2]))
+        except ValueError:
+            print("Index must be an integer", file=sys.stderr)
+            sys.exit(1)
+    elif command == 'remove' and len(sys.argv) > 2:
+        try:
+            remove_todo(int(sys.argv[2]))
+        except ValueError:
+            print("Index must be an integer", file=sys.stderr)
+            sys.exit(1)
     else:
         print(f"Unknown command or missing argument: {command}", file=sys.stderr)
         sys.exit(1)
-
-if __name__ == '__main__':
-    main()

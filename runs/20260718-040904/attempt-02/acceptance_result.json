@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-dto1xm4b/acceptance_tests.py\", line 62, in <module>\n    test_valid_usage()\n  File \"/tmp/agentic-acceptance-dto1xm4b/acceptance_tests.py\", line 18, in test_valid_usage\n    todo.main()\n    ^^^^^^^^^\nAttributeError: module 'todo' has no attribute 'main'"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-dto1xm4b/acceptance_tests.py\", line 62, in <module>\n    test_valid_usage()\n  File \"/tmp/agentic-acceptance-dto1xm4b/acceptance_tests.py\", line 18, in test_valid_usage\n    todo.main()\n    ^^^^^^^^^\nAttributeError: module 'todo' has no attribute 'main'\n",
+  "executed": true
+}

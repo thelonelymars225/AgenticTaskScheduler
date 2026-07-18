@@ -69,7 +69,7 @@ def remove_todo(index):
         print("Invalid todo index", file=sys.stderr)
         sys.exit(1)
 
-def main():
+if __name__ == '__main__':
     if os.getenv('AGENT_SMOKE_TEST') == '1':
         sys.exit(0)
 
@@ -89,6 +89,3 @@ def main():
     else:
         print(f"Unknown command or missing argument: {command}", file=sys.stderr)
         sys.exit(1)
-
-if __name__ == '__main__':
-    main()

@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The code does not have a `main` function. The entry point of the script should be defined as a function named `main`. This is a common Python convention and is expected by many testing frameworks.",
+    "The `AGENT_SMOKE_TEST=1` environment variable is checked, but there's no corresponding exit path when it's set to 1. The code should handle this case accordingly."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The code does not have a `main` function. The entry point of the script should be defined as a function named `main`. This is a common Python convention and is expected by many testing frameworks.\",\n    \"The `AGENT_SMOKE_TEST=1` environment variable is checked, but there's no corresponding exit path when it's set to 1. The code should handle this case accordingly.\"\n] }"
+}

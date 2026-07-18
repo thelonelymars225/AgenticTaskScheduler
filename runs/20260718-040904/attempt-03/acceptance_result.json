@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Todo text cannot be empty"
+  ],
+  "stdout": "1. [ ] Buy milk\n",
+  "stderr": "Todo text cannot be empty\n",
+  "executed": true
+}
