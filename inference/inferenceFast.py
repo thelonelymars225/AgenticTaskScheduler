@@ -437,6 +437,11 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
         violations.append("a write-only temporary file must not be read; use mode='w+' or reopen it")
     temp_vars = re.findall(r"NamedTemporaryFile\([^\n]*\)\s+as\s+(\w+)", tests)
     for variable in temp_vars:
+        tests = re.sub(
+            rf"(?m)^(\s*)(json\.load\s*\(\s*{variable}\s*\))",
+            rf"\1{variable}.seek(0)\n\1\2",
+            tests,
+        )
         if re.search(rf"json\.load\s*\(\s*{variable}\s*\)", tests) and not re.search(rf"{variable}\.seek\s*\(", tests):
             violations.append(f"temporary file {variable} must be rewound before json.load")
     if re.search(r"subprocess\.run\([^\n]*stdin\s*=\s*\w+\.name", tests):
