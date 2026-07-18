@@ -49,6 +49,7 @@ from inference.inferenceFast import (  # noqa: E402
     project_management_with_attempts,
     quality_review,
     run_acceptance_tests,
+    _acceptance_harness_violations,
     runtime_check,
     validate_syntax,
 )
@@ -61,6 +62,17 @@ from inference.pipeline_config import (  # noqa: E402
 
 
 class PipelineHelperTests(unittest.TestCase):
+    def test_acceptance_harness_rejects_text_file_and_missing_import_errors(self) -> None:
+        violations = _acceptance_harness_violations(
+            "import importlib.util\n"
+            "spec_from_file_location('candidate', os.environ['CANDIDATE_PATH'])\n"
+            "import tempfile\n"
+            "with tempfile.NamedTemporaryFile() as f: json.dump({}, f)\n"
+            "sys.argv = ['tool']\n"
+        )
+        self.assertIn("text JSON must not be written to a binary NamedTemporaryFile", violations)
+        self.assertIn("it references sys without importing sys", violations)
+
     def test_default_profile_prioritizes_quality(self) -> None:
         self.assertTrue(ENABLE_PLANNING)
         self.assertTrue(ENABLE_LLM_REVIEW)

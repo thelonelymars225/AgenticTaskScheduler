@@ -363,6 +363,9 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
                 "test pure logic with fakes or mocks only. If no headless interface can be exercised, raise one clear "
                 "AssertionError without opening a window. If testing a CLI, create its temporary input and invoke it "
                 "with explicit arguments (or call its public functions); never rely on the test runner's empty argv. "
+                "When writing JSON or text to temporary files, use pathlib.Path or tempfile.NamedTemporaryFile(mode='w', "
+                "encoding='utf-8'); do not pass text to a binary temporary file. If using sys.argv or sys.executable, "
+                "include the corresponding import. "
                 "Exercise at least one valid case and one invalid/edge case. Avoid network calls, sleeps, and third-party packages. Exit non-zero "
                 "or raise AssertionError when a required behavior fails. If an acceptance requirement cannot be tested "
                 "from the candidate, fail with a clear assertion explaining the missing testable interface."
@@ -382,7 +385,9 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
         correction = (
             "Your previous test script violated the harness contract. Regenerate it now. "
             "It must import CANDIDATE_PATH with spec_from_file_location, never instantiate tkinter.Tk or tkinter.Canvas, "
-            "and must exercise a valid and invalid case without relying on empty argv. Return only the corrected script."
+            "must use text-mode temporary files (NamedTemporaryFile(mode='w', encoding='utf-8') or pathlib.Path), "
+            "must import every module it references, and must exercise a valid and invalid case without relying on empty argv. "
+            "Return only the corrected script."
         )
         retry_messages = [*messages, {"role": "user", "content": correction}]
         tests = _strip_code_blocks(_chat(QA_MODEL, retry_messages, num_predict=1800, temperature=0.0))
@@ -396,6 +401,10 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
         violations.append("it must import the candidate through CANDIDATE_PATH")
     if re.search(r"(?:import\s+tkinter|from\s+tkinter|(?:tkinter|tk)\.(?:Tk|Canvas)\s*\()", tests):
         violations.append("it must not import or instantiate GUI objects in headless acceptance")
+    if "NamedTemporaryFile" in tests and not re.search(r"NamedTemporaryFile\([^)]*mode\s*=\s*['\"]w['\"]", tests):
+        violations.append("text JSON must not be written to a binary NamedTemporaryFile")
+    if re.search(r"\bsys\.", tests) and not re.search(r"^\s*import\s+sys\b", tests, re.MULTILINE):
+        violations.append("it references sys without importing sys")
     return violations
 
 
