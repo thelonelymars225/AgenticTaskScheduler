@@ -16,7 +16,7 @@ def merge_json(obj1, obj2):
     elif isinstance(obj1, list) and isinstance(obj2, list):
         return obj1 + obj2
     else:
-        return obj1 if obj1 is not None else obj2
+        return obj2
 
 def main():
     if os.getenv('AGENT_SMOKE_TEST') == '1':
@@ -26,19 +26,9 @@ def main():
         print("Usage: python merge_json.py <file1> <file2>")
         sys.exit(1)
 
-    file1, file2 = sys.argv[1], sys.argv[2]
-
     try:
-        with open(file1, 'r', encoding='utf-8') as f1:
-            if os.fstat(f1.fileno()).st_size == 0:
-                print(f"Error: {file1} is empty.")
-                sys.exit(2)
+        with open(sys.argv[1], 'r', encoding='utf-8') as f1, open(sys.argv[2], 'r', encoding='utf-8') as f2:
             json1 = json.load(f1)
-
-        with open(file2, 'r', encoding='utf-8') as f2:
-            if os.fstat(f2.fileno()).st_size == 0:
-                print(f"Error: {file2} is empty.")
-                sys.exit(2)
             json2 = json.load(f2)
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"Error reading JSON files: {e}")

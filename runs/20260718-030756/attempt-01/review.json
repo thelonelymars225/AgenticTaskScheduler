@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The merge_json function does not handle the case where both obj1 and obj2 are lists. It should return the concatenation of the two lists.",
+    "The main function does not check if the merged JSON can be written to a file before trying to write it. This could lead to an error if the file cannot be written for some reason."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [ \"The merge_json function does not handle the case where both obj1 and obj2 are lists. It should return the concatenation of the two lists.\", \"The main function does not check if the merged JSON can be written to a file before trying to write it. This could lead to an error if the file cannot be written for some reason.\" ] }"
+}

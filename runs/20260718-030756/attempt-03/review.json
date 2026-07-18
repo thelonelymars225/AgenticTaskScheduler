@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "merge_json function does not handle conflicting scalar values correctly",
+    "main function does not check if the input files are valid JSON",
+    "main function does not handle the case where one of the input files is empty",
+    "main function does not handle the case where the merged JSON cannot be written to a file"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"issue\": \"merge_json function does not handle conflicting scalar values correctly\"},\n    {\"issue\": \"main function does not check if the input files are valid JSON\"},\n    {\"issue\": \"main function does not handle the case where one of the input files is empty\"},\n    {\"issue\": \"main function does not handle the case where the merged JSON cannot be written to a file\"}\n] }"
+}
