@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-9p1q4b6m/acceptance_tests.py\", line 70, in <module>\n    test_complete_task()\n  File \"/tmp/agentic-acceptance-9p1q4b6m/acceptance_tests.py\", line 46, in test_complete_task\n    assert todo.load_todos() == [{'task': 'Buy milk', 'completed': False}, {'task': 'Walk dog', 'completed': True}]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-9p1q4b6m/acceptance_tests.py\", line 70, in <module>\n    test_complete_task()\n  File \"/tmp/agentic-acceptance-9p1q4b6m/acceptance_tests.py\", line 46, in test_complete_task\n    assert todo.load_todos() == [{'task': 'Buy milk', 'completed': False}, {'task': 'Walk dog', 'completed': True}]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true
+}

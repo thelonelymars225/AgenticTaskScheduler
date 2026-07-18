@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The `load_todos()` function does not handle the case where the JSON file is empty. This will cause an error when trying to access the first element of the list."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [ \"The `load_todos()` function does not handle the case where the JSON file is empty. This will cause an error when trying to access the first element of the list.\" ] }"
+}
