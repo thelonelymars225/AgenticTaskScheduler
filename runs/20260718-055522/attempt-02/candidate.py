@@ -29,7 +29,9 @@ def main():
     try:
         with open(sys.argv[1], 'r') as f1, open(sys.argv[2], 'r') as f2:
             json1 = json.load(f1)
+            f1.seek(0)  # Rewind the file pointer
             json2 = json.load(f2)
+            f2.seek(0)  # Rewind the file pointer
     except (json.JSONDecodeError, FileNotFoundError) as e:
         print(f"Error reading JSON files: {e}", file=sys.stderr)
         sys.exit(2)

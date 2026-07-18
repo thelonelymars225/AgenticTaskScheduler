@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "Error reading JSON files",
+    "Error writing merged JSON"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"Error reading JSON files\" },\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"Error writing merged JSON\" }\n] }"
+}
