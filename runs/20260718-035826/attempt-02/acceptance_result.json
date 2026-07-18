@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "failures": [],
+  "stdout": "{\n    \"a\": 1,\n    \"b\": 2\n}\n",
+  "stderr": "",
+  "executed": true
+}
