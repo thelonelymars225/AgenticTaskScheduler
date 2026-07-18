@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "JSON merge",
+    "rewind temporary file f1 before json.load",
+    "rewind temporary file f2 before json.load"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  { \"class\": \"merge_json\", \"function\": \"main\", \"behavior\": \"JSON merge\" },\n  { \"class\": \"json\", \"function\": \"load\", \"behavior\": \"rewind temporary file f1 before json.load\" },\n  { \"class\": \"json\", \"function\": \"load\", \"behavior\": \"rewind temporary file f2 before json.load\" }\n] }"
+}

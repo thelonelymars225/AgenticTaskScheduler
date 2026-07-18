@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "rewinding temporary files",
+    "rewinding temporary files",
+    "rewinding temporary files",
+    "rewinding temporary files",
+    "rewinding temporary files",
+    "rewinding temporary files"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding temporary files\" },\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding temporary files\" },\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding temporary files\" },\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding temporary files\" },\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding temporary files\" },\n  { \"class\": \"merge_json.py\", \"function\": \"main\", \"behavior\": \"rewinding temporary files\" }\n] }"
+}
