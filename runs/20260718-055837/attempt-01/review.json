@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case when the user tries to complete or remove a task that does not exist. This can be fixed by adding checks in the `complete_task` and `remove_task` functions to ensure that the index is within the bounds of the list."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [ \"The program does not handle the case when the user tries to complete or remove a task that does not exist. This can be fixed by adding checks in the `complete_task` and `remove_task` functions to ensure that the index is within the bounds of the list.\" ] }"
+}

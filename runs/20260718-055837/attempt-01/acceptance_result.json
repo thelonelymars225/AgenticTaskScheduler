@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Error: Task index out of range"
+  ],
+  "stdout": "1. [ ] Buy milk\n",
+  "stderr": "Error: Task index out of range\n",
+  "executed": true
+}

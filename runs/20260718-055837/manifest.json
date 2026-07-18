@@ -1,0 +1,15 @@
+{
+  "task": "## Specification\n- Write a standard-library Python command-line todo application. It must persist tasks as JSON, support add, list, complete, and remove commands, validate malformed stored data, return useful exit codes, and expose the storage operations as importable functions for tests.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "todo_cli",
+  "final_verdict": "VERDICT: FAIL\n- The program does not handle the case when the user tries to complete or remove a task that does not exist. This can be fixed by adding checks in the `complete_task` and `remove_task` functions to ensure that the index is within the bounds of the list.\n- Repair returned an unchanged candidate; stopping the loop.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    }
+  ]
+}
