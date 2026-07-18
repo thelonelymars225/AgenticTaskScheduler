@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-ehh_husi/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-ehh_husi/acceptance_tests.py\", line 73, in test_cli\n    error_message = json.loads(output.decode('utf-8'))['error']\n                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\nKeyError: 'error'"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-ehh_husi/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-ehh_husi/acceptance_tests.py\", line 73, in test_cli\n    error_message = json.loads(output.decode('utf-8'))['error']\n                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^\nKeyError: 'error'\n",
+  "executed": true,
+  "test_count": 4,
+  "exit_code": 1
+}

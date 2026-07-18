@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The CLI does not handle the case when the input file path is a directory.",
+    "The CLI does not check if the input file path exists before trying to read it.",
+    "The `analyze_text` function does not handle the case when the input text is an empty string or contains only whitespace characters.",
+    "The `tokenize_text` function uses a regular expression that may not match all Unicode words correctly.",
+    "The `word_frequency` function returns a dictionary with keys in arbitrary order, but it should return them in deterministic lexical key order.",
+    "The CLI does not handle the case when the input file path is a symbolic link to a non-existent file."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The CLI does not handle the case when the input file path is a directory.\",\n    \"The CLI does not check if the input file path exists before trying to read it.\",\n    \"The `analyze_text` function does not handle the case when the input text is an empty string or contains only whitespace characters.\",\n    \"The `tokenize_text` function uses a regular expression that may not match all Unicode words correctly.\",\n    \"The `word_frequency` function returns a dictionary with keys in arbitrary order, but it should return them in deterministic lexical key order.\",\n    \"The CLI does not handle the case when the input file path is a symbolic link to a non-existent file.\"\n] }"
+}

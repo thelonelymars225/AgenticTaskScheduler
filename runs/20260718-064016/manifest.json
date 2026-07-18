@@ -1,0 +1,46 @@
+{
+  "task": "## Specification\n- Write a standard-library Python text statistics tool with one fixed contract. Expose importable core functions. None and unsupported non-string values raise TypeError. Empty and whitespace-only strings have zero words and an empty frequency mapping. Character count uses the original text; line count is zero for empty text and otherwise counts logical lines. Tokenize Unicode words deterministically, remove surrounding punctuation, normalize words to lowercase, and return frequency mappings in deterministic lexical key order. File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError, and never call sys.exit. The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "text_statistics",
+  "run_timestamp": "2026-07-18T06:40:16.685572+03:00",
+  "attempt_count": 3,
+  "model_used": "qwen2.5-coder:14b",
+  "selected_candidate": 3,
+  "repair_count": 2,
+  "final_classification": "CANDIDATE_FAIL",
+  "final_verdict": "VERDICT: FAIL\n- The `analyze_file` function does not handle the case where the file path is a symbolic link to a non-existent file. It should raise a FileNotFoundError in this case.\n- The `analyze_text` function does not check if the input text is empty or whitespace-only before counting lines and characters. It should return 0 for lines and characters in these cases.\n- The `tokenize_text` function uses a regular expression that may not match all Unicode words correctly. It should use a more robust method to tokenize the text, such as the `wordninja` library.\n- The `analyze_file` function does not handle the case where the file path is a directory. It should raise an IsADirectoryError in this case.\n- The `analyze_text` function does not check if the input text is None or not a string before processing it. It should raise a TypeError in these cases.\n- The CLI does not handle the case where the input file path is not a valid UTF-8 encoded file. It should propagate the UnicodeDecodeError exception.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 4,
+      "acceptance_exit_code": 1,
+      "review_passed": false,
+      "repair_changed_code": true
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 5,
+      "acceptance_exit_code": 1,
+      "review_passed": false,
+      "repair_changed_code": true
+    },
+    {
+      "number": 3,
+      "path": "attempt-03",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 7,
+      "acceptance_exit_code": 1,
+      "review_passed": false,
+      "repair_changed_code": true
+    }
+  ]
+}

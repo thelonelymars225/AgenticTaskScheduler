@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The `analyze_file` function does not handle the case where the file path is a symbolic link to a non-existent file. It should raise a FileNotFoundError in this case.",
+    "The `analyze_text` function does not check if the input text is empty or whitespace-only before counting lines and characters. It should return 0 for lines and characters in these cases.",
+    "The `tokenize_text` function uses a regular expression that may not match all Unicode words correctly. It should use a more robust method to tokenize the text, such as the `wordninja` library.",
+    "The `analyze_file` function does not handle the case where the file path is a directory. It should raise an IsADirectoryError in this case.",
+    "The `analyze_text` function does not check if the input text is None or not a string before processing it. It should raise a TypeError in these cases.",
+    "The CLI does not handle the case where the input file path is not a valid UTF-8 encoded file. It should propagate the UnicodeDecodeError exception."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `analyze_file` function does not handle the case where the file path is a symbolic link to a non-existent file. It should raise a FileNotFoundError in this case.\",\n    \"The `analyze_text` function does not check if the input text is empty or whitespace-only before counting lines and characters. It should return 0 for lines and characters in these cases.\",\n    \"The `tokenize_text` function uses a regular expression that may not match all Unicode words correctly. It should use a more robust method to tokenize the text, such as the `wordninja` library.\",\n    \"The `analyze_file` function does not handle the case where the file path is a directory. It should raise an IsADirectoryError in this case.\",\n    \"The `analyze_text` function does not check if the input text is None or not a string before processing it. It should raise a TypeError in these cases.\",\n    \"The CLI does not handle the case where the input file path is not a valid UTF-8 encoded file. It should propagate the UnicodeDecodeError exception.\"\n] }"
+}

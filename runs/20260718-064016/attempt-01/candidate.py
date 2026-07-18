@@ -19,8 +19,7 @@ def tokenize_text(text):
 def word_frequency(tokens):
     if not tokens:
         return {}
-    frequency = dict(Counter(tokens))
-    return dict(sorted(frequency.items()))
+    return dict(Counter(tokens))
 
 def analyze_text(text):
     if text is None or not isinstance(text, str):
@@ -39,18 +38,6 @@ def analyze_text(text):
     }
 
 def analyze_file(file_path):
-    if not isinstance(file_path, str) or not file_path:
-        raise ValueError("File path must be a non-empty string")
-    
-    if os.path.isdir(file_path):
-        raise IsADirectoryError(f"Input is a directory: '{file_path}'")
-    
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"No such file: '{file_path}'")
-    
-    if os.path.islink(file_path) and not os.path.exists(os.readlink(file_path)):
-        raise FileNotFoundError(f"Symbolic link points to a non-existent file: '{file_path}'")
-    
     with open(file_path, 'r', encoding='utf-8') as file:
         text = file.read()
     return analyze_text(text)
@@ -76,12 +63,6 @@ if __name__ == "__main__":
     except UnicodeDecodeError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(3)
-    except ValueError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(4)
-    except IsADirectoryError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(5)
     except Exception as e:
         print(f"Unexpected error: {e}", file=sys.stderr)
         sys.exit(1)

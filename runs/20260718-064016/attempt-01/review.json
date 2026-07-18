@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The CLI does not handle the case when the input file is empty or contains only whitespace.",
+    "The program does not check if the provided file path exists before attempting to read it.",
+    "The `analyze_text` function does not handle non-string inputs correctly, raising a TypeError instead of propagating the error.",
+    "The `analyze_file` function does not propagate the FileNotFoundError when the input file is not found.",
+    "The program does not check if the provided file path is a valid string before attempting to read it.",
+    "The CLI does not handle the case when the input file contains invalid UTF-8 characters."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The CLI does not handle the case when the input file is empty or contains only whitespace.\",\n    \"The program does not check if the provided file path exists before attempting to read it.\",\n    \"The `analyze_text` function does not handle non-string inputs correctly, raising a TypeError instead of propagating the error.\",\n    \"The `analyze_file` function does not propagate the FileNotFoundError when the input file is not found.\",\n    \"The program does not check if the provided file path is a valid string before attempting to read it.\",\n    \"The CLI does not handle the case when the input file contains invalid UTF-8 characters.\"\n] }"
+}
