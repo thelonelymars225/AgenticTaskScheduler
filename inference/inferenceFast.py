@@ -360,6 +360,7 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
                 "CANDIDATE_PATH is invalid. Test the explicit acceptance requirements using observable "
                 "behavior, not style. Do not invent APIs: inspect the candidate and use public functions/classes it "
                 "actually provides. Never instantiate tkinter.Tk(), Canvas, or any GUI/window: for GUI candidates, "
+                "load the candidate before defining test functions; never copy or reimplement candidate behavior in the harness. "
                 "test pure logic with fakes or mocks only. If no headless interface can be exercised, raise one clear "
                 "AssertionError without opening a window. If testing a CLI, create its temporary input and invoke it "
                 "with explicit arguments (or call its public functions); never rely on the test runner's empty argv. "
@@ -386,6 +387,7 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
         correction = (
             "Your previous test script violated the harness contract. Regenerate it now. "
             "It must import CANDIDATE_PATH with spec_from_file_location, never instantiate tkinter.Tk or tkinter.Canvas, "
+            "must load the candidate before defining test functions and must not copy its implementation, "
             "must use text-mode temporary files (NamedTemporaryFile(mode='w', encoding='utf-8') or pathlib.Path), "
             "use mode='w+' when reading back through the same handle, pass a file handle or input text to subprocess stdin, "
             "must import every module it references, and must exercise a valid and invalid case without relying on empty argv. "
@@ -401,6 +403,10 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
     violations: list[str] = []
     if "CANDIDATE_PATH" not in tests or "spec_from_file_location" not in tests:
         violations.append("it must import the candidate through CANDIDATE_PATH")
+    candidate_load = tests.find("spec_from_file_location")
+    first_function = re.search(r"^\s*def\s+", tests, re.MULTILINE)
+    if candidate_load >= 0 and first_function and first_function.start() < candidate_load:
+        violations.append("the candidate must be loaded before test functions; do not duplicate its implementation")
     if re.search(r"(?:import\s+tkinter|from\s+tkinter|(?:tkinter|tk)\.(?:Tk|Canvas)\s*\()", tests):
         violations.append("it must not import or instantiate GUI objects in headless acceptance")
     if "NamedTemporaryFile" in tests and not re.search(r"NamedTemporaryFile\([^)]*mode\s*=\s*['\"]w['\"]", tests):
