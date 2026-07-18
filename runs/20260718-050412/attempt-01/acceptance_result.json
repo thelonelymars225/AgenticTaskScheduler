@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "failures": [],
+  "stdout": "Error reading configuration file: Expecting value: line 1 column 1 (char 0)\nError reading configuration file: [Errno 2] No such file or directory: 'non_existent_file.json'\n",
+  "stderr": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.023s\n\nOK\n",
+  "executed": true
+}
