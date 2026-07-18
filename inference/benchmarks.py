@@ -39,9 +39,26 @@ BENCHMARKS: tuple[BenchmarkTask, ...] = (
         "words, characters, and case-insensitive word frequencies, handle empty Unicode text, and provide a command-line "
         "interface that reads a UTF-8 file and emits JSON.",
     ),
+    BenchmarkTask(
+        "json_merge",
+        "Write a standard-library Python JSON merge utility. It must recursively merge JSON objects, preserve non-conflicting keys, "
+        "define deterministic behavior for conflicting scalar values, expose an importable merge function, and provide a CLI that "
+        "reads two JSON files and writes the merged JSON with useful exit codes.",
+    ),
+    BenchmarkTask(
+        "log_summary",
+        "Write a standard-library Python log summarizer. It must parse timestamped level/message lines, count levels including empty input, "
+        "expose an importable summarize function, and provide a CLI that reads UTF-8 input and emits stable JSON.",
+    ),
 )
+
+# Keep the first measurement phase deterministic and free of display dependencies.
+# Pong remains in BENCHMARKS for the later headless GUI evaluator phase.
+BENCHMARK_MODE = "cli"
+CLI_BENCHMARKS = tuple(task for task in BENCHMARKS if task.identifier != "pong_tkinter")
 
 
 def select_benchmark(completed_runs: int) -> BenchmarkTask:
     """Choose benchmarks deterministically, so results are comparable by commit."""
-    return BENCHMARKS[completed_runs % len(BENCHMARKS)]
+    active = CLI_BENCHMARKS if BENCHMARK_MODE == "cli" else BENCHMARKS
+    return active[completed_runs % len(active)]
