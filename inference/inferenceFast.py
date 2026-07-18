@@ -435,6 +435,10 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
         violations.append("text JSON must not be written to a binary NamedTemporaryFile")
     if re.search(r"NamedTemporaryFile\([^)]*mode\s*=\s*['\"]w['\"]", tests) and re.search(r"json\.load\s*\(\s*\w+\s*\)", tests):
         violations.append("a write-only temporary file must not be read; use mode='w+' or reopen it")
+    temp_vars = re.findall(r"NamedTemporaryFile\([^\n]*\)\s+as\s+(\w+)", tests)
+    for variable in temp_vars:
+        if re.search(rf"json\.load\s*\(\s*{variable}\s*\)", tests) and not re.search(rf"{variable}\.seek\s*\(", tests):
+            violations.append(f"temporary file {variable} must be rewound before json.load")
     if re.search(r"subprocess\.run\([^\n]*stdin\s*=\s*\w+\.name", tests):
         violations.append("subprocess stdin must be a file handle or input text, not a filename string")
     if re.search(r"\bsys\.", tests) and not re.search(r"^\s*import\s+sys\b", tests, re.MULTILINE):
