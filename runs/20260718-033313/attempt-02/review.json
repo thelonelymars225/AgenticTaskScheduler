@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "Quality review did not approve the implementation."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  {\n    \"description\": \"The program does not handle the case where the input files are empty.\",\n    \"actionable\": true,\n    \"priority\": 1\n  },\n  {\n    \"description\": \"The program does not check if the merged JSON can be written to disk before attempting to write it.\",\n    \"actionable\": true,\n    \"priority\": 2\n  }\n] }"
+}

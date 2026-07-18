@@ -37,9 +37,8 @@ def main():
     merged_data = merge_json(data1, data2)
 
     try:
-        with open('merged.json', 'w+') as f_out:
+        with open('merged.json', 'w') as f_out:
             json.dump(merged_data, f_out, indent=4)
-            f_out.seek(0)  # Ensure the file pointer is at the beginning for reading
     except IOError as e:
         print(f"Error writing merged JSON: {e}")
         sys.exit(3)

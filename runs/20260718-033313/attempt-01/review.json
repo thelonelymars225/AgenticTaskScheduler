@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "Quality review did not approve the implementation."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  { \"description\": \"The program does not handle the case where one of the input files is empty.\", \"actionable\": true },\n  { \"description\": \"The merge_json function does not handle nested lists correctly.\", \"actionable\": true }\n] }"
+}

@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Invalid acceptance harness: a write-only temporary file must not be read; use mode='w+' or reopen it."
+  ],
+  "stdout": "",
+  "stderr": "",
+  "executed": true
+}
