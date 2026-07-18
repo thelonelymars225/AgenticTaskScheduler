@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "issues": [
+    "Tokenization of Unicode words is deterministic",
+    "Frequency mapping is in deterministic lexical key order",
+    "Line count is zero for empty text and otherwise counts logical lines",
+    "File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError",
+    "The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"class\": \"analyze_text\", \"function\": \"tokenize\", \"behavior\": \"Tokenization of Unicode words is deterministic\"},\n    {\"class\": \"frequency_mapping\", \"function\": \"Counter\", \"behavior\": \"Frequency mapping is in deterministic lexical key order\"},\n    {\"class\": \"line_count\", \"function\": \"splitlines\", \"behavior\": \"Line count is zero for empty text and otherwise counts logical lines\"},\n    {\"class\": \"analyze_file\", \"function\": \"open\", \"behavior\": \"File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError\"},\n    {\"class\": \"main\", \"function\": \"sys.exit\", \"behavior\": \"The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes\"}\n] }"
+}

@@ -1,21 +1,7 @@
-=== Analysis ===
-## Specification
-- Write a standard-library Python text statistics tool with one fixed contract. Expose importable core functions. None and unsupported non-string values raise TypeError. Empty and whitespace-only strings have zero words and an empty frequency mapping. Character count uses the original text; line count is zero for empty text and otherwise counts logical lines. Tokenize Unicode words deterministically, remove surrounding punctuation, normalize words to lowercase, and return frequency mappings in deterministic lexical key order. File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError, and never call sys.exit. The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import json
 import re
 from collections import Counter
-import sys
 
 def tokenize(text):
     if text is None or not isinstance(text, str):
@@ -70,6 +56,7 @@ def main():
         print("Smoke test passed")
         return 0
     
+    import sys
     if len(sys.argv) != 2:
         print("Usage: python script.py <file_path>", file=sys.stderr)
         return 1
@@ -92,12 +79,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-=== QA Result ===
-VERDICT: FAIL
-- Tokenization of Unicode words is deterministic
-- Frequency mapping is in deterministic lexical key order
-- Line count is zero for empty text and otherwise counts logical lines
-- File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError
-- The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes
-- Repair returned an unchanged candidate; stopping the loop.
