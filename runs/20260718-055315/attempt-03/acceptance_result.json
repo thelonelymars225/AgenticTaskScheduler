@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: ..F\n======================================================================\nFAIL: test_analyze_text_valid (__main__.TestTextStats.test_analyze_text_valid)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/agentic-acceptance-pxjz385g/acceptance_tests.py\", line 28, in test_analyze_text_valid\n    self.assertEqual(stats['lines'], 2)\nAssertionError: 0 != 2\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nFAILED (failures=1)"
+  ],
+  "stdout": "",
+  "stderr": "..F\n======================================================================\nFAIL: test_analyze_text_valid (__main__.TestTextStats.test_analyze_text_valid)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/agentic-acceptance-pxjz385g/acceptance_tests.py\", line 28, in test_analyze_text_valid\n    self.assertEqual(stats['lines'], 2)\nAssertionError: 0 != 2\n\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nFAILED (failures=1)\n",
+  "executed": true
+}

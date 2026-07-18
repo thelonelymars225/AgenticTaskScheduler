@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The `count_words` function does not handle empty Unicode text correctly. It should return 0 when the input is an empty string.",
+    "The `analyze_text` function does not check if the input text is None before calling other functions on it. This could lead to a TypeError if the input text is None."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `count_words` function does not handle empty Unicode text correctly. It should return 0 when the input is an empty string.\",\n    \"The `analyze_text` function does not check if the input text is None before calling other functions on it. This could lead to a TypeError if the input text is None.\"\n] }"
+}

@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-0_e98mip/acceptance_tests.py\", line 63, in <module>\n    test_analyze_text()\n  File \"/tmp/agentic-acceptance-0_e98mip/acceptance_tests.py\", line 19, in test_analyze_text\n    assert stats['words'] == 6\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-0_e98mip/acceptance_tests.py\", line 63, in <module>\n    test_analyze_text()\n  File \"/tmp/agentic-acceptance-0_e98mip/acceptance_tests.py\", line 19, in test_analyze_text\n    assert stats['words'] == 6\n           ^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true
+}

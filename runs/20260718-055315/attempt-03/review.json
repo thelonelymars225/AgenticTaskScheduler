@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "raises exception when input text is None",
+    "does not handle empty strings correctly"
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"class\": \"TextAnalysisError\", \"function\": \"analyze_text\", \"behavior\": \"raises exception when input text is None\"},\n    {\"class\": \"Counter\", \"function\": \"word_frequencies\", \"behavior\": \"does not handle empty strings correctly\"}\n] }"
+}
