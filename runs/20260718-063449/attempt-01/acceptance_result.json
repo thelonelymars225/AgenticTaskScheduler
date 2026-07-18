@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-fvtamwis/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-fvtamwis/acceptance_tests.py\", line 52, in test_merge_invalid\n    assert 'Error reading' in error_message\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-fvtamwis/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-fvtamwis/acceptance_tests.py\", line 52, in test_merge_invalid\n    assert 'Error reading' in error_message\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true,
+  "test_count": 2,
+  "exit_code": 1
+}

@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The merge function does not handle the case where both left and right are lists. It should recursively merge the elements of the lists.",
+    "The main function does not check if the output path already exists before writing to it. This could lead to data loss if the output file is being written concurrently by another process."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The merge function does not handle the case where both left and right are lists. It should recursively merge the elements of the lists.\",\n  \"The main function does not check if the output path already exists before writing to it. This could lead to data loss if the output file is being written concurrently by another process.\"\n] }"
+}

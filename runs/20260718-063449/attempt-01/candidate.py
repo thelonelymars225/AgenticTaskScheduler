@@ -11,9 +11,6 @@ def merge(left, right):
             else:
                 result[key] = right[key]
         return result
-    elif isinstance(left, list) and isinstance(right, list):
-        # Recursively merge elements of the lists
-        return [merge(l, r) for l, r in zip(left, right)]
     else:
         return right
 
@@ -42,11 +39,6 @@ def main():
         sys.exit(3)
 
     merged_data = merge(left_data, right_data)
-
-    # Check if the output path already exists
-    if os.path.exists(output_path):
-        print(f"Output path {output_path} already exists. Please choose a different path or remove the existing file.", file=sys.stderr)
-        sys.exit(5)
 
     try:
         with open(output_path, 'w', encoding='utf-8') as f:
