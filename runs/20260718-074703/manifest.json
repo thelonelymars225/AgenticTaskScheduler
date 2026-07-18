@@ -1,0 +1,142 @@
+{
+  "task": "## Specification\n- Write a standard-library Python text statistics tool with one fixed contract. Expose importable core functions. None and unsupported non-string values raise TypeError. Empty and whitespace-only strings have zero words and an empty frequency mapping. Character count uses the original text; line count is zero for empty text and otherwise counts logical lines. Tokenize Unicode words deterministically, remove surrounding punctuation, normalize words to lowercase, and return frequency mappings in deterministic lexical key order. File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError, and never call sys.exit. The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "text_statistics",
+  "run_timestamp": "2026-07-18T07:47:03.470480+03:00",
+  "attempt_count": 2,
+  "model_used": "qwen2.5-coder:14b",
+  "selected_candidate": 2,
+  "measurement_status": "VALID",
+  "candidate_status": "FAIL",
+  "repair_status": "UNCHANGED",
+  "repair_count": 2,
+  "repair_events": [
+    {
+      "repair_number": 1,
+      "source_attempt": 1,
+      "trigger": [
+        "Runtime failure: Traceback (most recent call last):\n  File \"/tmp/agentic-task-tq47dyxa/generated.py\", line 58, in <module>\n    sys.exit(main())\n    ^^^\nNameError: name 'sys' is not defined. Did you forget to import 'sys'?",
+        "Acceptance was not executed."
+      ],
+      "before_sha256": "0953dec65056311bac9b7694451f769cf49ea09db12ce4fc9120545b87c02242",
+      "after_sha256": "76b7717a26ce475cf0a3c86bb26e151d539be056e60097816e70ecfa69066514",
+      "changed": true,
+      "model": "qwen2.5-coder:14b",
+      "status": "CHANGED",
+      "duration_seconds": 5.2083484809991205
+    },
+    {
+      "repair_number": 2,
+      "source_attempt": 2,
+      "trigger": [
+        "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_tests.py\", line 28, in test_required_interfaces_and_type_errors\n    assert callable(getattr(candidate, name, None)), f\"missing required {name} interface\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: missing required tokenize interface"
+      ],
+      "before_sha256": "76b7717a26ce475cf0a3c86bb26e151d539be056e60097816e70ecfa69066514",
+      "after_sha256": "76b7717a26ce475cf0a3c86bb26e151d539be056e60097816e70ecfa69066514",
+      "changed": false,
+      "model": "qwen2.5-coder:14b",
+      "status": "UNCHANGED",
+      "duration_seconds": 5.169804846998886
+    }
+  ],
+  "trusted_suite_version": "1.0.0",
+  "valid_evaluation": true,
+  "timings": {
+    "pipeline.analyze": 2.3885440999947605,
+    "pipeline.generate": 7.371339303004788,
+    "pipeline.validate.1": 0.10106765499949688,
+    "pipeline.repair.1": 5.208344143000431,
+    "pipeline.validate.2": 0.10107723400142277,
+    "pipeline.acceptance.run.2": 0.03133574999810662,
+    "pipeline.repair.2": 5.169800298004702,
+    "pipeline.workflow": 20.3717293410009
+  },
+  "generation_duration_seconds": 7.371339303004788,
+  "acceptance_generation_duration_seconds": 0,
+  "acceptance_execution_duration_seconds": 0.03133574999810662,
+  "review_duration_seconds": 0,
+  "repair_duration_seconds": 10.378144441005134,
+  "total_duration_seconds": 20.3717293410009,
+  "model_call_count": 4,
+  "prompt_tokens": 2229,
+  "output_tokens": 1199,
+  "model_calls": [
+    {
+      "call_number": 1,
+      "model": "llama3.1:8b",
+      "duration_seconds": 2.3885222480021184,
+      "prompt_tokens": 242,
+      "output_tokens": 18,
+      "ollama_total_duration_ns": 2387000026,
+      "ollama_load_duration_ns": 2013465148,
+      "ollama_prompt_eval_duration_ns": 39558562,
+      "ollama_eval_duration_ns": 113440971
+    },
+    {
+      "call_number": 2,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 7.3712211579986615,
+      "prompt_tokens": 460,
+      "output_tokens": 395,
+      "ollama_total_duration_ns": 7370395038,
+      "ollama_load_duration_ns": 2293702903,
+      "ollama_prompt_eval_duration_ns": 130752799,
+      "ollama_eval_duration_ns": 4772344711
+    },
+    {
+      "call_number": 3,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 5.208265513996594,
+      "prompt_tokens": 740,
+      "output_tokens": 393,
+      "ollama_total_duration_ns": 5207471054,
+      "ollama_load_duration_ns": 61003142,
+      "ollama_prompt_eval_duration_ns": 204181718,
+      "ollama_eval_duration_ns": 4768796945
+    },
+    {
+      "call_number": 4,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 5.169756916999177,
+      "prompt_tokens": 787,
+      "output_tokens": 393,
+      "ollama_total_duration_ns": 5168914125,
+      "ollama_load_duration_ns": 57868526,
+      "ollama_prompt_eval_duration_ns": 166372218,
+      "ollama_eval_duration_ns": 4771481844
+    }
+  ],
+  "final_classification": "CANDIDATE_FAIL",
+  "final_verdict": "VERDICT: FAIL\n- Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_tests.py\", line 28, in test_required_interfaces_and_type_errors\n    assert callable(getattr(candidate, name, None)), f\"missing required {name} interface\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: missing required tokenize interface\n- Repair returned an unchanged candidate; stopping the loop.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": false,
+      "acceptance_passed": false,
+      "acceptance_executed": false,
+      "collected_test_count": 0,
+      "acceptance_exit_code": null,
+      "measurement_status": "NOT_EXECUTED",
+      "candidate_status": "UNMEASURED",
+      "review_passed": false,
+      "repair_status": "NOT_ATTEMPTED",
+      "repair_changed_code": false,
+      "candidate_sha256": "0953dec65056311bac9b7694451f769cf49ea09db12ce4fc9120545b87c02242"
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 5,
+      "acceptance_exit_code": 1,
+      "measurement_status": "VALID",
+      "candidate_status": "FAIL",
+      "review_passed": false,
+      "repair_status": "CHANGED",
+      "repair_changed_code": true,
+      "candidate_sha256": "76b7717a26ce475cf0a3c86bb26e151d539be056e60097816e70ecfa69066514"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_tests.py\", line 28, in test_required_interfaces_and_type_errors\n    assert callable(getattr(candidate, name, None)), f\"missing required {name} interface\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: missing required tokenize interface"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-yl49ird5/acceptance_tests.py\", line 28, in test_required_interfaces_and_type_errors\n    assert callable(getattr(candidate, name, None)), f\"missing required {name} interface\"\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: missing required tokenize interface\n",
+  "executed": true,
+  "test_count": 5,
+  "exit_code": 1,
+  "measurement_status": "VALID",
+  "suite_version": "1.0.0"
+}

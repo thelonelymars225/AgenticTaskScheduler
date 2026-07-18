@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance was not executed."
+  ],
+  "stdout": "",
+  "stderr": "",
+  "executed": false,
+  "test_count": 0,
+  "exit_code": null,
+  "measurement_status": "NOT_EXECUTED",
+  "suite_version": "1.0.0"
+}

@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "failures": [
+    "Runtime failure: Traceback (most recent call last):\n  File \"/tmp/agentic-task-tq47dyxa/generated.py\", line 58, in <module>\n    sys.exit(main())\n    ^^^\nNameError: name 'sys' is not defined. Did you forget to import 'sys'?"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-task-tq47dyxa/generated.py\", line 58, in <module>\n    sys.exit(main())\n    ^^^\nNameError: name 'sys' is not defined. Did you forget to import 'sys'?\n"
+}

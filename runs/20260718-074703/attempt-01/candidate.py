@@ -2,7 +2,6 @@ import os
 import json
 import re
 from collections import Counter
-import sys
 
 def count_lines(text):
     if not text.strip():
@@ -35,19 +34,17 @@ def main():
         print("Smoke test passed")
         return 0
 
+    import sys
     if len(sys.argv) != 2:
         print("Usage: python script.py <file_path>", file=sys.stderr)
         return 1
 
     path = sys.argv[1]
     try:
-        with open(path, 'r', encoding='utf-8') as file:
-            text = file.read()
-        
         stats = {
-            "word_frequency": word_frequency(text),
-            "line_count": count_lines(text),
-            "character_count": count_characters(text)
+            "word_frequency": file_word_frequency(path),
+            "line_count": count_lines(open(path, 'r', encoding='utf-8').read()),
+            "character_count": count_characters(open(path, 'r', encoding='utf-8').read())
         }
         print(json.dumps(stats, indent=4))
     except FileNotFoundError:
