@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where the input is empty.",
+    "The `summarize` function does not correctly count levels when there are multiple lines with the same level.",
+    "The `main` function does not check if the environment variable 'AGENT_SMOKE_TEST' is set to '1' before reading from stdin."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The program does not handle the case where the input is empty.\",\n  \"The `summarize` function does not correctly count levels when there are multiple lines with the same level.\",\n  \"The `main` function does not check if the environment variable 'AGENT_SMOKE_TEST' is set to '1' before reading from stdin.\"\n] }"
+}

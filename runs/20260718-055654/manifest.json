@@ -1,0 +1,15 @@
+{
+  "task": "## Specification\n- Write a standard-library Python log summarizer. It must parse timestamped level/message lines, count levels including empty input, expose an importable summarize function, and provide a CLI that reads UTF-8 input and emits stable JSON.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "log_summary",
+  "final_verdict": "VERDICT: FAIL\n- The program does not handle the case where the input is empty.\n- The `summarize` function does not correctly count levels when there are multiple lines with the same level.\n- The `main` function does not check if the environment variable 'AGENT_SMOKE_TEST' is set to '1' before reading from stdin.\n- Repair returned an unchanged candidate; stopping the loop.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    }
+  ]
+}
