@@ -7,8 +7,7 @@ def count_lines(text):
     return len(text.splitlines())
 
 def count_words(text):
-    # Count words, considering punctuation as separate from words
-    return len([word for word in text.split() if word])
+    return len(text.split())
 
 def count_characters(text):
     return len(text)

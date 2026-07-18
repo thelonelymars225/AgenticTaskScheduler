@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "Does not handle empty Unicode text correctly.",
+    "Does not count newline characters as words.",
+    "Does not handle punctuation attached to words correctly.",
+    "Does not provide a command-line interface that reads a UTF-8 file and emits JSON."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    {\"class\": \"analyze_text function\", \"issue\": \"Does not handle empty Unicode text correctly.\"},\n    {\"class\": \"count_words function\", \"issue\": \"Does not count newline characters as words.\"},\n    {\"class\": \"word_frequencies function\", \"issue\": \"Does not handle punctuation attached to words correctly.\"},\n    {\"class\": \"analyze_text function\", \"issue\": \"Does not provide a command-line interface that reads a UTF-8 file and emits JSON.\"}\n] }"
+}

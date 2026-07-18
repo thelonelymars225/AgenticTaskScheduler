@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-0keb5yf6/acceptance_tests.py\", line 49, in <module>\n    test_cli()\n  File \"/tmp/agentic-acceptance-0keb5yf6/acceptance_tests.py\", line 44, in test_cli\n    candidate_module.main()\n    ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'candidate' has no attribute 'main'"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-0keb5yf6/acceptance_tests.py\", line 49, in <module>\n    test_cli()\n  File \"/tmp/agentic-acceptance-0keb5yf6/acceptance_tests.py\", line 44, in test_cli\n    candidate_module.main()\n    ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'candidate' has no attribute 'main'\n",
+  "executed": true
+}

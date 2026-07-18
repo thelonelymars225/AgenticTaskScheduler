@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-drexcfx9/acceptance_tests.py\", line 52, in <module>\n    test_invalid_file()\n  File \"/tmp/agentic-acceptance-drexcfx9/acceptance_tests.py\", line 29, in test_invalid_file\n    candidate_module.main(args)\n    ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'candidate' has no attribute 'main'"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-drexcfx9/acceptance_tests.py\", line 52, in <module>\n    test_invalid_file()\n  File \"/tmp/agentic-acceptance-drexcfx9/acceptance_tests.py\", line 29, in test_invalid_file\n    candidate_module.main(args)\n    ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: module 'candidate' has no attribute 'main'\n",
+  "executed": true
+}
