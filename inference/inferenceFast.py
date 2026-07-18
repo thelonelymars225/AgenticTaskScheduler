@@ -397,9 +397,15 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
         tests = _strip_code_blocks(_chat(QA_MODEL, retry_messages, num_predict=1800, temperature=0.0))
     # A missing standard-library import is a harness construction defect, not
     # candidate evidence. Normalize this safe, unambiguous case after retry.
-    for module in ("sys", "argparse", "os"):
+    for module in ("sys", "argparse", "os", "json", "io"):
         if re.search(rf"\b{module}\.", tests) and not re.search(rf"^\s*import\s+{module}\b", tests, re.MULTILINE):
             tests = f"import {module}\n" + tests
+    tests = re.sub(r"(NamedTemporaryFile\([^\n]*mode\s*=\s*['\"])w(['\"])", r"\1w+\2", tests)
+    tests = re.sub(
+        r"(?m)^(\s*)(\w+)\.flush\(\)\s*\n(\s*(?:\w+\s*=\s*)?json\.load\s*\()",
+        r"\1\2.flush()\n\1\2.seek(0)\n\3",
+        tests,
+    )
     tests = re.sub(
         r"(?m)^(\s*os\.environ\[[^\n]+\]\s*=\s*)Path\((.*)\)\s*$",
         r"\1str(Path(\2))",
