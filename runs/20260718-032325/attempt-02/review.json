@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where the config file is empty but valid JSON.",
+    "The program does not check if the required fields are present in the config before checking their types.",
+    "The program does not provide any feedback when the config file is missing or cannot be read.",
+    "The program does not handle the case where the config file contains invalid JSON.",
+    "The program does not import sys correctly, it should be imported at the beginning of the script.",
+    "The program does not check if the config file path is valid before trying to open it."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The program does not handle the case where the config file is empty but valid JSON.\",\n  \"The program does not check if the required fields are present in the config before checking their types.\",\n  \"The program does not provide any feedback when the config file is missing or cannot be read.\",\n  \"The program does not handle the case where the config file contains invalid JSON.\",\n  \"The program does not import sys correctly, it should be imported at the beginning of the script.\",\n  \"The program does not check if the config file path is valid before trying to open it.\"\n] }"
+}

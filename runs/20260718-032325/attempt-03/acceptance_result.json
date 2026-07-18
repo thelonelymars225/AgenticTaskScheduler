@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Invalid acceptance harness: it references sys without importing sys."
+  ],
+  "stdout": "",
+  "stderr": "",
+  "executed": true
+}

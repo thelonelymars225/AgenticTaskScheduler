@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not import the sys module, which is used in the main function."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [ \"The program does not import the sys module, which is used in the main function.\" ] }"
+}

@@ -1,0 +1,31 @@
+{
+  "task": "## Specification\n- Write a standard-library Python configuration validator. It must load JSON from a file, validate required string, integer-range, and boolean fields, report all validation errors, provide an importable validate_config function, and include a command-line interface with useful exit codes.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "config_validator",
+  "final_verdict": "VERDICT: FAIL\n- The program does not import the sys module, which is used in the main function.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    },
+    {
+      "number": 3,
+      "path": "attempt-03",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "review_passed": false
+    }
+  ]
+}
