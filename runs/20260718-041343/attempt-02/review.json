@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where the configuration file is empty, but it should return an error code.",
+    "The `validate_config` function does not check if the required fields are present in the config dictionary before checking their types.",
+    "The `main` function does not handle the case where the configuration file contains invalid JSON."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The program does not handle the case where the configuration file is empty, but it should return an error code.\",\n  \"The `validate_config` function does not check if the required fields are present in the config dictionary before checking their types.\",\n  \"The `main` function does not handle the case where the configuration file contains invalid JSON.\"\n] }"
+}
