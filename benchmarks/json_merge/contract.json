@@ -1,0 +1,20 @@
+{
+  "benchmark_id": "json_merge",
+  "version": "1.0.0",
+  "interface": ["merge(left, right)"],
+  "merge_semantics": {
+    "object_object": "recursively merge keys",
+    "non_conflicting_keys": "preserve",
+    "scalar_conflict": "right replaces left",
+    "list_conflict": "complete right list replaces left",
+    "type_mismatch": "right replaces left",
+    "input_mutation": "forbidden"
+  },
+  "cli": {
+    "arguments": ["left_input_path", "right_input_path", "output_path"],
+    "encoding": "utf-8",
+    "sorted_keys": true,
+    "accept_trailing_json_whitespace": true,
+    "missing_or_malformed_input": "nonzero exit and stderr"
+  }
+}

@@ -74,6 +74,20 @@ class PipelineHelperTests(unittest.TestCase):
         self.assertIn("text JSON must not be written to a binary NamedTemporaryFile", violations)
         self.assertIn("it references sys without importing sys", violations)
 
+    def test_acceptance_harness_rejects_pytest_fixtures_and_cwd_paths(self) -> None:
+        violations = _acceptance_harness_violations(
+            "import importlib.util, os\n"
+            "from pathlib import Path\n"
+            "spec = importlib.util.spec_from_file_location('candidate', os.environ['CANDIDATE_PATH'])\n"
+            "module = importlib.util.module_from_spec(spec)\n"
+            "spec.loader.exec_module(module)\n"
+            "def test_cli(tmp_path):\n"
+            "    output = Path('output.json')\n"
+            "    assert module is not None\n"
+        )
+        self.assertIn("test function test_cli requires unsupported fixture arguments", violations)
+        self.assertIn("test fixtures must not depend on current-working-directory relative paths", violations)
+
     def test_default_profile_prioritizes_quality(self) -> None:
         self.assertTrue(ENABLE_PLANNING)
         self.assertTrue(ENABLE_LLM_REVIEW)

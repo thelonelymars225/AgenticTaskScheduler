@@ -1,0 +1,20 @@
+{
+  "benchmark_id": "text_statistics",
+  "version": "1.0.0",
+  "interface": ["tokenize(text)", "analyze_text(text)", "analyze_file(path)"],
+  "result_schema": ["words", "frequency", "lines", "characters"],
+  "line_rule": "empty text has zero lines; otherwise len(text.splitlines())",
+  "token_rule": "Unicode word runs, surrounding punctuation excluded, lowercase normalization",
+  "frequency_order": "lexical key order",
+  "errors": {
+    "none_or_non_string": "TypeError",
+    "missing_file": "FileNotFoundError",
+    "invalid_utf8": "UnicodeDecodeError"
+  },
+  "cli": {
+    "arguments": ["input_path"],
+    "encoding": "utf-8",
+    "output": "stable JSON",
+    "failure": "nonzero exit and stderr"
+  }
+}

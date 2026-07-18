@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ast
+import hashlib
 import json
 import os
 import re
@@ -22,7 +23,6 @@ from inference.pipeline_config import (
     ENABLE_ACCEPTANCE_TESTS,
     ENABLE_LLM_REVIEW,
     ENABLE_PLANNING,
-    ESCALATION_MODEL,
     MAX_REPAIRS,
     MODEL_KEEP_ALIVE,
     PLANNER_MODEL,
@@ -30,12 +30,20 @@ from inference.pipeline_config import (
     QA_MODEL,
     STARTUP_GRACE_SECONDS,
 )
+from inference.trusted_benchmarks import get_trusted_suite
 from timer import Timer
 
 CLIENT = ollama.Client()
 KEEP_ALIVE = MODEL_KEEP_ALIVE
 STARTUP_GRACE = STARTUP_GRACE_SECONDS
 CHAR_LIMITS = {"simple": 8000, "medium": 16000, "complex": 24000, "very_complex": 32000}
+MEASUREMENT_STATUSES = {
+    "VALID", "INVALID_HARNESS", "INVALID_EXPECTATION", "INFRA_FAIL",
+    "NOT_EXECUTED", "NO_TESTS_COLLECTED",
+}
+CANDIDATE_STATUSES = {"PASS", "FAIL", "UNMEASURED"}
+REPAIR_STATUSES = {"NOT_ATTEMPTED", "CHANGED", "UNCHANGED", "FAILED"}
+_MODEL_CALL_EVENTS: list[dict[str, Any]] = []
 
 
 @dataclass(frozen=True)
@@ -87,6 +95,12 @@ class AcceptanceTestResult:
     executed: bool = False
     test_count: int = 0
     exit_code: int | None = None
+    measurement_status: str = "NOT_EXECUTED"
+    suite_version: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.measurement_status not in MEASUREMENT_STATUSES:
+            raise ValueError(f"Unsupported measurement status: {self.measurement_status}")
 
 
 @dataclass
@@ -97,6 +111,31 @@ class AttemptRecord:
     acceptance_tests: str
     acceptance_result: AcceptanceTestResult
     review: ReviewResult
+    candidate_status: str = "UNMEASURED"
+    repair_status: str = "NOT_ATTEMPTED"
+
+    def __post_init__(self) -> None:
+        if self.candidate_status not in CANDIDATE_STATUSES:
+            raise ValueError(f"Unsupported candidate status: {self.candidate_status}")
+        if self.repair_status not in REPAIR_STATUSES:
+            raise ValueError(f"Unsupported repair status: {self.repair_status}")
+
+
+@dataclass
+class RepairEvent:
+    repair_number: int
+    source_attempt: int
+    trigger: list[str]
+    before_sha256: str
+    after_sha256: str
+    changed: bool
+    model: str
+    status: str
+    duration_seconds: float
+
+    def __post_init__(self) -> None:
+        if self.status not in REPAIR_STATUSES - {"NOT_ATTEMPTED"}:
+            raise ValueError(f"Unsupported repair event status: {self.status}")
 
 
 @dataclass
@@ -105,6 +144,11 @@ class PipelineResult:
     code: str
     review: ReviewResult
     attempts: list[AttemptRecord]
+    benchmark_id: str | None = None
+    trusted_suite_version: str | None = None
+    repair_events: list[RepairEvent] = field(default_factory=list)
+    timings: dict[str, float] = field(default_factory=dict)
+    model_calls: list[dict[str, Any]] = field(default_factory=list)
 
 
 def _as_list(value: Any) -> list[str]:
@@ -184,8 +228,49 @@ def _chat(model: str, messages: list[dict[str, Any]], *, json_output: bool = Fal
     }
     if json_output:
         kwargs["format"] = "json"
+    started = time.perf_counter()
     response = CLIENT.chat(**kwargs)
+    elapsed = time.perf_counter() - started
+
+    def response_value(name: str) -> Any:
+        if isinstance(response, dict):
+            return response.get(name)
+        return getattr(response, name, None)
+    _MODEL_CALL_EVENTS.append({
+        "call_number": len(_MODEL_CALL_EVENTS) + 1,
+        "model": model,
+        "duration_seconds": elapsed,
+        "prompt_tokens": response_value("prompt_eval_count"),
+        "output_tokens": response_value("eval_count"),
+        "ollama_total_duration_ns": response_value("total_duration"),
+        "ollama_load_duration_ns": response_value("load_duration"),
+        "ollama_prompt_eval_duration_ns": response_value("prompt_eval_duration"),
+        "ollama_eval_duration_ns": response_value("eval_duration"),
+    })
     return response["message"]["content"]
+
+
+def _sha256(code: str) -> str:
+    return hashlib.sha256(code.encode("utf-8")).hexdigest()
+
+
+def _candidate_status(validation: ValidationResult, acceptance: AcceptanceTestResult) -> str:
+    """Derive candidate status only from valid executable measurement evidence."""
+    if (
+        acceptance.measurement_status != "VALID"
+        or not acceptance.executed
+        or acceptance.test_count < 1
+        or acceptance.exit_code is None
+    ):
+        return "UNMEASURED"
+    return "PASS" if validation.passed and acceptance.passed and acceptance.exit_code == 0 else "FAIL"
+
+
+def _timing_totals(total_duration: float) -> dict[str, float]:
+    stats = Timer.get_stats() if hasattr(Timer, "get_stats") else {}
+    totals = {name: values["total"] for name, values in stats.items()}
+    totals["pipeline.workflow"] = total_duration
+    return totals
 
 
 def analyze_task(prompt: str) -> TaskPlan:
@@ -478,6 +563,10 @@ def _acceptance_test_inventory(tests: str) -> tuple[list[str], list[str], int]:
 def _acceptance_harness_violations(tests: str) -> list[str]:
     """Return deterministic contract violations before running a test harness."""
     violations: list[str] = []
+    try:
+        tree = ast.parse(tests)
+    except SyntaxError as exc:
+        return [f"test script does not parse at line {exc.lineno}: {exc.msg}"]
     if "CANDIDATE_PATH" not in tests or "spec_from_file_location" not in tests:
         violations.append("it must import the candidate through CANDIDATE_PATH")
     candidate_load = tests.find("spec_from_file_location")
@@ -504,6 +593,12 @@ def _acceptance_harness_violations(tests: str) -> list[str]:
         violations.append("subprocess stdin must be a file handle or input text, not a filename string")
     if re.search(r"\bsys\.", tests) and not re.search(r"^\s*import\s+sys\b", tests, re.MULTILINE):
         violations.append("it references sys without importing sys")
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name.startswith("test_"):
+            if node.args.args or node.args.posonlyargs or node.args.kwonlyargs:
+                violations.append(f"test function {node.name} requires unsupported fixture arguments")
+    if re.search(r"\bPath\(\s*['\"][^/'\"][^'\"]*['\"]\s*\)", tests):
+        violations.append("test fixtures must not depend on current-working-directory relative paths")
     return violations
 
 
@@ -511,17 +606,26 @@ def run_acceptance_tests(code: str, tests: str,
                          timeout: float = ACCEPTANCE_TEST_TIMEOUT_SECONDS) -> AcceptanceTestResult:
     """Run generated acceptance tests in an isolated temporary directory."""
     if not tests.strip():
-        return AcceptanceTestResult(False, ["Independent acceptance test generator returned no test script."])
+        return AcceptanceTestResult(
+            False,
+            ["Independent acceptance test generator returned no test script."],
+            measurement_status="INVALID_HARNESS",
+        )
     tests = _normalize_acceptance_harness(tests)
     violations = _acceptance_harness_violations(tests)
     if violations:
         return AcceptanceTestResult(
             False,
             ["Invalid acceptance harness: " + "; ".join(violations) + "."],
+            measurement_status="INVALID_HARNESS",
         )
     test_names, test_classes, test_count = _acceptance_test_inventory(tests)
     if test_count == 0:
-        return AcceptanceTestResult(False, ["No executable acceptance tests were collected."])
+        return AcceptanceTestResult(
+            False,
+            ["No executable acceptance tests were collected."],
+            measurement_status="NO_TESTS_COLLECTED",
+        )
     with tempfile.TemporaryDirectory(prefix="agentic-acceptance-") as directory:
         root = Path(directory)
         candidate = root / "candidate.py"
@@ -551,12 +655,12 @@ def run_acceptance_tests(code: str, tests: str,
         except subprocess.TimeoutExpired as exc:
             return AcceptanceTestResult(
                 False, [f"Acceptance tests timed out after {timeout:g} seconds."],
-                exc.stdout or "", exc.stderr or "", True, test_count, None,
+                exc.stdout or "", exc.stderr or "", True, test_count, None, "INFRA_FAIL",
             )
         except OSError as exc:
             return AcceptanceTestResult(
                 False, [f"Could not run acceptance tests: {exc}"],
-                executed=False, test_count=test_count,
+                executed=False, test_count=test_count, measurement_status="INFRA_FAIL",
             )
     stdout = result.stdout[-4000:]
     stderr = result.stderr[-4000:]
@@ -564,11 +668,11 @@ def run_acceptance_tests(code: str, tests: str,
         detail = stderr.strip() or stdout.strip() or f"Test process exited with code {result.returncode}."
         return AcceptanceTestResult(
             False, [f"Acceptance failure: {detail}"], stdout, stderr,
-            True, test_count, result.returncode,
+            True, test_count, result.returncode, "VALID",
         )
     return AcceptanceTestResult(
         True, stdout=stdout, stderr=stderr, executed=True,
-        test_count=test_count, exit_code=result.returncode,
+        test_count=test_count, exit_code=result.returncode, measurement_status="VALID",
     )
 
 
@@ -601,66 +705,147 @@ def quality_review(code: str, task: TaskPlan, evidence: list[str] | None = None)
     return ReviewResult(False, ["QA unavailable: reviewer returned no valid structured response after one retry."])
 
 
-def project_management_with_attempts(prompt: str, max_retries: int = MAX_REPAIRS) -> PipelineResult:
+def project_management_with_attempts(
+    prompt: str,
+    max_retries: int = MAX_REPAIRS,
+    benchmark_id: str | None = None,
+) -> PipelineResult:
+    """Generate and measure candidates, using frozen suites for known benchmark IDs."""
     max_retries = max(0, min(max_retries, MAX_REPAIRS))
+    workflow_started = time.perf_counter()
     Timer.reset_all()
+    _MODEL_CALL_EVENTS.clear()
+    trusted_suite = get_trusted_suite(benchmark_id)
     with Timer("pipeline.analyze"):
         task = analyze_task(prompt) if ENABLE_PLANNING else _fast_task_plan(prompt)
     with Timer("pipeline.generate"):
         code = write_code(prompt, task)
 
-    failures: list[str] = []
     attempts: list[AttemptRecord] = []
+    repair_events: list[RepairEvent] = []
     review = ReviewResult(False, ["Pipeline did not complete."])
+    repair_status_for_attempt = "NOT_ATTEMPTED"
     for attempt in range(max_retries + 1):
         with Timer(f"pipeline.validate.{attempt + 1}"):
             validation = validate_code(code, task)
         acceptance_tests = ""
-        # The default profile deliberately skips generated deep acceptance tests
-        # for speed. Keep that distinct from a passing executed test in artifacts.
-        acceptance = AcceptanceTestResult(True, executed=False)
+        acceptance = AcceptanceTestResult(
+            False,
+            ["Acceptance was not executed."],
+            executed=False,
+            measurement_status="NOT_EXECUTED",
+            suite_version=trusted_suite.version if trusted_suite else None,
+        )
         if validation.passed and ENABLE_ACCEPTANCE_TESTS:
-            with Timer(f"pipeline.acceptance.generate.{attempt + 1}"):
-                acceptance_tests = write_acceptance_tests(code, task)
+            if trusted_suite:
+                acceptance_tests = trusted_suite.source
+            else:
+                with Timer(f"pipeline.acceptance.generate.{attempt + 1}"):
+                    acceptance_tests = write_acceptance_tests(code, task)
             with Timer(f"pipeline.acceptance.run.{attempt + 1}"):
                 acceptance = run_acceptance_tests(code, acceptance_tests)
+            acceptance.suite_version = trusted_suite.version if trusted_suite else None
 
+        candidate_status = _candidate_status(validation, acceptance)
         evidence = [*validation.failures, *acceptance.failures]
-        if ENABLE_LLM_REVIEW:
+        if trusted_suite:
+            review = ReviewResult(
+                candidate_status == "PASS",
+                [] if candidate_status == "PASS" else evidence,
+                f"trusted-suite:{trusted_suite.benchmark_id}:{trusted_suite.version}",
+            )
+        elif ENABLE_LLM_REVIEW:
             with Timer(f"pipeline.review.{attempt + 1}"):
                 review = quality_review(code, task, evidence)
         else:
             review = ReviewResult(True)
 
-        attempt_record = AttemptRecord(attempt + 1, code, validation, acceptance_tests, acceptance, review)
+        attempt_record = AttemptRecord(
+            attempt + 1,
+            code,
+            validation,
+            acceptance_tests,
+            acceptance,
+            review,
+            candidate_status,
+            repair_status_for_attempt,
+        )
         attempts.append(attempt_record)
-        if validation.passed and acceptance.passed and review.passed:
-            Timer.print_stats()
-            return PipelineResult(task, code, review, attempts)
+        completed = candidate_status == "PASS" if trusted_suite else (
+            validation.passed and acceptance.passed and review.passed
+        )
+        if completed:
+            break
 
-        failures.extend(evidence)
-        failures.extend(review.issues)
+        invalid_measurement = acceptance.measurement_status in {
+            "INVALID_HARNESS", "INVALID_EXPECTATION", "INFRA_FAIL", "NO_TESTS_COLLECTED",
+        }
+        if invalid_measurement:
+            break
         if any(issue.startswith("QA unavailable:") for issue in review.issues):
             break
         if attempt < max_retries:
-            with Timer(f"pipeline.repair.{attempt + 1}"):
-                repaired = repair_code(code, task, failures)
-            if repaired.strip() == code.strip():
-                review = ReviewResult(False, [*review.issues, "Repair returned an unchanged candidate; stopping the loop."], review.raw)
+            trigger = [*evidence]
+            if not trusted_suite:
+                trigger.extend(review.issues)
+            trigger = [item for item in trigger if item][:8]
+            before_sha256 = _sha256(code)
+            repair_started = time.perf_counter()
+            try:
+                with Timer(f"pipeline.repair.{len(repair_events) + 1}"):
+                    repaired = repair_code(code, task, trigger)
+            except Exception as exc:
+                duration = time.perf_counter() - repair_started
+                repair_events.append(RepairEvent(
+                    len(repair_events) + 1,
+                    attempt + 1,
+                    trigger,
+                    before_sha256,
+                    before_sha256,
+                    False,
+                    CODER_MODEL,
+                    "FAILED",
+                    duration,
+                ))
+                review = ReviewResult(False, [*review.issues, f"Repair invocation failed: {exc}"], review.raw)
+                break
+            duration = time.perf_counter() - repair_started
+            changed = repaired.strip() != code.strip()
+            status = "CHANGED" if changed else "UNCHANGED"
+            repair_events.append(RepairEvent(
+                len(repair_events) + 1,
+                attempt + 1,
+                trigger,
+                before_sha256,
+                _sha256(repaired),
+                changed,
+                CODER_MODEL,
+                status,
+                duration,
+            ))
+            if not changed:
+                review = ReviewResult(
+                    False,
+                    [*review.issues, "Repair returned an unchanged candidate; stopping the loop."],
+                    review.raw,
+                )
                 break
             code = repaired
-
-    if ESCALATION_MODEL and ESCALATION_MODEL != CODER_MODEL:
-        with Timer("pipeline.escalate"):
-            code = write_code(prompt, task, ESCALATION_MODEL, failures)
-        validation = validate_code(code, task)
-        acceptance_tests = write_acceptance_tests(code, task) if validation.passed and ENABLE_ACCEPTANCE_TESTS else ""
-        acceptance = run_acceptance_tests(code, acceptance_tests) if acceptance_tests else AcceptanceTestResult(validation.passed, executed=False)
-        review = quality_review(code, task, [*validation.failures, *acceptance.failures]) if ENABLE_LLM_REVIEW else ReviewResult(True)
-        attempts.append(AttemptRecord(len(attempts) + 1, code, validation, acceptance_tests, acceptance, review))
+            repair_status_for_attempt = "CHANGED"
 
     Timer.print_stats()
-    return PipelineResult(task, code, review, attempts)
+    workflow_duration = time.perf_counter() - workflow_started
+    return PipelineResult(
+        task=task,
+        code=code,
+        review=review,
+        attempts=attempts,
+        benchmark_id=benchmark_id,
+        trusted_suite_version=trusted_suite.version if trusted_suite else None,
+        repair_events=repair_events,
+        timings=_timing_totals(workflow_duration),
+        model_calls=[dict(event) for event in _MODEL_CALL_EVENTS],
+    )
 
 
 def project_management(prompt: str, max_retries: int = MAX_REPAIRS) -> tuple[str, str, str]:
