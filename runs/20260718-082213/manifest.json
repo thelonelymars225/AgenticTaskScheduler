@@ -1,0 +1,193 @@
+{
+  "task": "## Specification\n- converter python to js\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": null,
+  "run_timestamp": "2026-07-18T08:22:13.625067+03:00",
+  "attempt_count": 2,
+  "model_used": "qwen2.5-coder:14b",
+  "selected_candidate": 2,
+  "measurement_status": "VALID",
+  "candidate_status": "FAIL",
+  "repair_status": "UNCHANGED",
+  "repair_count": 2,
+  "repair_events": [
+    {
+      "repair_number": 1,
+      "source_attempt": 1,
+      "trigger": [
+        "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-ow27jzb6/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-ow27jzb6/acceptance_tests.py\", line 28, in test_convert_python_to_js_invalid_input\n    assert False, \"Expected SyntaxError\"\n           ^^^^^\nAssertionError: Expected SyntaxError",
+        "The provided Python code is not a valid syntax for the `convert_python_to_js` function. It should be a string containing Python code to be converted.",
+        "The `convert_python_to_js` function does not handle invalid input correctly, as it returns a hardcoded JavaScript string instead of raising an error or returning None."
+      ],
+      "before_sha256": "8820921a189f1f92f60b36379eff2fc68d14ad9c48d5b24e8c22ad5d812cb8bc",
+      "after_sha256": "a0b3739a729ff0195d7d0004a1243427bde722cf30c96360592ca18516812137",
+      "changed": true,
+      "model": "qwen2.5-coder:14b",
+      "status": "CHANGED",
+      "duration_seconds": 4.268467077999958
+    },
+    {
+      "repair_number": 2,
+      "source_attempt": 2,
+      "trigger": [
+        "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-v7b8axcx/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-v7b8axcx/acceptance_tests.py\", line 27, in test_convert_python_to_js_invalid_type\n    with pytest.raises(SyntaxError):\n         ^^^^^^\nNameError: name 'pytest' is not defined. Did you mean: 'bytes'?",
+        "The code does not handle the case when `python_code` is not a string correctly, it should raise a `SyntaxError` with a meaningful message."
+      ],
+      "before_sha256": "a0b3739a729ff0195d7d0004a1243427bde722cf30c96360592ca18516812137",
+      "after_sha256": "a0b3739a729ff0195d7d0004a1243427bde722cf30c96360592ca18516812137",
+      "changed": false,
+      "model": "qwen2.5-coder:14b",
+      "status": "UNCHANGED",
+      "duration_seconds": 4.286669517998234
+    }
+  ],
+  "trusted_suite_version": null,
+  "valid_evaluation": true,
+  "timings": {
+    "pipeline.analyze": 4.192385791997367,
+    "pipeline.generate": 3.733536396997806,
+    "pipeline.validate.1": 0.10102913199807517,
+    "pipeline.acceptance.generate.1": 4.386384753997845,
+    "pipeline.acceptance.run.1": 0.026653927001461852,
+    "pipeline.review.1": 1.6802249800020945,
+    "pipeline.repair.1": 4.268462068001099,
+    "pipeline.validate.2": 0.10087622099672444,
+    "pipeline.acceptance.generate.2": 4.929574948000663,
+    "pipeline.acceptance.run.2": 0.02527169999666512,
+    "pipeline.review.2": 0.9270253490030882,
+    "pipeline.repair.2": 4.286664849001681,
+    "pipeline.workflow": 28.65830960499443
+  },
+  "generation_duration_seconds": 3.733536396997806,
+  "acceptance_generation_duration_seconds": 9.315959701998509,
+  "acceptance_execution_duration_seconds": 0.05192562699812697,
+  "review_duration_seconds": 2.6072503290051827,
+  "repair_duration_seconds": 8.55512691700278,
+  "total_duration_seconds": 28.65830960499443,
+  "model_call_count": 8,
+  "prompt_tokens": 3140,
+  "output_tokens": 1523,
+  "model_calls": [
+    {
+      "call_number": 1,
+      "model": "llama3.1:8b",
+      "duration_seconds": 4.192360865003138,
+      "prompt_tokens": 109,
+      "output_tokens": 225,
+      "ollama_total_duration_ns": 4190857900,
+      "ollama_load_duration_ns": 79987999,
+      "ollama_prompt_eval_duration_ns": 27748595,
+      "ollama_eval_duration_ns": 1475250385
+    },
+    {
+      "call_number": 2,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 3.7334316479973495,
+      "prompt_tokens": 196,
+      "output_tokens": 110,
+      "ollama_total_duration_ns": 3732725266,
+      "ollama_load_duration_ns": 2308759618,
+      "ollama_prompt_eval_duration_ns": 66321395,
+      "ollama_eval_duration_ns": 1305840365
+    },
+    {
+      "call_number": 3,
+      "model": "llama3.1:8b",
+      "duration_seconds": 4.385396377001598,
+      "prompt_tokens": 525,
+      "output_tokens": 347,
+      "ollama_total_duration_ns": 4384512307,
+      "ollama_load_duration_ns": 1846035792,
+      "ollama_prompt_eval_duration_ns": 81904880,
+      "ollama_eval_duration_ns": 2298677086
+    },
+    {
+      "call_number": 4,
+      "model": "llama3.1:8b",
+      "duration_seconds": 1.6801934410032118,
+      "prompt_tokens": 423,
+      "output_tokens": 81,
+      "ollama_total_duration_ns": 1679392328,
+      "ollama_load_duration_ns": 72260708,
+      "ollama_prompt_eval_duration_ns": 65077873,
+      "ollama_eval_duration_ns": 529771656
+    },
+    {
+      "call_number": 5,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 4.26842640000541,
+      "prompt_tokens": 417,
+      "output_tokens": 149,
+      "ollama_total_duration_ns": 4267716211,
+      "ollama_load_duration_ns": 2296287964,
+      "ollama_prompt_eval_duration_ns": 119142663,
+      "ollama_eval_duration_ns": 1782549763
+    },
+    {
+      "call_number": 6,
+      "model": "llama3.1:8b",
+      "duration_seconds": 4.9291187609997,
+      "prompt_tokens": 564,
+      "output_tokens": 421,
+      "ollama_total_duration_ns": 4928283494,
+      "ollama_load_duration_ns": 1857407806,
+      "ollama_prompt_eval_duration_ns": 86992395,
+      "ollama_eval_duration_ns": 2794005220
+    },
+    {
+      "call_number": 7,
+      "model": "llama3.1:8b",
+      "duration_seconds": 0.9269977670046501,
+      "prompt_tokens": 473,
+      "output_tokens": 41,
+      "ollama_total_duration_ns": 926291885,
+      "ollama_load_duration_ns": 70201927,
+      "ollama_prompt_eval_duration_ns": 70673683,
+      "ollama_eval_duration_ns": 266294346
+    },
+    {
+      "call_number": 8,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 4.2866281700044055,
+      "prompt_tokens": 433,
+      "output_tokens": 149,
+      "ollama_total_duration_ns": 4285919032,
+      "ollama_load_duration_ns": 2295467776,
+      "ollama_prompt_eval_duration_ns": 119717445,
+      "ollama_eval_duration_ns": 1786296070
+    }
+  ],
+  "final_classification": "CANDIDATE_FAIL",
+  "final_verdict": "VERDICT: FAIL\n- The code does not handle the case when `python_code` is not a string correctly, it should raise a `SyntaxError` with a meaningful message.\n- Repair returned an unchanged candidate; stopping the loop.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 3,
+      "acceptance_exit_code": 1,
+      "measurement_status": "VALID",
+      "candidate_status": "FAIL",
+      "review_passed": false,
+      "repair_status": "NOT_ATTEMPTED",
+      "repair_changed_code": false,
+      "candidate_sha256": "8820921a189f1f92f60b36379eff2fc68d14ad9c48d5b24e8c22ad5d812cb8bc"
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 3,
+      "acceptance_exit_code": 1,
+      "measurement_status": "VALID",
+      "candidate_status": "FAIL",
+      "review_passed": false,
+      "repair_status": "CHANGED",
+      "repair_changed_code": true,
+      "candidate_sha256": "a0b3739a729ff0195d7d0004a1243427bde722cf30c96360592ca18516812137"
+    }
+  ]
+}

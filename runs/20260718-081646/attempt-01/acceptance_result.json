@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "Invalid acceptance harness: test fixtures must not depend on current-working-directory relative paths."
+  ],
+  "stdout": "",
+  "stderr": "",
+  "executed": false,
+  "test_count": 0,
+  "exit_code": null,
+  "measurement_status": "INVALID_HARNESS",
+  "suite_version": null
+}

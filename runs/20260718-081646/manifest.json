@@ -1,0 +1,109 @@
+{
+  "task": "## Specification\n- convreter from js to ts\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": null,
+  "run_timestamp": "2026-07-18T08:16:46.472023+03:00",
+  "attempt_count": 1,
+  "model_used": "qwen2.5-coder:14b",
+  "selected_candidate": 1,
+  "measurement_status": "INVALID_HARNESS",
+  "candidate_status": "UNMEASURED",
+  "repair_status": "NOT_ATTEMPTED",
+  "repair_count": 0,
+  "repair_events": [],
+  "trusted_suite_version": null,
+  "valid_evaluation": false,
+  "timings": {
+    "pipeline.analyze": 2.5053617550001945,
+    "pipeline.generate": 4.266177847996005,
+    "pipeline.validate.1": 0.10118650100048399,
+    "pipeline.acceptance.generate.1": 8.782844428998942,
+    "pipeline.acceptance.run.1": 0.00039038099930621684,
+    "pipeline.review.1": 3.4257443440001225,
+    "pipeline.workflow": 19.081812965006975
+  },
+  "generation_duration_seconds": 4.266177847996005,
+  "acceptance_generation_duration_seconds": 8.782844428998942,
+  "acceptance_execution_duration_seconds": 0.00039038099930621684,
+  "review_duration_seconds": 3.4257443440001225,
+  "repair_duration_seconds": 0,
+  "total_duration_seconds": 19.081812965006975,
+  "model_call_count": 5,
+  "prompt_tokens": 1970,
+  "output_tokens": 1313,
+  "model_calls": [
+    {
+      "call_number": 1,
+      "model": "llama3.1:8b",
+      "duration_seconds": 2.5053379100063466,
+      "prompt_tokens": 112,
+      "output_tokens": 33,
+      "ollama_total_duration_ns": 2503836858,
+      "ollama_load_duration_ns": 1880436064,
+      "ollama_prompt_eval_duration_ns": 23081419,
+      "ollama_eval_duration_ns": 210896154
+    },
+    {
+      "call_number": 2,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 4.266051458995207,
+      "prompt_tokens": 202,
+      "output_tokens": 153,
+      "ollama_total_duration_ns": 4265252401,
+      "ollama_load_duration_ns": 2307757784,
+      "ollama_prompt_eval_duration_ns": 66697559,
+      "ollama_eval_duration_ns": 1820687351
+    },
+    {
+      "call_number": 3,
+      "model": "llama3.1:8b",
+      "duration_seconds": 6.174620669997239,
+      "prompt_tokens": 571,
+      "output_tokens": 599,
+      "ollama_total_duration_ns": 6173753893,
+      "ollama_load_duration_ns": 1834711959,
+      "ollama_prompt_eval_duration_ns": 87348041,
+      "ollama_eval_duration_ns": 3983012128
+    },
+    {
+      "call_number": 4,
+      "model": "llama3.1:8b",
+      "duration_seconds": 2.6069351409969386,
+      "prompt_tokens": 698,
+      "output_tokens": 353,
+      "ollama_total_duration_ns": 2606160709,
+      "ollama_load_duration_ns": 71811635,
+      "ollama_prompt_eval_duration_ns": 29483272,
+      "ollama_eval_duration_ns": 2345919648
+    },
+    {
+      "call_number": 5,
+      "model": "llama3.1:8b",
+      "duration_seconds": 3.4257140870031435,
+      "prompt_tokens": 387,
+      "output_tokens": 175,
+      "ollama_total_duration_ns": 3424985884,
+      "ollama_load_duration_ns": 75474885,
+      "ollama_prompt_eval_duration_ns": 55738330,
+      "ollama_eval_duration_ns": 1151559502
+    }
+  ],
+  "final_classification": "INVALID_HARNESS",
+  "final_verdict": "VERDICT: FAIL\n- The program does not handle the case where the environment variable 'AGENT_SMOKE_TEST' is not set.\n- The program assumes that the file 'example.js' exists in the current working directory, but it should be a path to the file instead of a relative path.\n- There is no error handling for the case where the conversion fails due to reasons other than a CalledProcessError (e.g., permission issues).\n- The program does not check if the 'npx' command is available before trying to use it.\n- The program does not handle the case where the output file already exists and cannot be overwritten.\n- There is no validation of the input parameters (js_file, ts_file) to ensure they are valid paths.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": false,
+      "collected_test_count": 0,
+      "acceptance_exit_code": null,
+      "measurement_status": "INVALID_HARNESS",
+      "candidate_status": "UNMEASURED",
+      "review_passed": false,
+      "repair_status": "NOT_ATTEMPTED",
+      "repair_changed_code": false,
+      "candidate_sha256": "4ee5320be16dbe3e484bd8f7e947af8935ecbb501a9ed955e52c071415cfcf44"
+    }
+  ]
+}

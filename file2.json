@@ -1,0 +1,11 @@
+{
+    "app": "AgenticTaskScheduler",
+    "version": 3,
+    "features": {
+        "logging": false,
+        "metrics": true,
+        "theme": "light"
+    },
+    "rate_limit": 200,
+    "timeout": 30
+}

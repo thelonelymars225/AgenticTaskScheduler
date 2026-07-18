@@ -1,0 +1,159 @@
+{
+  "task": "## Specification\n- Write a standard-library Python text statistics tool with one fixed contract. Expose importable core functions. None and unsupported non-string values raise TypeError. Empty and whitespace-only strings have zero words and an empty frequency mapping. Character count uses the original text; line count is zero for empty text and otherwise counts logical lines. Tokenize Unicode words deterministically, remove surrounding punctuation, normalize words to lowercase, and return frequency mappings in deterministic lexical key order. File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError, and never call sys.exit. The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "text_statistics",
+  "run_timestamp": "2026-07-18T08:07:02.864115+03:00",
+  "attempt_count": 3,
+  "model_used": "qwen2.5-coder:14b",
+  "selected_candidate": 3,
+  "measurement_status": "VALID",
+  "candidate_status": "FAIL",
+  "repair_status": "CHANGED",
+  "repair_count": 2,
+  "repair_events": [
+    {
+      "repair_number": 1,
+      "source_attempt": 1,
+      "trigger": [
+        "Runtime failure: Traceback (most recent call last):\n  File \"/tmp/agentic-task-q6f5w54c/generated.py\", line 81, in <module>\n    sys.exit(main())\n    ^^^\nNameError: name 'sys' is not defined. Did you forget to import 'sys'?",
+        "Acceptance was not executed."
+      ],
+      "before_sha256": "a70c40c34af788db31ca98a67f654b5561ee99804552af0b83b4216c8f8ebe11",
+      "after_sha256": "6adebe2fd37a7547d532c484fe5c10ed32db3969867033c6ef3a604a79b51a18",
+      "changed": true,
+      "model": "qwen2.5-coder:14b",
+      "status": "CHANGED",
+      "duration_seconds": 6.4614030410011765
+    },
+    {
+      "repair_number": 2,
+      "source_attempt": 2,
+      "trigger": [
+        "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 42, in test_empty_whitespace_and_line_rule\n    empty = _assert_schema(candidate.analyze_text(\"\"))\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 22, in _assert_schema\n    assert set(result) == {\"words\", \"frequency\", \"lines\", \"characters\"}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+      ],
+      "before_sha256": "6adebe2fd37a7547d532c484fe5c10ed32db3969867033c6ef3a604a79b51a18",
+      "after_sha256": "6ccb2fb868b646e909261043d587e5eefe6865264bf59f230fbcdc10ce6d2e15",
+      "changed": true,
+      "model": "qwen2.5-coder:14b",
+      "status": "CHANGED",
+      "duration_seconds": 6.427105130998825
+    }
+  ],
+  "trusted_suite_version": "1.0.0",
+  "valid_evaluation": true,
+  "timings": {
+    "pipeline.analyze": 2.7460307289948105,
+    "pipeline.generate": 8.573168073002307,
+    "pipeline.validate.1": 0.10146130299835932,
+    "pipeline.repair.1": 6.461397150000266,
+    "pipeline.validate.2": 0.10128312400047434,
+    "pipeline.acceptance.run.2": 0.03121772699523717,
+    "pipeline.repair.2": 6.427100200999121,
+    "pipeline.validate.3": 0.10119821200350998,
+    "pipeline.acceptance.run.3": 0.0312916969996877,
+    "pipeline.workflow": 24.574434068999835
+  },
+  "generation_duration_seconds": 8.573168073002307,
+  "acceptance_generation_duration_seconds": 0,
+  "acceptance_execution_duration_seconds": 0.06250942399492487,
+  "review_duration_seconds": 0,
+  "repair_duration_seconds": 12.888497350999387,
+  "total_duration_seconds": 24.574434068999835,
+  "model_call_count": 4,
+  "prompt_tokens": 2476,
+  "output_tokens": 1510,
+  "model_calls": [
+    {
+      "call_number": 1,
+      "model": "llama3.1:8b",
+      "duration_seconds": 2.7460040980004123,
+      "prompt_tokens": 242,
+      "output_tokens": 43,
+      "ollama_total_duration_ns": 2744447752,
+      "ollama_load_duration_ns": 1881238719,
+      "ollama_prompt_eval_duration_ns": 39818767,
+      "ollama_eval_duration_ns": 278885861
+    },
+    {
+      "call_number": 2,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 8.573031624000578,
+      "prompt_tokens": 460,
+      "output_tokens": 490,
+      "ollama_total_duration_ns": 8572168273,
+      "ollama_load_duration_ns": 2302590217,
+      "ollama_prompt_eval_duration_ns": 131137991,
+      "ollama_eval_duration_ns": 5926919030
+    },
+    {
+      "call_number": 3,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 6.46134372799861,
+      "prompt_tokens": 837,
+      "output_tokens": 489,
+      "ollama_total_duration_ns": 6460308612,
+      "ollama_load_duration_ns": 60443148,
+      "ollama_prompt_eval_duration_ns": 232918941,
+      "ollama_eval_duration_ns": 5954697246
+    },
+    {
+      "call_number": 4,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 6.42705270100123,
+      "prompt_tokens": 937,
+      "output_tokens": 488,
+      "ollama_total_duration_ns": 6426185493,
+      "ollama_load_duration_ns": 61863696,
+      "ollama_prompt_eval_duration_ns": 193430261,
+      "ollama_eval_duration_ns": 5959503816
+    }
+  ],
+  "final_classification": "CANDIDATE_FAIL",
+  "final_verdict": "VERDICT: FAIL\n- Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-3jhh21wu/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-3jhh21wu/acceptance_tests.py\", line 49, in test_empty_whitespace_and_line_rule\n    assert whitespace[\"lines\"] == len(whitespace_text.splitlines())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": false,
+      "acceptance_passed": false,
+      "acceptance_executed": false,
+      "collected_test_count": 0,
+      "acceptance_exit_code": null,
+      "measurement_status": "NOT_EXECUTED",
+      "candidate_status": "UNMEASURED",
+      "review_passed": false,
+      "repair_status": "NOT_ATTEMPTED",
+      "repair_changed_code": false,
+      "candidate_sha256": "a70c40c34af788db31ca98a67f654b5561ee99804552af0b83b4216c8f8ebe11"
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 5,
+      "acceptance_exit_code": 1,
+      "measurement_status": "VALID",
+      "candidate_status": "FAIL",
+      "review_passed": false,
+      "repair_status": "CHANGED",
+      "repair_changed_code": true,
+      "candidate_sha256": "6adebe2fd37a7547d532c484fe5c10ed32db3969867033c6ef3a604a79b51a18"
+    },
+    {
+      "number": 3,
+      "path": "attempt-03",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 5,
+      "acceptance_exit_code": 1,
+      "measurement_status": "VALID",
+      "candidate_status": "FAIL",
+      "review_passed": false,
+      "repair_status": "CHANGED",
+      "repair_changed_code": true,
+      "candidate_sha256": "6ccb2fb868b646e909261043d587e5eefe6865264bf59f230fbcdc10ce6d2e15"
+    }
+  ]
+}

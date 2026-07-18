@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The provided Python code is not a valid syntax for the `convert_python_to_js` function. It should be a string containing Python code to be converted.",
+    "The `convert_python_to_js` function does not handle invalid input correctly, as it returns a hardcoded JavaScript string instead of raising an error or returning None."
+  ],
+  "raw": "{\n\"verdict\": \"FAIL\",\n\"issues\": [\n    \"The provided Python code is not a valid syntax for the `convert_python_to_js` function. It should be a string containing Python code to be converted.\",\n    \"The `convert_python_to_js` function does not handle invalid input correctly, as it returns a hardcoded JavaScript string instead of raising an error or returning None.\"\n]\n}"
+}

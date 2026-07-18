@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-cfxfvyqo/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-cfxfvyqo/acceptance_tests.py\", line 49, in test_empty_whitespace_and_line_rule\n    assert whitespace[\"lines\"] == len(whitespace_text.splitlines())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-cfxfvyqo/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-cfxfvyqo/acceptance_tests.py\", line 49, in test_empty_whitespace_and_line_rule\n    assert whitespace[\"lines\"] == len(whitespace_text.splitlines())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true,
+  "test_count": 5,
+  "exit_code": 1,
+  "measurement_status": "VALID",
+  "suite_version": "1.0.0"
+}

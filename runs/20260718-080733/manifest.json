@@ -1,0 +1,74 @@
+{
+  "task": "## Specification\n- Write a standard-library Python JSON merge utility with one fixed contract. Expose an importable merge(left, right) function. When both values are objects, recursively merge their keys; preserve non-conflicting keys, and let the right value replace the left value for scalar, list, type-mismatch, and every other non-object conflict. Do not mutate either input. The CLI requires explicit left-input, right-input, and output paths, reads and writes UTF-8 JSON, writes stable JSON with sorted keys, reports malformed JSON and file errors on stderr, and returns useful non-zero exit codes.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "json_merge",
+  "run_timestamp": "2026-07-18T08:07:33.156107+03:00",
+  "attempt_count": 1,
+  "model_used": "qwen2.5-coder:14b",
+  "selected_candidate": 1,
+  "measurement_status": "VALID",
+  "candidate_status": "PASS",
+  "repair_status": "NOT_ATTEMPTED",
+  "repair_count": 0,
+  "repair_events": [],
+  "trusted_suite_version": "1.0.0",
+  "valid_evaluation": true,
+  "timings": {
+    "pipeline.analyze": 2.98840003299847,
+    "pipeline.generate": 7.327201000000059,
+    "pipeline.validate.1": 0.10121421300573274,
+    "pipeline.acceptance.run.1": 0.06564830600109417,
+    "pipeline.workflow": 10.48261119399831
+  },
+  "generation_duration_seconds": 7.327201000000059,
+  "acceptance_generation_duration_seconds": 0,
+  "acceptance_execution_duration_seconds": 0.06564830600109417,
+  "review_duration_seconds": 0,
+  "repair_duration_seconds": 0,
+  "total_duration_seconds": 10.48261119399831,
+  "model_call_count": 2,
+  "prompt_tokens": 648,
+  "output_tokens": 436,
+  "model_calls": [
+    {
+      "call_number": 1,
+      "model": "llama3.1:8b",
+      "duration_seconds": 2.9883747860003496,
+      "prompt_tokens": 224,
+      "output_tokens": 43,
+      "ollama_total_duration_ns": 2986858265,
+      "ollama_load_duration_ns": 2140008631,
+      "ollama_prompt_eval_duration_ns": 36850076,
+      "ollama_eval_duration_ns": 277754597
+    },
+    {
+      "call_number": 2,
+      "model": "qwen2.5-coder:14b",
+      "duration_seconds": 7.327087876001315,
+      "prompt_tokens": 424,
+      "output_tokens": 393,
+      "ollama_total_duration_ns": 7326321139,
+      "ollama_load_duration_ns": 2291277736,
+      "ollama_prompt_eval_duration_ns": 118933055,
+      "ollama_eval_duration_ns": 4744064695
+    }
+  ],
+  "final_classification": "PASS",
+  "final_verdict": "VERDICT: PASS",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": true,
+      "acceptance_executed": true,
+      "collected_test_count": 4,
+      "acceptance_exit_code": 0,
+      "measurement_status": "VALID",
+      "candidate_status": "PASS",
+      "review_passed": true,
+      "repair_status": "NOT_ATTEMPTED",
+      "repair_changed_code": false,
+      "candidate_sha256": "887e2d9b5aa2940c0efcc074c817bfb8ec8f2346d1483d6fcc3214ecd0d6f876"
+    }
+  ]
+}

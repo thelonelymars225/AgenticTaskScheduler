@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-v7b8axcx/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-v7b8axcx/acceptance_tests.py\", line 27, in test_convert_python_to_js_invalid_type\n    with pytest.raises(SyntaxError):\n         ^^^^^^\nNameError: name 'pytest' is not defined. Did you mean: 'bytes'?"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-v7b8axcx/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-v7b8axcx/acceptance_tests.py\", line 27, in test_convert_python_to_js_invalid_type\n    with pytest.raises(SyntaxError):\n         ^^^^^^\nNameError: name 'pytest' is not defined. Did you mean: 'bytes'?\n",
+  "executed": true,
+  "test_count": 3,
+  "exit_code": 1,
+  "measurement_status": "VALID",
+  "suite_version": null
+}

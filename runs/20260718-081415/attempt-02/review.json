@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where the user closes the game window, causing a runtime error.",
+    "The acceptance test for compilation and startup without exception has not been implemented."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The program does not handle the case where the user closes the game window, causing a runtime error.\",\"The acceptance test for compilation and startup without exception has not been implemented.\"]}"
+}

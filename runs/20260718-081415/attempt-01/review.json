@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The program fails to compile due to a missing dependency (Pygame) and does not execute the acceptance test of compiling and starting without an exception."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The program fails to compile due to a missing dependency (Pygame) and does not execute the acceptance test of compiling and starting without an exception.\"]}"
+}

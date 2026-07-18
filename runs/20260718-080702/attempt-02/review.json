@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 42, in test_empty_whitespace_and_line_rule\n    empty = _assert_schema(candidate.analyze_text(\"\"))\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 22, in _assert_schema\n    assert set(result) == {\"words\", \"frequency\", \"lines\", \"characters\"}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "raw": "trusted-suite:text_statistics:1.0.0"
+}

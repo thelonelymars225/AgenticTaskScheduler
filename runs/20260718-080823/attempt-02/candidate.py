@@ -1,0 +1,71 @@
+import os
+import json
+import re
+from collections import Counter
+
+def tokenize(text):
+    if text is None or not isinstance(text, str):
+        raise TypeError("Input must be a string")
+    # Use regex to find words and remove surrounding punctuation
+    words = re.findall(r'\b\w+\b', text)
+    return [word.lower() for word in words]
+
+def frequency_mapping(text):
+    tokens = tokenize(text)
+    return dict(Counter(tokens))
+
+def line_count(text):
+    if not text.strip():
+        return 0
+    # Count logical lines, ignoring empty lines
+    return sum(1 for line in text.splitlines() if line.strip())
+
+def character_count(text):
+    return len(text)
+
+def analyze_text(text):
+    if text is None or not isinstance(text, str):
+        raise TypeError("Input must be a string")
+    
+    words = tokenize(text)
+    freq_map = frequency_mapping(text)
+    lines = line_count(text)
+    chars = character_count(text)
+    
+    return {
+        "words": len(words),
+        "frequency": dict(sorted(freq_map.items())),
+        "lines": lines,
+        "characters": chars
+    }
+
+def analyze_file(file_path):
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"File not found: {file_path}")
+    
+    with open(file_path, 'r', encoding='utf-8') as file:
+        text = file.read()
+    
+    return analyze_text(text)
+
+if __name__ == "__main__":
+    if os.getenv('AGENT_SMOKE_TEST') == '1':
+        exit(0)
+    
+    import sys
+    
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <file_path>", file=sys.stderr)
+        sys.exit(1)
+    
+    file_path = sys.argv[1]
+    
+    try:
+        result = analyze_file(file_path)
+        json.dump(result, sys.stdout, indent=4)
+    except (FileNotFoundError, UnicodeDecodeError) as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(2)
+    except Exception as e:
+        print(f"Unexpected error: {e}", file=sys.stderr)
+        sys.exit(3)

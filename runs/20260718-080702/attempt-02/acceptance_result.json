@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 42, in test_empty_whitespace_and_line_rule\n    empty = _assert_schema(candidate.analyze_text(\"\"))\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 22, in _assert_schema\n    assert set(result) == {\"words\", \"frequency\", \"lines\", \"characters\"}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 42, in test_empty_whitespace_and_line_rule\n    empty = _assert_schema(candidate.analyze_text(\"\"))\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/agentic-acceptance-rqa8vfrn/acceptance_tests.py\", line 22, in _assert_schema\n    assert set(result) == {\"words\", \"frequency\", \"lines\", \"characters\"}\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true,
+  "test_count": 5,
+  "exit_code": 1,
+  "measurement_status": "VALID",
+  "suite_version": "1.0.0"
+}

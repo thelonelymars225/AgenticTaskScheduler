@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "failures": [
+    "Runtime failure: Error: Pygame is not installed. Please install it using 'pip install pygame'."
+  ],
+  "stdout": "Error: Pygame is not installed. Please install it using 'pip install pygame'.\n",
+  "stderr": ""
+}

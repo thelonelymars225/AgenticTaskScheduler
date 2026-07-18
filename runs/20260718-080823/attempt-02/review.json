@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-pq6gsjdq/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-pq6gsjdq/acceptance_tests.py\", line 49, in test_empty_whitespace_and_line_rule\n    assert whitespace[\"lines\"] == len(whitespace_text.splitlines())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "raw": "trusted-suite:text_statistics:1.0.0"
+}

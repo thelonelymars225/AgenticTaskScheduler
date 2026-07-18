@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "Runtime failure: Traceback (most recent call last):\n  File \"/tmp/agentic-task-q6f5w54c/generated.py\", line 81, in <module>\n    sys.exit(main())\n    ^^^\nNameError: name 'sys' is not defined. Did you forget to import 'sys'?",
+    "Acceptance was not executed."
+  ],
+  "raw": "trusted-suite:text_statistics:1.0.0"
+}

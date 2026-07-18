@@ -1,0 +1,13 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-ow27jzb6/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-ow27jzb6/acceptance_tests.py\", line 28, in test_convert_python_to_js_invalid_input\n    assert False, \"Expected SyntaxError\"\n           ^^^^^\nAssertionError: Expected SyntaxError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-ow27jzb6/acceptance_runner.py\", line 7, in <module>\n    namespace[name]()\n  File \"/tmp/agentic-acceptance-ow27jzb6/acceptance_tests.py\", line 28, in test_convert_python_to_js_invalid_input\n    assert False, \"Expected SyntaxError\"\n           ^^^^^\nAssertionError: Expected SyntaxError\n",
+  "executed": true,
+  "test_count": 3,
+  "exit_code": 1,
+  "measurement_status": "VALID",
+  "suite_version": null
+}

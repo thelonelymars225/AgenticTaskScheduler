@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The code does not handle the case when `python_code` is not a string correctly, it should raise a `SyntaxError` with a meaningful message."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The code does not handle the case when `python_code` is not a string correctly, it should raise a `SyntaxError` with a meaningful message.\"]}"
+}
