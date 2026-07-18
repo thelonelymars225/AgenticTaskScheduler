@@ -1,21 +1,7 @@
-=== Analysis ===
-## Specification
-- Write a standard-library Python text statistics tool. It must expose importable functions that count lines, words, characters, and case-insensitive word frequencies, handle empty Unicode text, and provide a command-line interface that reads a UTF-8 file and emits JSON.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import json
 from collections import Counter
 from pathlib import Path
-import string
 
 def count_lines(text):
     return len(text.splitlines())
@@ -27,7 +13,7 @@ def count_characters(text):
     return len(text)
 
 def word_frequencies(text):
-    words = text.lower().translate(str.maketrans('', '', string.punctuation)).split()
+    words = text.lower().split()
     return dict(Counter(words))
 
 def analyze_text(text):
@@ -69,10 +55,3 @@ if __name__ == '__main__':
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-
-=== QA Result ===
-VERDICT: FAIL
-- The `analyze_text` function does not handle the case where the input text is a non-string type.
-- The `count_lines`, `count_words`, and `count_characters` functions do not handle empty strings correctly, returning incorrect counts.
-- The `word_frequencies` function does not remove punctuation from words correctly, leaving it attached to the word.
-- The command-line interface does not handle invalid file paths or permissions correctly, raising a generic exception instead of a specific one.

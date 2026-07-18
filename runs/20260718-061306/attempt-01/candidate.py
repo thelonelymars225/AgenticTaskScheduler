@@ -1,8 +1,6 @@
 import os
 import json
 from collections import Counter
-from pathlib import Path
-import string
 
 def count_lines(text):
     return len(text.splitlines())
@@ -14,17 +12,10 @@ def count_characters(text):
     return len(text)
 
 def word_frequencies(text):
-    words = text.lower().translate(str.maketrans('', '', string.punctuation)).split()
+    words = text.lower().split()
     return dict(Counter(words))
 
 def analyze_text(text):
-    if not text:
-        return {
-            'lines': 0,
-            'words': 0,
-            'characters': 0,
-            'word_frequencies': {}
-        }
     return {
         'lines': count_lines(text),
         'words': count_words(text),
@@ -43,13 +34,7 @@ if __name__ == '__main__':
 
     filename = sys.argv[1]
     try:
-        file_path = Path(filename)
-        if not file_path.is_file():
-            raise FileNotFoundError(f"No such file: '{filename}'")
-        if not os.access(file_path, os.R_OK):
-            raise PermissionError(f"Permission denied: '{filename}'")
-
-        with open(file_path, 'r', encoding='utf-8') as file:
+        with open(filename, 'r', encoding='utf-8') as file:
             text = file.read()
             result = analyze_text(text)
             json.dump(result, sys.stdout, ensure_ascii=False, indent=4)

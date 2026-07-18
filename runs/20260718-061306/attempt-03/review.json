@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "The `analyze_text` function does not handle the case where the input text is a non-string type.",
+    "The `count_lines`, `count_words`, and `count_characters` functions do not handle empty strings correctly, returning incorrect counts.",
+    "The `word_frequencies` function does not remove punctuation from words correctly, leaving it attached to the word.",
+    "The command-line interface does not handle invalid file paths or permissions correctly, raising a generic exception instead of a specific one."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `analyze_text` function does not handle the case where the input text is a non-string type.\",\n    \"The `count_lines`, `count_words`, and `count_characters` functions do not handle empty strings correctly, returning incorrect counts.\",\n    \"The `word_frequencies` function does not remove punctuation from words correctly, leaving it attached to the word.\",\n    \"The command-line interface does not handle invalid file paths or permissions correctly, raising a generic exception instead of a specific one.\"\n] }"
+}

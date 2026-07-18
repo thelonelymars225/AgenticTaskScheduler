@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "The `analyze_text` function does not handle Unicode text correctly. It should return a dictionary with the correct counts and frequencies for non-ASCII characters.",
+    "The `count_lines`, `count_words`, and `count_characters` functions do not handle empty strings correctly. They should return 0 or an empty dictionary in this case.",
+    "The `word_frequencies` function does not handle punctuation attached to words correctly. It should remove punctuation from the words before counting frequencies.",
+    "The command-line interface does not handle invalid file paths correctly. It should raise a `FileNotFoundError` with a meaningful error message when the file does not exist or is not accessible."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `analyze_text` function does not handle Unicode text correctly. It should return a dictionary with the correct counts and frequencies for non-ASCII characters.\",\n    \"The `count_lines`, `count_words`, and `count_characters` functions do not handle empty strings correctly. They should return 0 or an empty dictionary in this case.\",\n    \"The `word_frequencies` function does not handle punctuation attached to words correctly. It should remove punctuation from the words before counting frequencies.\",\n    \"The command-line interface does not handle invalid file paths correctly. It should raise a `FileNotFoundError` with a meaningful error message when the file does not exist or is not accessible.\"\n] }"
+}
