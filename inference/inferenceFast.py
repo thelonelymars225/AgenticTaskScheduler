@@ -401,6 +401,12 @@ def write_acceptance_tests(code: str, task: TaskPlan) -> str:
         if re.search(rf"\b{module}\.", tests) and not re.search(rf"^\s*import\s+{module}\b", tests, re.MULTILINE):
             tests = f"import {module}\n" + tests
     tests = re.sub(r"(NamedTemporaryFile\([^\n]*mode\s*=\s*['\"])w(['\"])", r"\1w+\2", tests)
+    if "NamedTemporaryFile" in tests and ("json.dump" in tests or "json.load" in tests):
+        tests = re.sub(
+            r"NamedTemporaryFile\(\)",
+            "NamedTemporaryFile(mode='w+', encoding='utf-8')",
+            tests,
+        )
     tests = re.sub(
         r"(?m)^(\s*)(\w+)\.flush\(\)\s*\n(\s*(?:\w+\s*=\s*)?json\.load\s*\()",
         r"\1\2.flush()\n\1\2.seek(0)\n\3",
