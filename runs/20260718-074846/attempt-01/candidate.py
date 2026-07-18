@@ -1,21 +1,7 @@
-=== Analysis ===
-## Specification
-- Write a standard-library Python text statistics tool with one fixed contract. Expose importable core functions. None and unsupported non-string values raise TypeError. Empty and whitespace-only strings have zero words and an empty frequency mapping. Character count uses the original text; line count is zero for empty text and otherwise counts logical lines. Tokenize Unicode words deterministically, remove surrounding punctuation, normalize words to lowercase, and return frequency mappings in deterministic lexical key order. File functions accept an explicit path, read UTF-8, propagate FileNotFoundError and UnicodeDecodeError, and never call sys.exit. The CLI accepts an explicit input path, emits stable JSON, reports errors on stderr, and uses useful exit codes.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import json
 import re
 from collections import Counter
-import sys
 
 def count_lines(text):
     if not text.strip():
@@ -57,6 +43,7 @@ def main():
         print("Smoke test passed")
         return 0
     
+    import sys
     if len(sys.argv) != 2:
         print("Usage: python script.py <file_path>", file=sys.stderr)
         return 1
@@ -84,14 +71,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-
-=== QA Result ===
-VERDICT: FAIL
-- Acceptance failure: Traceback (most recent call last):
-  File "/tmp/agentic-acceptance-j52hp2gj/acceptance_runner.py", line 7, in <module>
-    namespace[name]()
-  File "/tmp/agentic-acceptance-j52hp2gj/acceptance_tests.py", line 28, in test_required_interfaces_and_type_errors
-    assert callable(getattr(candidate, name, None)), f"missing required {name} interface"
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AssertionError: missing required tokenize interface
-- Repair returned an unchanged candidate; stopping the loop.
