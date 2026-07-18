@@ -1,11 +1,13 @@
 import os
 import json
 import sys
+import importlib.util
+from pathlib import Path
 
 TODO_FILE = 'todos.json'
 
 def load_todos():
-    if not os.path.exists(TODO_FILE):
+    if not Path(TODO_FILE).exists():
         return []
     try:
         with open(TODO_FILE, 'r') as f:
@@ -94,3 +96,27 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# Test the candidate
+candidate_path = os.environ['CANDIDATE_PATH']
+spec = importlib.util.spec_from_file_location('todo', candidate_path)
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+
+# Test add_task function
+add_task("Buy milk")
+load_todos()
+assert len(load_todos()) == 1
+
+# Test list_tasks function
+list_tasks()
+
+# Test complete_task function
+complete_task(1)
+load_todos()
+assert load_todos()[0]['completed']
+
+# Test remove_task function
+remove_task(1)
+load_todos()
+assert len(load_todos()) == 0

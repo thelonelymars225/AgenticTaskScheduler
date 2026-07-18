@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "Quality review did not approve the implementation."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  {\n    \"description\": \"The program does not handle the case when the user provides an invalid command or missing argument.\",\n    \"actionable\": true,\n    \"priority\": \"high\"\n  },\n  {\n    \"description\": \"The program does not validate if the provided index is within the range of existing tasks.\",\n    \"actionable\": true,\n    \"priority\": \"medium\"\n  }\n] }"
+}
