@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle empty Unicode text correctly. The `analyze_text` function returns a dictionary with 'lines', 'words', and 'characters' keys, but it should return zero for these counts when the input text is empty."
+  ],
+  "raw": "{\"verdict\":\"FAIL\",\"issues\":[\"The program does not handle empty Unicode text correctly. The `analyze_text` function returns a dictionary with 'lines', 'words', and 'characters' keys, but it should return zero for these counts when the input text is empty.\"]}"
+}

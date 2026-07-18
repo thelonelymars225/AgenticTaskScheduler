@@ -3,16 +3,16 @@ import json
 from collections import Counter
 
 def count_lines(text):
-    return len(text.splitlines()) if text else 0
+    return len(text.splitlines())
 
 def count_words(text):
-    return len(text.split()) if text else 0
+    return len(text.split())
 
 def count_characters(text):
-    return len(text) if text else 0
+    return len(text)
 
 def word_frequencies(text):
-    words = text.lower().split() if text else []
+    words = text.lower().split()
     return dict(Counter(words))
 
 def analyze_text(text):
