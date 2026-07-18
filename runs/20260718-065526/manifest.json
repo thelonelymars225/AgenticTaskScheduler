@@ -1,0 +1,35 @@
+{
+  "task": "## Specification\n- Write a standard-library Python JSON merge utility with one fixed contract. Expose an importable merge(left, right) function. When both values are objects, recursively merge their keys; preserve non-conflicting keys, and let the right value replace the left value for scalar, list, type-mismatch, and every other non-object conflict. Do not mutate either input. The CLI requires explicit left-input, right-input, and output paths, reads and writes UTF-8 JSON, writes stable JSON with sorted keys, reports malformed JSON and file errors on stderr, and returns useful non-zero exit codes.\n\n## Implementation Plan\n- Use a minimal reliable Python design.\n\n## Acceptance Tests\n- The program compiles and starts without an exception.\n\nCOMPLEXITY: medium",
+  "benchmark_id": "json_merge",
+  "run_timestamp": "2026-07-18T06:55:26.131451+03:00",
+  "attempt_count": 2,
+  "model_used": "qwen2.5-coder:14b",
+  "selected_candidate": 2,
+  "repair_count": 1,
+  "final_classification": "UNCHANGED_REPAIR",
+  "final_verdict": "VERDICT: FAIL\n- The merge_json.py script does not handle the case where the input files are empty or contain only whitespace. This can lead to a JSONDecodeError when trying to load the file.\n- Repair returned an unchanged candidate; stopping the loop.",
+  "attempts": [
+    {
+      "number": 1,
+      "path": "attempt-01",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 2,
+      "acceptance_exit_code": 1,
+      "review_passed": false,
+      "repair_changed_code": true
+    },
+    {
+      "number": 2,
+      "path": "attempt-02",
+      "validation_passed": true,
+      "acceptance_passed": false,
+      "acceptance_executed": true,
+      "collected_test_count": 4,
+      "acceptance_exit_code": 1,
+      "review_passed": false,
+      "repair_changed_code": true
+    }
+  ]
+}

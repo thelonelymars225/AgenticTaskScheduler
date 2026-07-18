@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "issues": [
+    "The merge_json.py script does not handle the case where the input files are empty or contain only whitespace. This can lead to a JSONDecodeError when trying to load the file."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [ \"The merge_json.py script does not handle the case where the input files are empty or contain only whitespace. This can lead to a JSONDecodeError when trying to load the file.\" ] }"
+}
