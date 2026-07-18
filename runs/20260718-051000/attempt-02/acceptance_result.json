@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-z7vp_fzy/acceptance_tests.py\", line 68, in <module>\n    test_cli_invalid_file()\n  File \"/tmp/agentic-acceptance-z7vp_fzy/acceptance_tests.py\", line 61, in test_cli_invalid_file\n    assert \"Error: File\" in output.decode('utf-8')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-z7vp_fzy/acceptance_tests.py\", line 68, in <module>\n    test_cli_invalid_file()\n  File \"/tmp/agentic-acceptance-z7vp_fzy/acceptance_tests.py\", line 61, in test_cli_invalid_file\n    assert \"Error: File\" in output.decode('utf-8')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true
+}

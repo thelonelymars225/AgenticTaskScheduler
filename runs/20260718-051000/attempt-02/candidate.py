@@ -1,16 +1,3 @@
-=== Analysis ===
-## Specification
-- Write a standard-library Python text statistics tool. It must expose importable functions that count lines, words, characters, and case-insensitive word frequencies, handle empty Unicode text, and provide a command-line interface that reads a UTF-8 file and emits JSON.
-
-## Implementation Plan
-- Use a minimal reliable Python design.
-
-## Acceptance Tests
-- The program compiles and starts without an exception.
-
-COMPLEXITY: medium
-
-=== Code ===
 import os
 import json
 from collections import Counter
@@ -60,37 +47,13 @@ if __name__ == '__main__':
         file_path = Path(filename)
         if not file_path.exists():
             raise FileNotFoundError(f"File '{filename}' does not exist")
-        if file_path.is_dir():
-            raise IsADirectoryError(f"'{filename}' is a directory, not a file")
-        if file_path.is_symlink():
-            print(f"Warning: '{filename}' is a symbolic link", file=sys.stderr)
-        if not os.access(file_path, os.R_OK):
-            raise PermissionError(f"Permission denied: '{filename}' cannot be read")
-
         with open(file_path, 'r', encoding='utf-8') as file:
             text = file.read()
             result = analyze_text(text)
-            try:
-                json.dump(result, sys.stdout, ensure_ascii=False, indent=4)
-            except Exception as e:
-                print(f"Error: Failed to write output - {e}", file=sys.stderr)
-                sys.exit(1)
-
-    except FileNotFoundError as fnf_error:
-        print(f"Error: File '{filename}' does not exist", file=sys.stderr)
-        sys.exit(1)
-    except IsADirectoryError as dir_error:
-        print(dir_error, file=sys.stderr)
-        sys.exit(1)
-    except PermissionError as perm_error:
-        print(perm_error, file=sys.stderr)
-        sys.exit(1)
+            json.dump(result, sys.stdout, ensure_ascii=False, indent=4)
     except UnicodeDecodeError:
         print(f"Error: File '{filename}' is not a valid UTF-8 encoded file", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-
-=== QA Result ===
-VERDICT: PASS

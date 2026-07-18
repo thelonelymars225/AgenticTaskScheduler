@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case when the input file is a directory.",
+    "The program does not handle the case when the input file is a symbolic link.",
+    "The program does not handle the case when the input file has no read permission.",
+    "The program does not handle the case when the input file is too large to fit in memory."
+  ],
+  "raw": "{ \n  \"verdict\": \"FAIL\",\n  \"issues\": [\n    {\n      \"cause\": \"The program does not handle the case when the input file is a directory.\",\n      \"location\": \"Path(filename).exists()\",\n      \"description\": \"When the input file is a directory, Path(filename).exists() returns True, but the program tries to open it as if it were a file. This will result in a UnicodeDecodeError.\"\n    },\n    {\n      \"cause\": \"The program does not handle the case when the input file is a symbolic link.\",\n      \"location\": \"Path(filename).exists()\",\n      \"description\": \"When the input file is a symbolic link, Path(filename).exists() returns True, but the program tries to open it as if it were a file. This will result in a UnicodeDecodeError.\"\n    },\n    {\n      \"cause\": \"The program does not handle the case when the input file has no read permission.\",\n      \"location\": \"open(file_path, 'r', encoding='utf-8')\",\n      \"description\": \"When the input file has no read permission, open() will raise a PermissionError.\"\n    },\n    {\n      \"cause\": \"The program does not handle the case when the input file is too large to fit in memory.\",\n      \"location\": \"file.read()\",\n      \"description\": \"When the input file is too large to fit in memory, file.read() will raise a MemoryError.\"\n    }\n  ]\n}"
+}
