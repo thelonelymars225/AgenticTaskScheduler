@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "failures": [
+    "Acceptance failure: Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-drm79t27/acceptance_tests.py\", line 82, in <module>\n    test_summarize()\n  File \"/tmp/agentic-acceptance-drm79t27/acceptance_tests.py\", line 30, in test_summarize\n    assert result == expected_output\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError"
+  ],
+  "stdout": "",
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/agentic-acceptance-drm79t27/acceptance_tests.py\", line 82, in <module>\n    test_summarize()\n  File \"/tmp/agentic-acceptance-drm79t27/acceptance_tests.py\", line 30, in test_summarize\n    assert result == expected_output\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+  "executed": true
+}

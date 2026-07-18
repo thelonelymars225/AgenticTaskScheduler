@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "issues": [
+    "The log summarizer does not handle empty input correctly.",
+    "The program fails to exit with a non-zero status code when encountering an invalid case.",
+    "The summary function does not return the expected output for valid cases."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The log summarizer does not handle empty input correctly.\",\n    \"The program fails to exit with a non-zero status code when encountering an invalid case.\",\n    \"The summary function does not return the expected output for valid cases.\"\n] }"
+}

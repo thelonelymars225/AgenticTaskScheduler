@@ -1,0 +1,8 @@
+{
+  "passed": false,
+  "issues": [
+    "The program does not handle the case where a log line is empty.",
+    "The `summarize` function does not correctly count levels when there are multiple lines with the same level."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n  \"The program does not handle the case where a log line is empty.\",\n  \"The `summarize` function does not correctly count levels when there are multiple lines with the same level.\"\n] }"
+}

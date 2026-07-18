@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "issues": [
+    "The `summarize` function does not handle invalid input lines correctly.",
+    "The `main` function does not check for empty input before processing it.",
+    "The `summarize` function does not count levels when the log line is missing a level.",
+    "The `main` function does not handle non-UTF-8 input correctly."
+  ],
+  "raw": "{ \"verdict\": \"FAIL\", \"issues\": [\n    \"The `summarize` function does not handle invalid input lines correctly.\",\n    \"The `main` function does not check for empty input before processing it.\",\n    \"The `summarize` function does not count levels when the log line is missing a level.\",\n    \"The `main` function does not handle non-UTF-8 input correctly.\"\n] }"
+}
